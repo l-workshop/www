@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="B-MJ's three-layer type system: the Ty grammar with Hazel-style hole types, the class table and nominal subtyping, the checker with override rules, and the Typing tab's WF-* and T-* derivations.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Types — B-MJ Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-b-mj/types.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-bmj">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>B-MJ Help</b><span class="help-bar-sub">Block-based MiniJava</span></span>
+        </a>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://b-mj.l-workshop.my.id" rel="noopener">Open B-MJ</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li>
+                    <a href="types.html" aria-current="page"><em>04</em> Types</a>
+                    <ul class="help-subnav">
+                        <li><a href="#layers">Three layers</a></li>
+                        <li><a href="#holes">The hole type</a></li>
+                        <li><a href="#subtyping">Classes and subtyping</a></li>
+                        <li><a href="#overrides">Override checking</a></li>
+                        <li><a href="#typing-tab">The Typing tab</a></li>
+                        <li><a href="#rules">Rule names</a></li>
+                        <li><a href="#problems">The Problems tab</a></li>
+                    </ul>
+                </li>
+                <li><a href="strings.html"><em>05</em> Strings</a></li>
+                <li><a href="semantics.html"><em>06</em> Semantics</a></li>
+                <li><a href="reference.html"><em>07</em> Reference</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>B-MJ</b>, running at
+                <a href="https://b-mj.l-workshop.my.id" rel="noopener">b-mj.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">04 / Types</span>
+                <h1>A type system that tolerates unfinished work</h1>
+                <p class="help-lede">The whole workspace is re-checked on every edit. The design problem that creates is
+                    not speed &mdash; it is that a program under construction is nearly always ill-typed, and a checker
+                    that shouts about it is useless. B-MJ solves that with a hole type.</p>
+
+                <h2 id="layers">Three layers</h2>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Layer</th>
+                                <th>Responsible for</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>Ty</code> grammar</td>
+                                <td>What a type <em>is</em>: <code>int</code>, <code>boolean</code>,
+                                    <code>String</code>, <code>int[]</code>, <code>String[]</code>, class types, method
+                                    arrows, <code>Top</code> / <code>Bottom</code> bounds, and the hole type.</td>
+                            </tr>
+                            <tr>
+                                <td>Class table</td>
+                                <td>Collecting names and members, resolving <code>extends</code> (with cycle
+                                    detection), and deciding nominal subtyping.</td>
+                            </tr>
+                            <tr>
+                                <td>Checker</td>
+                                <td>Statement and expression rules, override checking, duplicate detection.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>Checking is debounced, and only the program reachable from the <code>Goal</code> block is examined
+                    &mdash; detached scratch blocks stay quiet.</p>
+
+                <h2 id="holes">The hole type</h2>
+                <p>A block whose type cannot yet be determined &mdash; an empty socket, an unfinished expression &mdash;
+                    gets a first-class <strong>hole type</strong>, in the style of the Hazel language. A hole is
+                    <em>consistent with everything</em>.</p>
+
+                <p>The practical consequence is that errors do not cascade. If you have not yet filled in the condition
+                    of an <code>if</code>, that one block is incomplete; the branches, the enclosing method and the rest
+                    of the class are still checked normally and still report their own real problems. Without hole types
+                    a single empty socket near the root would paint the entire program red and bury whatever you
+                    actually wanted to know.</p>
+
+                <div class="help-callout is-new">
+                    <strong>Incomplete is not the same as wrong</strong>
+                    <p>This is the type-system counterpart of B-Lambda treating a partly built term as expected rather
+                        than erroneous. Both languages are built on the assumption that you will spend most of your time
+                        looking at a program that is not finished yet.</p>
+                </div>
+
+                <h2 id="subtyping">Classes and subtyping</h2>
+                <p>MiniJava has single inheritance and no interfaces, so subtyping is <strong>nominal</strong>: class
+                    <code>B</code> is a subtype of <code>A</code> if it declares <code>extends A</code>, transitively.
+                    Structural similarity counts for nothing.</p>
+
+                <p>The class table resolves the <code>extends</code> graph and <strong>detects cycles</strong>. A class
+                    hierarchy that loops is reported as a problem rather than sending the checker into infinite
+                    recursion &mdash; worth knowing, because it is easy to produce by accident when renaming
+                    classes.</p>
+
+                <p>Duplicate detection catches the other common structural mistakes: two classes with the same name, two
+                    fields with the same name in one class, two methods with the same name (MiniJava has no
+                    overloading), or two parameters sharing a name.</p>
+
+                <h2 id="overrides">Override checking</h2>
+                <p>When a subclass declares a method that its superclass already has, B-MJ checks the signature the
+                    standard way:</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Part</th>
+                                <th>Rule</th>
+                                <th>Why</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Parameters</td>
+                                <td><strong>Invariant</strong> &mdash; the types must match exactly</td>
+                                <td>A caller holding a supertype reference must be able to pass what the supertype
+                                    accepted</td>
+                            </tr>
+                            <tr>
+                                <td>Return type</td>
+                                <td><strong>Covariant</strong> &mdash; may be a subtype of the overridden return</td>
+                                <td>A caller expecting the supertype's result is still satisfied by a more specific
+                                    one</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>The <em>Shapes (Inheritance)</em> example is built around this: a hierarchy where overriding is the
+                    point, so you can edit a signature and watch the diagnostic appear.</p>
+
+                <h2 id="typing-tab">The Typing tab</h2>
+                <p>The Inspector's <em>Types</em> tab picks a method from a dropdown &mdash; <code>main</code> plus every
+                    <code>C.m</code> in the program &mdash; shows its context &Gamma; once, and lists its statements as
+                    <code>&Gamma; &vdash; s ok</code> rows. Each row expands into a classic premises-over-a-bar proof
+                    tree.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bmj-typing.png" loading="lazy" style="max-width: 50%;" width="400"
+                        alt="The MiniJava Inspector's Types tab with a Derivation for dropdown set to main, the context gamma equals args colon String array, and a collapsed WF-Print row.">
+                    <figcaption><b>Fig. 1</b> The <em>Types</em> tab for <code>main</code>. Each row starts collapsed;
+                        the chevron opens the derivation.</figcaption>
+                </figure>
+
+                <p>Expanded, a method of any substance produces a full tree:</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="../assets/img/b-mj-type-derivation.png" loading="lazy"
+                        alt="An expanded typing derivation for the method Fac.ComputeFac, showing WF-If and WF-Return rows built from T-Var, T-Int, T-This, T-Arith, T-Invk, T-Cmp and WF-Assign premises.">
+                    <figcaption><b>Fig. 2</b> <code>Fac.ComputeFac</code> fully expanded, with
+                        <code>&Gamma; = this:Fac, num:int, num_aux:int</code>. Statement rules (<code>WF-*</code>) sit
+                        over expression rules (<code>T-*</code>).</figcaption>
+                </figure>
+
+                <p>Every judgement in the tree is a <strong>button</strong>: clicking it selects and centres the block
+                    that judgement is about. That is the fastest way to get from &ldquo;this premise looks wrong&rdquo;
+                    to the block responsible.</p>
+
+                <div class="help-callout">
+                    <strong>The derivation and the diagnostics cannot disagree</strong>
+                    <p>Both come from the same walk of the program. The checker builds a derivation &mdash; rule,
+                        judgement, premises, note &mdash; alongside every diagnostic it emits, so the proof tree and the
+                        <em>Problems</em> list are two renderings of one result rather than two analyses that might
+                        drift apart.</p>
+                </div>
+
+                <h2 id="rules">Rule names</h2>
+                <p>B-MJ uses two prefixes, and the distinction is the usual one between statements and expressions.</p>
+
+                <h3>Statements &mdash; <code>WF-*</code></h3>
+                <p>Well-formedness. A statement does not <em>have</em> a type; it is either well-formed in its context or
+                    it is not, so these conclude <code>&Gamma; &vdash; s ok</code>.</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Rule</th>
+                                <th>For</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>WF-If</code></td>
+                                <td><code>if / else</code> &mdash; condition must be <code>boolean</code>, both branches
+                                    well-formed</td>
+                            </tr>
+                            <tr>
+                                <td><code>WF-Assign</code></td>
+                                <td>Assignment &mdash; the right-hand type must fit the variable's</td>
+                            </tr>
+                            <tr>
+                                <td><code>WF-Print</code></td>
+                                <td><code>System.out.println</code> &mdash; accepts <code>int</code> or
+                                    <code>String</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>WF-Return</code></td>
+                                <td>The method's return value against its declared type</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Expressions &mdash; <code>T-*</code></h3>
+                <p>These conclude a type: <code>&Gamma; &vdash; e : &tau;</code>.</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Rule</th>
+                                <th>For</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>T-Var</code></td>
+                                <td>A variable, looked up in &Gamma;</td>
+                            </tr>
+                            <tr>
+                                <td><code>T-Int</code></td>
+                                <td>An integer literal</td>
+                            </tr>
+                            <tr>
+                                <td><code>T-This</code></td>
+                                <td><code>this</code>, at the enclosing class type</td>
+                            </tr>
+                            <tr>
+                                <td><code>T-Arith</code></td>
+                                <td>Arithmetic on two <code>int</code>s</td>
+                            </tr>
+                            <tr>
+                                <td><code>T-Cmp</code></td>
+                                <td>Comparison, giving <code>boolean</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>T-Invk</code></td>
+                                <td>A method call, against the receiver's class</td>
+                            </tr>
+                            <tr>
+                                <td><code>T-New</code></td>
+                                <td><code>new C()</code>, at type <code>C</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="help-callout is-new">
+                    <strong>Comparing notations across the workshop</strong>
+                    <p><a href="../help-b-lambda/types.html#rules">B-Lambda</a> has only <code>T-*</code> rules, because
+                        the &lambda;-calculus has no statements &mdash; everything is an expression with a type. MnL
+                        goes the other way and enriches the judgement itself to
+                        <code>&Gamma; &vdash; term : Category &otimes; Type</code>, because there the block's
+                        grammatical category is also being checked.</p>
+                </div>
+
+                <h2 id="problems">The Problems tab</h2>
+                <p>Diagnostics surface twice: as warning icons on the offending blocks, and in the bottom panel's
+                    <em>Problems</em> tab, described there as <em>Type-checker diagnostics from the current block
+                        program</em>. Clicking an entry selects and centres its block.</p>
+
+                <p>When the program checks, the tab says so plainly: <em>No problems: the program type-checks.</em></p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="blocks.html">
+                        <span>Previous &mdash; 03</span>
+                        <b>&larr; Blocks</b>
+                    </a>
+                    <a class="is-next" href="strings.html">
+                        <span>Next &mdash; 05</span>
+                        <b>Strings &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">B-MJ is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against the build running at b-mj.l-workshop.my.id.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

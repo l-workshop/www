@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="The Block Lambda toolbox: six categories, twelve blocks, the square-cornered Tude renderer, grammatical colour families, and the integer-division rule.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Blocks — B-Lambda Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-b-lambda/blocks.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-bl">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>B-Lambda Help</b><span class="help-bar-sub">Block-Based
+                    &lambda;-Calculus</span></span>
+        </a>
+        <span class="help-version">v1.0.0</span>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://b-lambda.l-workshop.my.id" rel="noopener">Open B-Lambda</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li>
+                    <a href="blocks.html" aria-current="page"><em>03</em> Blocks</a>
+                    <ul class="help-subnav">
+                        <li><a href="#toolbox">The toolbox</a></li>
+                        <li><a href="#tude">The Tude renderer</a></li>
+                        <li><a href="#colours">Grammatical colours</a></li>
+                        <li><a href="#operators">Operators</a></li>
+                        <li><a href="#division">Integer division</a></li>
+                        <li><a href="#search">Searching the toolbox</a></li>
+                    </ul>
+                </li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li><a href="semantics.html"><em>05</em> Semantics</a></li>
+                <li><a href="pipeline.html"><em>06</em> Compiler pipeline</a></li>
+                <li><a href="reference.html"><em>07</em> Reference</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>Block Lambda 1.0.0</b>, running at
+                <a href="https://b-lambda.l-workshop.my.id" rel="noopener">b-lambda.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">03 / Blocks</span>
+                <h1>Twelve blocks, six categories</h1>
+                <p class="help-lede">The toolbox is deliberately small. A language with three constructs does not need
+                    forty blocks, and keeping the palette short means every block in it is one you will actually
+                    use.</p>
+
+                <h2 id="toolbox">The toolbox</h2>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bl-toolbox.png" loading="lazy" style="max-width: 30%;"
+                        alt="The Block Lambda blocks sidebar with the Variables, Abstraction and Application categories expanded, and Let Binding, Operators and Literals collapsed.">
+                    <figcaption><b>Fig. 1</b> The blocks sidebar. Each category expands in place; the search field at
+                        the top filters across all of them.</figcaption>
+                </figure>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Block</th>
+                                <th>Sub-label</th>
+                                <th>Meaning</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Variables</td>
+                                <td><span class="help-glyph">&lambda; x . x</span></td>
+                                <td><code>x</code></td>
+                                <td>A variable reference. Renders as <em>bound</em> when its name matches an enclosing
+                                    binder.</td>
+                            </tr>
+                            <tr>
+                                <td>Abstraction</td>
+                                <td><span class="help-glyph">&lambda; x . body</span></td>
+                                <td><code>body</code></td>
+                                <td>Binds a parameter over a body. The only binder in the language apart from
+                                    <code>let</code>.</td>
+                            </tr>
+                            <tr>
+                                <td>Application</td>
+                                <td><span class="help-glyph">func arg</span></td>
+                                <td><code>func &middot; arg</code></td>
+                                <td>Applies a function to an argument. Left-associative.</td>
+                            </tr>
+                            <tr>
+                                <td>Application</td>
+                                <td><span class="help-glyph">( term )</span></td>
+                                <td><code>grouping</code></td>
+                                <td>Parentheses. No effect on evaluation; controls how text and derivations bracket.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Let Binding</td>
+                                <td><span class="help-glyph">&#8788;</span> let</td>
+                                <td><code>bind value</code></td>
+                                <td><code>let x = &hellip; in &hellip;</code>. Generalised, so polymorphic.</td>
+                            </tr>
+                            <tr>
+                                <td>Let Binding</td>
+                                <td><span class="help-glyph">&#8635;</span> letrec</td>
+                                <td><code>recursive bind</code></td>
+                                <td><code>letrec f = &hellip; in &hellip;</code>. Monomorphic.</td>
+                            </tr>
+                            <tr>
+                                <td>Operators</td>
+                                <td><span class="help-glyph">number + number</span></td>
+                                <td><code>+ &minus; &times; &divide;</code></td>
+                                <td>Arithmetic on <code>int</code>. The operator is a dropdown on the block.</td>
+                            </tr>
+                            <tr>
+                                <td>Operators</td>
+                                <td><span class="help-glyph">number &lt; number</span></td>
+                                <td><code>= &lt; &le; &gt; &ge;</code></td>
+                                <td>Comparison. Takes two <code>int</code>s, yields <code>bool</code>.</td>
+                            </tr>
+                            <tr>
+                                <td>Operators</td>
+                                <td><span class="help-glyph">boolean and boolean</span></td>
+                                <td><code>and / or / equal</code></td>
+                                <td>Boolean connectives on <code>bool</code>.</td>
+                            </tr>
+                            <tr>
+                                <td>Operators</td>
+                                <td><span class="help-glyph">if then else</span></td>
+                                <td><code>conditional</code></td>
+                                <td>Both branches must agree on a type; the condition must be <code>bool</code>.</td>
+                            </tr>
+                            <tr>
+                                <td>Literals</td>
+                                <td><span class="help-glyph">True / False</span></td>
+                                <td><code>boolean</code></td>
+                                <td>A <code>bool</code> literal.</td>
+                            </tr>
+                            <tr>
+                                <td>Literals</td>
+                                <td><span class="help-glyph">0 1 2</span></td>
+                                <td><code>number</code></td>
+                                <td>An <code>int</code> literal.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="help-callout">
+                    <strong>No block for recursion itself</strong>
+                    <p>There is no fixpoint or <code>Y</code> block. Recursion comes from <code>letrec</code>, and the
+                        machine implements it by unfolding the binding when the name is looked up &mdash; a rule you can
+                        watch fire as <code>unfold fixpoint</code> in the
+                        <a href="semantics.html#lockstep">Lockstep view</a>.</p>
+                </div>
+
+                <h2 id="tude">The Tude renderer</h2>
+                <p>B-Lambda's default renderer is called <strong>Tude</strong>. It is built on the same family as
+                    Blockly's Zelos renderer &mdash; so it keeps the modern connection model, with the same drag,
+                    snap and highlight behaviour &mdash; but it removes the rounded corners.</p>
+
+                <p>That single change is deliberate. Rounded blocks read as interlocking toys; square blocks read as
+                    <em>nested fragments of program text</em>, which is what a &lambda;-term actually is. Because the
+                    corners are square, a term built out of blocks has the same visual nesting as the same term written
+                    with brackets, and the reduction views can lay a rewritten term over the original without the shapes
+                    fighting each other.</p>
+
+                <p>You can switch to <em>Zelos</em> (rounded) or <em>Thrasos</em> (Blockly's classic renderer) from the
+                    <em>Renderer</em> menu at any time; the choice is remembered. Every figure in this help uses
+                    Tude.</p>
+
+                <h2 id="colours">Grammatical colours</h2>
+                <p>Block colour is assigned by <strong>grammatical family</strong>, not per block. Once you have the
+                    families, you can read the shape of an unfamiliar program from across the room:</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Family</th>
+                                <th>Blocks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Binding</td>
+                                <td><code>let</code>, <code>letrec</code>, abstraction &mdash; anything that introduces
+                                    a name</td>
+                            </tr>
+                            <tr>
+                                <td>Application</td>
+                                <td>application, grouping</td>
+                            </tr>
+                            <tr>
+                                <td>Control</td>
+                                <td><code>if / then / else</code></td>
+                            </tr>
+                            <tr>
+                                <td>Operator</td>
+                                <td>arithmetic, comparison, boolean</td>
+                            </tr>
+                            <tr>
+                                <td>Literal</td>
+                                <td>numbers, booleans</td>
+                            </tr>
+                            <tr>
+                                <td>Reference</td>
+                                <td>variables</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>The palette is theme-aware: switching between the light and dark workbench themes recolours the
+                    blocks to keep contrast, rather than leaving light-theme colours on a dark canvas.</p>
+
+                <div class="help-callout is-legacy">
+                    <strong>Colour is not the type</strong>
+                    <p>This is worth being careful about if you also use <a href="../help-mnl/index.html">MnL</a>, where
+                        block colour encodes the <em>type</em>. In B-Lambda colour encodes the <em>grammatical
+                            category</em>, and the type is shown separately &mdash; in the block's comment report, in
+                        the <em>Types</em> tab, and in the generated code's type comments.</p>
+                </div>
+
+                <h2 id="operators">Operators</h2>
+                <p>The three operator blocks each carry a dropdown rather than existing once per symbol, which keeps the
+                    toolbox short and lets you change an operator without rebuilding its operands.</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Block</th>
+                                <th>Operators</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Arithmetic</td>
+                                <td><code>+</code> <code>&minus;</code> <code>&times;</code> <code>&divide;</code></td>
+                                <td><code>int &rarr; int &rarr; int</code></td>
+                            </tr>
+                            <tr>
+                                <td>Comparison</td>
+                                <td><code>=</code> <code>&lt;</code> <code>&le;</code> <code>&gt;</code>
+                                    <code>&ge;</code></td>
+                                <td><code>int &rarr; int &rarr; bool</code></td>
+                            </tr>
+                            <tr>
+                                <td>Boolean</td>
+                                <td><code>and</code> <code>or</code> <code>equal</code></td>
+                                <td><code>bool &rarr; bool &rarr; bool</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 id="division">Integer division</h2>
+                <p>The only numeric type is <code>int</code>, and division has to respect that. So <code>&divide;</code>
+                    is <strong>integer division</strong>: it truncates toward zero.</p>
+
+                <pre><code>121 / 100   &rarr;   1
+7 / 2       &rarr;   3
+(0 - 7) / 2 &rarr;  -3     -- toward zero, not toward -&infin;
+7 / 0       &rarr;   0     -- not Infinity, not NaN</code></pre>
+
+                <div class="help-callout is-changed">
+                    <strong>Division by zero yields 0</strong>
+                    <p>This is a design choice, not an oversight. The alternative &mdash; producing
+                        <code>Infinity</code> or <code>NaN</code> &mdash; would mean a well-typed <code>int</code> term
+                        could evaluate to something that is not an <code>int</code>, which would break the property that
+                        the type system and every one of the nine compiler stages rely on. Returning <code>0</code>
+                        keeps evaluation total and keeps the type honest.</p>
+                    <p>Truncation toward zero is also what makes <code>mod</code> expressible, which is how the
+                        <em>GCD (Euclid)</em> example works without a remainder operator.</p>
+                </div>
+
+                <h2 id="search">Searching the toolbox</h2>
+                <p>The field at the top of the sidebar filters every category at once; press <kbd>/</kbd> to jump to it.
+                    Blocks can be added either by dragging or by clicking &mdash; a click drops the block into the
+                    workspace centre, which is quicker when you are assembling something with the keyboard.</p>
+
+                <p>If a search matches nothing the sidebar says so plainly rather than showing an empty list.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="getting-started.html">
+                        <span>Previous &mdash; 02</span>
+                        <b>&larr; Getting started</b>
+                    </a>
+                    <a class="is-next" href="types.html">
+                        <span>Next &mdash; 04</span>
+                        <b>Types &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">Block Lambda is developed at <a href="../index.html">L-Workshop</a>. This help was
+                written against Block Lambda 1.0.0.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

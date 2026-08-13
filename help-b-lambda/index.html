@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="Block Lambda is a block-based workbench for the Lambda Calculus: grammar-aware blocks, Hindley-Milner types, two reference semantics, and a nine-stage compiler you can inspect down to WebAssembly.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Overview — B-Lambda Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-b-lambda/index.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-bl">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>B-Lambda Help</b><span class="help-bar-sub">Block-Based
+                    &lambda;-Calculus</span></span>
+        </a>
+        <span class="help-version">v1.0.0</span>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://b-lambda.l-workshop.my.id" rel="noopener">Open B-Lambda</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li>
+                    <a href="index.html" aria-current="page"><em>01</em> Overview</a>
+                    <ul class="help-subnav">
+                        <li><a href="#what">What B-Lambda is</a></li>
+                        <li><a href="#workbench">The workbench</a></li>
+                        <li><a href="#perspectives">Perspectives</a></li>
+                        <li><a href="#palette">Command palette</a></li>
+                        <li><a href="#files">Files and autosave</a></li>
+                        <li><a href="#examples">Built-in examples</a></li>
+                    </ul>
+                </li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li><a href="semantics.html"><em>05</em> Semantics</a></li>
+                <li><a href="pipeline.html"><em>06</em> Compiler pipeline</a></li>
+                <li><a href="reference.html"><em>07</em> Reference</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>Block Lambda 1.0.0</b>, running at
+                <a href="https://b-lambda.l-workshop.my.id" rel="noopener">b-lambda.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">01 / Overview</span>
+                <h1>A workbench for the Lambda Calculus</h1>
+                <p class="help-lede">Block Lambda turns &lambda;-calculus from something you write on paper into
+                    something you can assemble, type-check, reduce by hand, and watch compile all the way down to
+                    WebAssembly &mdash; without leaving the browser.</p>
+
+                <h2 id="what">What B-Lambda is</h2>
+                <p>The core idea is that one program should be visible at every level of abstraction at once. You build
+                    a term out of blocks; B-Lambda simultaneously shows you its generated text, its inferred type, its
+                    typing derivation, its reduction sequence, its abstract-machine trace, and the nine intermediate
+                    representations a compiler would put it through. Change a block and every one of those views
+                    follows.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bl-workbench.jpg" loading="lazy"
+                        alt="The Block Lambda workbench: blocks toolbox on the left, the factorial program in the workspace, and the Inspector showing the inferred type int on the right.">
+                    <figcaption><b>Fig. 1</b> The workbench with the <em>Factorial 5</em> example loaded. The Inspector
+                        reports one top-level term of type <code>int</code>.</figcaption>
+                </figure>
+
+                <p>Three things make it more than a block editor:</p>
+                <ul>
+                    <li><strong>Two independent reference semantics.</strong> A substitution stepper and a CEK abstract
+                        machine evaluate the same term separately, and the <a href="semantics.html#lockstep">Lockstep
+                            view</a> checks that they agree step for step.</li>
+                    <li><strong>A real compiler, not a pretty-printer.</strong> Nine lowering stages end in bytecode and
+                        in a genuine WebAssembly module you can execute in the page &mdash; each stage cross-checked
+                        against the reference semantics.</li>
+                    <li><strong>Types you can read as shapes and colours.</strong> Hindley-Milner inference runs on
+                        every edit, and the results appear on the blocks themselves as well as in the Inspector.</li>
+                </ul>
+
+                <div class="help-callout">
+                    <strong>Where this sits</strong>
+                    <p>B-Lambda is one of the languages built at <a href="../index.html">L-Workshop</a>. It shares its
+                        Call-by-Structure evaluation strategy and its Lockstep correspondence view with
+                        <a href="../help-mnl/index.html">MnL</a>, and its bottom-panel layout with
+                        <a href="../help-b-mj/index.html">B-MJ</a>. If you know one, the other two will feel
+                        familiar.</p>
+                </div>
+
+                <h2 id="workbench">The workbench</h2>
+                <p>The shell is a docked workbench rather than a single canvas. Five regions, all of which can be
+                    hidden:</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Region</th>
+                                <th>What lives there</th>
+                                <th>Toggle</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Header menus</td>
+                                <td><em>File</em>, <em>Examples</em>, <em>View</em>, <em>Renderer</em>, <em>More</em>
+                                </td>
+                                <td>&mdash;</td>
+                            </tr>
+                            <tr>
+                                <td>Blocks sidebar</td>
+                                <td>Searchable, categorised toolbox</td>
+                                <td><kbd>Ctrl</kbd> + <kbd>B</kbd></td>
+                            </tr>
+                            <tr>
+                                <td>Workspace</td>
+                                <td>The blocks themselves, with zoom and <em>Run</em></td>
+                                <td>&mdash;</td>
+                            </tr>
+                            <tr>
+                                <td>Inspector</td>
+                                <td><em>Code</em>, <em>Types</em>, <em>Outline</em>, <em>Lowering</em></td>
+                                <td><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>C</kbd></td>
+                            </tr>
+                            <tr>
+                                <td>Bottom panel</td>
+                                <td><em>Problems</em>, <em>Output</em>, <em>Semantics</em></td>
+                                <td><kbd>Ctrl</kbd> + <kbd>J</kbd></td>
+                            </tr>
+                            <tr>
+                                <td>Status bar</td>
+                                <td>File name, block count, problem count, autosave, perspective</td>
+                                <td>&mdash;</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>The Inspector's four tabs are the heart of it. <em>Code</em> is an editable text view of the
+                    program that syncs both ways; <em>Types</em> holds the inferred types and the typing derivation;
+                    <em>Outline</em> shows the program structure as a tree; and <em>Lowering</em> is the
+                    <a href="pipeline.html">compiler pipeline</a>.</p>
+
+                <h3>Renderers</h3>
+                <p>B-Lambda ships three Blockly renderers, switchable live from the <em>Renderer</em> menu:</p>
+                <ul>
+                    <li><strong>Tude</strong> &mdash; the project's own renderer. Square corners, so blocks read as
+                        rectangular fragments of program text rather than as jigsaw pieces. This is the default and
+                        what every figure in this help uses.</li>
+                    <li><strong>Zelos</strong> &mdash; Blockly's rounded renderer.</li>
+                    <li><strong>Thrasos</strong> &mdash; Blockly's classic renderer.</li>
+                </ul>
+
+                <h2 id="perspectives">Perspectives</h2>
+                <p>A perspective is a saved arrangement of those regions. Pick one from <em>View</em>, from the
+                    <a href="#palette">command palette</a>, or from the picker at the right of the status bar.</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Perspective</th>
+                                <th>Arranged for</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Edit</td>
+                                <td>Building a term: blocks, workspace, code</td>
+                            </tr>
+                            <tr>
+                                <td>Debug</td>
+                                <td>Stepping: the Semantics dock takes the space</td>
+                            </tr>
+                            <tr>
+                                <td>Type Analysis</td>
+                                <td>Diagnostics: inferred types, derivation, problems</td>
+                            </tr>
+                            <tr>
+                                <td>Presentation <kbd>F11</kbd></td>
+                                <td>Teaching: a maximised workspace. Closing it restores the previous layout.</td>
+                            </tr>
+                            <tr>
+                                <td>Custom</td>
+                                <td>Not a preset &mdash; what you get the moment you move a panel by hand</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="help-callout is-new">
+                    <strong>Custom is honest, not broken</strong>
+                    <p>Dragging a panel switches the status bar to <strong>Custom</strong> rather than leaving a preset
+                        name on a layout that no longer matches it. Your layout, theme, renderer, autosave interval and
+                        active tabs are all restored next visit.</p>
+                </div>
+
+                <h2 id="palette">Command palette</h2>
+                <p>Press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> for every command in one searchable list.
+                    Commands are prefixed by area &mdash; <em>File</em>, <em>Edit</em>, <em>Build</em>, <em>View</em>,
+                    <em>Run</em>, <em>Perspective</em>, <em>Preferences</em>, <em>Workspace</em>, <em>Code</em> &mdash;
+                    so typing the prefix narrows to a group.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bl-command-palette.jpg" loading="lazy"
+                        alt="The Block Lambda command palette open over the workspace, listing File, Edit, Build and View commands with their keyboard shortcuts.">
+                    <figcaption><b>Fig. 2</b> The palette. Every command shows its shortcut, so it doubles as the
+                        keyboard reference.</figcaption>
+                </figure>
+
+                <p>The full list is in <a href="reference.html#commands">the reference chapter</a>.</p>
+
+                <h2 id="files">Files and autosave</h2>
+                <p>Workspaces save as <code>.blc</code> files. Nothing is uploaded &mdash; save and open are ordinary
+                    browser file operations, and the IDE also keeps a rolling backup in local storage.</p>
+
+                <ul>
+                    <li><strong>Save As&hellip;</strong> <kbd>Ctrl</kbd> + <kbd>S</kbd> writes a <code>.blc</code> file
+                        to disk.</li>
+                    <li><strong>Open&hellip;</strong> <kbd>Ctrl</kbd> + <kbd>O</kbd> loads one back.</li>
+                    <li><strong>Recover Autosave</strong> restores the local backup after a crash or a closed tab. The
+                        status bar shows <em>Autosave pending</em> and then <em>Saved locally</em> with a timestamp, so
+                        you can see whether there is anything to recover.</li>
+                </ul>
+
+                <h2 id="examples">Built-in examples</h2>
+                <p>The <em>Examples</em> menu carries twelve worked programs. They are ordered roughly by difficulty and
+                    each one is chosen to isolate a single idea &mdash; several exist specifically to make a semantic
+                    distinction visible.</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Example</th>
+                                <th>Shows</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Identity Function</td>
+                                <td><code>&lambda;x. x</code>, the polymorphic identity</td>
+                                <td><code>'a -&gt; 'a</code></td>
+                            </tr>
+                            <tr>
+                                <td>Currying &amp; Closures</td>
+                                <td><code>add 1</code> captures <code>x</code></td>
+                                <td>42</td>
+                            </tr>
+                            <tr>
+                                <td>Function Composition</td>
+                                <td><code>compose f g 5</code></td>
+                                <td>16</td>
+                            </tr>
+                            <tr>
+                                <td>Apply Twice</td>
+                                <td><code>f (f x)</code></td>
+                                <td>11</td>
+                            </tr>
+                            <tr>
+                                <td>Twice Twice</td>
+                                <td><code>twice</code> applied to itself</td>
+                                <td>4</td>
+                            </tr>
+                            <tr>
+                                <td>Let-Polymorphism</td>
+                                <td><code>id</code> used at <code>bool</code> and <code>int</code></td>
+                                <td>42</td>
+                            </tr>
+                            <tr>
+                                <td>Copy vs Lookup</td>
+                                <td>the Call-by-Structure &harr; Call-by-Value contrast</td>
+                                <td>42</td>
+                            </tr>
+                            <tr>
+                                <td>Shadowing</td>
+                                <td>the inner binder wins</td>
+                                <td>11</td>
+                            </tr>
+                            <tr>
+                                <td>Normal Form</td>
+                                <td>no reduction under a binder</td>
+                                <td>&mdash;</td>
+                            </tr>
+                            <tr>
+                                <td>Factorial 5</td>
+                                <td>linear recursion via <code>letrec</code></td>
+                                <td>120</td>
+                            </tr>
+                            <tr>
+                                <td>Fibonacci 6</td>
+                                <td>tree recursion</td>
+                                <td>8</td>
+                            </tr>
+                            <tr>
+                                <td>GCD (Euclid)</td>
+                                <td><code>mod</code> built from integer <code>&divide;</code></td>
+                                <td>6</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="help-callout is-changed">
+                    <strong>Loading over your work</strong>
+                    <p>If the workspace already has blocks, loading an example asks first, and offers
+                        <strong>Replace</strong> or <strong>Merge</strong> &mdash; merge drops the example alongside
+                        what you already have instead of discarding it. <em>Cancel</em> leaves everything untouched.</p>
+                </div>
+
+                <p>Two of these earn their place by contradiction rather than by computing something.
+                    <strong>Copy vs Lookup</strong> is the fastest way to see why the two evaluation strategies are
+                    genuinely different, and <strong>Normal Form</strong> exists to show you a term that
+                    <em>refuses</em> to reduce further. Both are covered in
+                    <a href="semantics.html">Semantics</a>.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="../index.html">
+                        <span>Up &mdash; site</span>
+                        <b>&larr; L-Workshop</b>
+                    </a>
+                    <a class="is-next" href="getting-started.html">
+                        <span>Next &mdash; 02</span>
+                        <b>Getting started &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">Block Lambda is developed at <a href="../index.html">L-Workshop</a>. This help was
+                written against Block Lambda 1.0.0.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

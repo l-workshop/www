@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="Hindley-Milner type inference in Block Lambda: fresh type variables, function types, let-polymorphism, monomorphic letrec, and the typing derivation with its T-Var, T-Int, T-NumOp and T-Abs rules.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Types — B-Lambda Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-b-lambda/types.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-bl">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>B-Lambda Help</b><span class="help-bar-sub">Block-Based
+                    &lambda;-Calculus</span></span>
+        </a>
+        <span class="help-version">v1.0.0</span>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://b-lambda.l-workshop.my.id" rel="noopener">Open B-Lambda</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li>
+                    <a href="types.html" aria-current="page"><em>04</em> Types</a>
+                    <ul class="help-subnav">
+                        <li><a href="#vocabulary">The type vocabulary</a></li>
+                        <li><a href="#inference">How inference runs</a></li>
+                        <li><a href="#polymorphism">Let-polymorphism</a></li>
+                        <li><a href="#derivation">The typing derivation</a></li>
+                        <li><a href="#rules">Rule names</a></li>
+                        <li><a href="#problems">When it goes wrong</a></li>
+                    </ul>
+                </li>
+                <li><a href="semantics.html"><em>05</em> Semantics</a></li>
+                <li><a href="pipeline.html"><em>06</em> Compiler pipeline</a></li>
+                <li><a href="reference.html"><em>07</em> Reference</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>Block Lambda 1.0.0</b>, running at
+                <a href="https://b-lambda.l-workshop.my.id" rel="noopener">b-lambda.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">04 / Types</span>
+                <h1>Types you never write down</h1>
+                <p class="help-lede">B-Lambda has no type annotations at all. Every type you see was inferred from the
+                    structure of the term &mdash; and the <em>Typing derivation</em> tab will show you the proof, rule by
+                    rule, for any program you build.</p>
+
+                <h2 id="vocabulary">The type vocabulary</h2>
+                <p>Deliberately tiny. Four things:</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Written</th>
+                                <th>Comes from</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Integer</td>
+                                <td><code>int</code></td>
+                                <td>number literals, arithmetic</td>
+                            </tr>
+                            <tr>
+                                <td>Boolean</td>
+                                <td><code>bool</code></td>
+                                <td>boolean literals, comparison, connectives</td>
+                            </tr>
+                            <tr>
+                                <td>Type variable</td>
+                                <td><code>'a</code>, <code>'b</code>, &hellip;</td>
+                                <td>an unconstrained parameter</td>
+                            </tr>
+                            <tr>
+                                <td>Function</td>
+                                <td><code>'a -&gt; 'b</code></td>
+                                <td>abstraction</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>Function types associate to the right, as usual: a two-parameter curried function has type
+                    <code>int -&gt; int -&gt; int</code>, which is <code>int -&gt; (int -&gt; int)</code>.</p>
+
+                <h2 id="inference">How inference runs</h2>
+                <p>Inference is Hindley-Milner. It re-runs on every workspace change and on every code refresh, and it
+                    is scheduled incrementally so that editing a large program stays responsive.</p>
+
+                <ul>
+                    <li>A <strong>&lambda; parameter</strong> starts as a fresh type variable, and gets refined by how
+                        the body uses it.</li>
+                    <li>An <strong>abstraction</strong> gets a function type from its parameter and body.</li>
+                    <li>An <strong>application</strong> unifies the function's argument type with the actual argument,
+                        and takes the function's result type.</li>
+                    <li><strong>Literals, operators, comparison and conditionals</strong> contribute the
+                        <code>int</code> / <code>bool</code> constraints from the table in
+                        <a href="blocks.html#operators">Blocks</a>.</li>
+                    <li>A <strong><code>let</code></strong> generalises its binding into a type scheme &mdash; see
+                        below.</li>
+                    <li>A <strong><code>letrec</code></strong> is inferred monomorphically.</li>
+                </ul>
+
+                <p>The results surface in four places: the <em>Inferred types</em> tab, the type comment on each block,
+                    a type comment in the generated code, and warning bubbles on any block that does not check.</p>
+
+                <h2 id="polymorphism">Let-polymorphism</h2>
+                <p>This is the one place where the type system does something you might not expect from the term alone.
+                    A <code>let</code>-bound value is <strong>generalised</strong>: its type variables are quantified, so
+                    each <em>use</em> of the name can instantiate them differently.</p>
+
+                <pre><code>let id = &lambda;x. x in
+  if (id True) then (id 42) else 0</code></pre>
+
+                <p>Here <code>id</code> is used at <code>bool -&gt; bool</code> and at <code>int -&gt; int</code> in the
+                    same expression. Without generalisation the two uses would be forced to agree and the program would
+                    not type-check. The <em>Let-Polymorphism</em> example loads exactly this shape.</p>
+
+                <div class="help-callout">
+                    <strong>The identity function is the smallest demonstration</strong>
+                    <p><code>&lambda;x. x</code> alone infers <code>'a -&gt; 'a</code>. The type variable is not a
+                        placeholder for something inference failed to work out &mdash; it is the answer. Nothing in the
+                        term constrains <code>x</code>, so the function genuinely works at every type.</p>
+                </div>
+
+                <h2 id="derivation">The typing derivation</h2>
+                <p><em>Types &rarr; Typing derivation</em> renders the proof as nested premises-over-a-bar trees, the way
+                    a paper would print them. Each box is a sub-derivation; the label at the right of each bar is the
+                    rule that was applied.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="../assets/img/b-lambda-type-derivation.png" loading="lazy" style="max-width: 80%;" width="400"
+                        alt="A typing derivation for lambda y. ((2 + 3) + y), with T-Int on the literals, T-Var on y, T-NumOp on each addition, and T-Abs concluding int to int.">
+                    <figcaption><b>Fig. 1</b> The derivation for <code>&lambda;y. ((2 + 3) + y)</code>. Read bottom-up:
+                        <code>T-Int</code> on the literals, <code>T-Var</code> on <code>y</code>, <code>T-NumOp</code> on
+                        each addition, and <code>T-Abs</code> concluding <code>int -&gt; int</code>.</figcaption>
+                </figure>
+
+                <p>For a recursive program the derivation opens with the binding's own judgement, so you can see the type
+                    <code>letrec</code> committed to before it started checking the body:</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bl-typing.png" loading="lazy" style="max-width: 80%;" width="400"
+                        alt="The typing derivation for the factorial example, headed by recursive bind factorial : int to int, with the condition, then and else branches each derived below.">
+                    <figcaption><b>Fig. 2</b> <em>Factorial 5</em>. The header reads
+                        <code>recursive bind factorial : int -&gt; int</code> &mdash; the monomorphic type assumed for
+                        the recursive call &mdash; and each branch is derived beneath it.</figcaption>
+                </figure>
+
+                <p>The corresponding <em>Inferred types</em> tab is the summary view: one line per top-level term with
+                    its type, plus a <em>Selected block</em> pane that reports the term, type and status of whichever
+                    block you have clicked.</p>
+
+                <h2 id="rules">Rule names</h2>
+                <p>The rules you will see on the bars, and what each one concludes:</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Rule</th>
+                                <th>Concludes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>T-Var</code></td>
+                                <td>A variable's type, by looking it up in the context: <code>x : &tau; &isin;
+                                        &Gamma;</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>T-Int</code></td>
+                                <td>A number literal is <code>int</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>T-Bool</code></td>
+                                <td>A boolean literal is <code>bool</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>T-Abs</code></td>
+                                <td>An abstraction is a function type</td>
+                            </tr>
+                            <tr>
+                                <td><code>T-App</code></td>
+                                <td>An application, after unifying argument with parameter</td>
+                            </tr>
+                            <tr>
+                                <td><code>T-NumOp</code></td>
+                                <td>Arithmetic: two <code>int</code>s give an <code>int</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>T-Cmp</code></td>
+                                <td>Comparison: two <code>int</code>s give a <code>bool</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>The judgement form is the standard one, <code>&Gamma; &vdash; term : type</code>, with the context
+                    shown as <code>&Gamma;</code> and additions to it written as <code>assume x : &tau;</code> at the top
+                    of the box that introduces them.</p>
+
+                <div class="help-callout is-new">
+                    <strong>Comparing notations across the workshop</strong>
+                    <p>B-MJ uses the same <code>T-*</code> prefix for expression rules and adds <code>WF-*</code> rules
+                        for statements &mdash; see <a href="../help-b-mj/types.html#rules">B-MJ's types chapter</a>. MnL
+                        uses a richer judgement, <code>&Gamma; &vdash; term : Category &otimes; Type</code>, because
+                        there the block's grammatical category is part of what is being checked.</p>
+                </div>
+
+                <h2 id="problems">When it goes wrong</h2>
+                <p>Two kinds of thing can be wrong: a term can be incomplete (an empty socket), or it can be
+                    ill-typed. Both are reported the same three ways.</p>
+
+                <ul>
+                    <li><strong>A warning bubble on the block.</strong> Blockly's own warning icon, on the specific
+                        block that failed &mdash; not on its parent.</li>
+                    <li><strong>The <em>Problems</em> tab</strong> in the bottom panel, which lists every diagnostic.
+                        When there is nothing to report it says <em>No problems detected. Type inference is
+                            current.</em> &mdash; the second sentence matters, because it tells you the empty list is
+                        up to date rather than stale.</li>
+                    <li><strong>The status bar count</strong>, so you can see there is a problem without opening the
+                        panel.</li>
+                </ul>
+
+                <p>An incomplete term is not treated as an error to be shouted about &mdash; a term you are halfway
+                    through building is expected. Inference gives what it can and reports the missing input, which is
+                    why the count usually drops to zero on its own as you finish connecting blocks.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="blocks.html">
+                        <span>Previous &mdash; 03</span>
+                        <b>&larr; Blocks</b>
+                    </a>
+                    <a class="is-next" href="semantics.html">
+                        <span>Next &mdash; 05</span>
+                        <b>Semantics &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">Block Lambda is developed at <a href="../index.html">L-Workshop</a>. This help was
+                written against Block Lambda 1.0.0.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

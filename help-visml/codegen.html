@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="ViSML's bidirectional code generation: the blocks-to-SML generator with its pretty-printer and negative-literal handling, the Apply to Blocks parser, the round-trip test suite, and why ViSML never executes your program.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Code Generation — ViSML Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-visml/codegen.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-visml">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>ViSML Help</b><span class="help-bar-sub">Visual Standard ML</span></span>
+        </a>
+        <span class="help-version">v5.0.0</span>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://visml.l-workshop.my.id" rel="noopener">Open ViSML</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li><a href="renderers.html"><em>05</em> Renderers</a></li>
+                <li>
+                    <a href="codegen.html" aria-current="page"><em>06</em> Code Generation</a>
+                    <ul class="help-subnav">
+                        <li><a href="#generator">Blocks &rarr; SML</a></li>
+                        <li><a href="#parser">SML &rarr; blocks</a></li>
+                        <li><a href="#roundtrip">The round-trip suite</a></li>
+                        <li><a href="#no-runtime">ViSML does not execute programs</a></li>
+                    </ul>
+                </li>
+                <li><a href="reference.html"><em>07</em> Reference</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>ViSML 5.0.0</b>, running at
+                <a href="https://visml.l-workshop.my.id" rel="noopener">visml.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">06 / Code Generation</span>
+                <h1>Blocks and SML text, both ways</h1>
+                <p class="help-lede">ViSML's real engine room is a pair of translators: a generator that turns your
+                    block program into SML source text, and a parser that turns SML source text back into blocks.
+                    Neither is a toy &mdash; both are checked, mechanically, against each other.</p>
+
+                <h2 id="generator">Blocks &rarr; SML</h2>
+                <p>Every block type has a corresponding generator function, keyed by block type, that emits its piece
+                    of SML source. A handful of details in that generator matter enough to call out on their own:</p>
+
+                <ul>
+                    <li><strong>Negative literals use <code>~</code>.</strong> SML spells a negative integer or word
+                        as <code>~5</code>, not <code>-5</code> &mdash; the generator follows that convention rather
+                        than the more familiar minus sign.</li>
+                    <li><strong>Strings and characters are properly quoted.</strong> String literals come out
+                        double-quoted, and character literals as SML's <code>#"c"</code> form.</li>
+                    <li><strong>Reserved words are guarded.</strong> An identifier that collides with an SML keyword
+                        is caught before it reaches the generated text.</li>
+                    <li><strong>Naked top-level expressions get wrapped.</strong> SML has no bare-expression
+                        statement, so a top-level expression is emitted as <code>local _ = &lt;expr&gt;</code> rather
+                        than failing to generate at all.</li>
+                </ul>
+
+                <p>A custom pretty-printer then re-flows the raw generated text: consistent indentation, a blank line
+                    between top-level declarations, aligned <code>|</code> alternatives in a multi-clause function or
+                    a datatype. Because SML is layout-insensitive, none of this changes what the program
+                    <em>means</em> &mdash; it only changes how it reads. The Code panel is where you see the result
+                    live, as covered in <a href="getting-started.html#first">Getting started</a>.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/visml-codegen.png" loading="lazy"
+                        alt="The ViSML Code panel showing generated SML source next to the block workspace, with the Apply to Blocks button below the editable code.">
+                    <figcaption><b>Fig. 1</b> The Code panel: generated SML on the right, the block program it came
+                        from on the left, and <strong>Apply to Blocks</strong> below the editable text.</figcaption>
+                </figure>
+
+                <h2 id="parser">SML &rarr; blocks</h2>
+                <p>The other direction is a genuine hand-written recursive-descent parser for SML, not a thin wrapper
+                    around the generator run backward. It accepts the generator's own output, plus a tolerant
+                    superset of it, and builds an equivalent Blockly JSON workspace tree from whatever it parses.</p>
+
+                <p>The entry point is the <strong>Apply to Blocks</strong> button beneath the Code panel: paste or
+                    type SML text, click it, and the workspace rebuilds itself to match. Typing this, for
+                    instance</p>
+
+                <pre><code>fun fact n = if (n = 0) then 1 else n * fact (n - 1);
+val result = fact 5;</code></pre>
+
+                <p>and pressing <strong>Apply to Blocks</strong> produces a correct 35-block workspace and a
+                    confirming status-bar message, <em>&ldquo;Converted SML into workspace blocks.&rdquo;</em> This is
+                    the same mechanism the <a href="getting-started.html#factorial">Factorial example</a> uses under
+                    the hood, and it is worth trying on code you write yourself the first time you want to build
+                    something faster than dragging blocks would allow.</p>
+
+                <h2 id="roundtrip">The round-trip suite</h2>
+                <p><code>npm test</code> runs a battery of SML snippets &mdash; arithmetic precedence, logic, tuples,
+                    lists, <code>cons</code>/append, string concatenation, function composition
+                    (<code>o</code>), typed expressions, the <code>op</code> prefix, and more &mdash; through
+                    parse&nbsp;&rarr;&nbsp;generate&nbsp;&rarr;&nbsp;re-parse and checks that the result is a fixed
+                    point: generating from the re-parsed blocks reproduces the same text. All seven of ViSML's
+                    built-in examples pass this with zero errors.</p>
+
+                <div class="help-callout is-new">
+                    <strong>100% fidelity, not &ldquo;mostly works&rdquo;</strong>
+                    <p>The research paper behind ViSML reports independently that this round trip holds across
+                        <strong>all 132 SML grammar production rules</strong> the project implements &mdash; not a
+                        sample of common cases, the complete set. That is the empirical claim underneath everything
+                        said about grammar preservation in <a href="renderers.html#research">Renderers</a>: it is not
+                        just that the toolbox <em>looks</em> complete, it is that nothing gets lost going in either
+                        direction.</p>
+                </div>
+
+                <p>There is no further compilation target past this. Blocks and SML source text are the only two
+                    representations ViSML translates between &mdash; there is no bytecode, no JavaScript, no WASM
+                    output. The unrelated <strong>Export Workspace as PNG</strong> feature is worth distinguishing
+                    from all of this: it is a screenshot of the visual block diagram, not a code export.</p>
+
+                <h2 id="no-runtime">ViSML does not execute programs</h2>
+                <div class="help-callout is-changed">
+                    <strong>No interpreter, no stepper, no output</strong>
+                    <p>Everything on this page describes translation, not execution. ViSML has no interpreter, no
+                        stepper, no abstract machine, and no comparison of evaluation strategies &mdash; a total
+                        contrast with <a href="../help-b-lambda/semantics.html">B-Lambda's</a> dual CbS/CbV steppers
+                        and CEK machine, or <a href="../help-b-mj/semantics.html">B-MJ's</a> CESK heap machine. The
+                        bottom panel's <em>Output</em> tab only logs editor events &mdash; autosave, renders,
+                        conversions &mdash; never program output, because there is no program run to produce
+                        any.</p>
+                </div>
+
+                <p>The command palette says this plainly if you go looking. Filter it to &ldquo;run&rdquo; and the
+                    single result is a permanently disabled entry:</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/visml-norun.png" loading="lazy"
+                        alt="The ViSML command palette filtered to &quot;run&quot;, showing the single disabled result: Execution runtime is not configured.">
+                    <figcaption><b>Fig. 2</b> The palette filtered to <em>run</em>: one greyed-out result,
+                        <strong>Execution runtime is not configured</strong>.</figcaption>
+                </figure>
+
+                <p>To actually run a program you build in ViSML, copy the generated SML out of the Code panel and
+                    feed it to a real Standard ML implementation &mdash; <strong>SML/NJ</strong>,
+                    <strong>MLton</strong>, or <strong>Poly/ML</strong> will all compile and run it as ordinary SML,
+                    because that is exactly what it is. This is the same point made early in
+                    <a href="getting-started.html#norun">Getting started</a>; it is worth repeating here because it
+                    is the boundary that defines what this whole chapter is and is not about.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="renderers.html">
+                        <span>Previous &mdash; 05</span>
+                        <b>&larr; Renderers</b>
+                    </a>
+                    <a class="is-next" href="reference.html">
+                        <span>Next &mdash; 07</span>
+                        <b>Reference &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">ViSML is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against ViSML 5.0.0.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="The BFJ toolbox: five categories and thirteen blocks matching FJ's grammar exactly, the fixed constructor block, and the BFJ-Thrasos renderer whose connector shapes encode FJ's non-terminals.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Blocks — BFJ Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-bfj/blocks.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-bfj">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>BFJ Help</b><span class="help-bar-sub">Block-based Featherweight
+                    Java</span></span>
+        </a>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://bfj.l-workshop.my.id" rel="noopener">Open BFJ</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li>
+                    <a href="blocks.html" aria-current="page"><em>03</em> Blocks</a>
+                    <ul class="help-subnav">
+                        <li><a href="#toolbox">The toolbox</a></li>
+                        <li><a href="#ctor">The fixed constructor</a></li>
+                        <li><a href="#renderer">The BFJ-Thrasos renderer</a></li>
+                        <li><a href="#connectors">Connector shapes</a></li>
+                    </ul>
+                </li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li><a href="semantics.html"><em>05</em> Semantics</a></li>
+                <li><a href="translation.html"><em>06</em> Translation</a></li>
+                <li><a href="reference.html"><em>07</em> Reference</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>BFJ</b>, running at
+                <a href="https://bfj.l-workshop.my.id" rel="noopener">bfj.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">03 / Blocks</span>
+                <h1>Thirteen blocks, five categories</h1>
+                <p class="help-lede">The toolbox is an exact match to classic FJ &mdash; not a superset with the
+                    extra bits trimmed in the UI, but thirteen blocks because the grammar has thirteen productions.
+                    Nothing here exists for convenience.</p>
+
+                <h2 id="toolbox">The toolbox</h2>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bfj-toolbox.png" loading="lazy" style="max-width: 40%;" width="400"
+                        alt="The BFJ blocks sidebar showing the Class, Members, Types, Expressions and Arguments categories with their blocks listed.">
+                    <figcaption><b>Fig. 1</b> The blocks sidebar. Five categories, matching FJ's own grammar rather
+                        than a convenience grouping.</figcaption>
+                </figure>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Blocks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Class</td>
+                                <td><code>fj_class</code> &mdash; <code>class C extends D { fields; ctor; methods
+                                        }</code></td>
+                            </tr>
+                            <tr>
+                                <td>Members</td>
+                                <td><code>fj_field</code> (<code>C f</code>) &middot; <code>fj_ctor</code>
+                                    (derived) &middot; <code>fj_method</code> (<code>C0 m(params){ return e; }</code>)
+                                    &middot; <code>fj_param</code> (<code>C x</code>)</td>
+                            </tr>
+                            <tr>
+                                <td>Types</td>
+                                <td><code>fj_type_class</code> (a class name) &middot; <code>fj_type_object</code>
+                                    (<code>Object</code>, the root)</td>
+                            </tr>
+                            <tr>
+                                <td>Expressions</td>
+                                <td><code>fj_var</code> (variable, including <code>this</code>) &middot;
+                                    <code>fj_field_access</code> (<code>e.f</code>) &middot; <code>fj_invk</code>
+                                    (<code>e.m(&#275;)</code>) &middot; <code>fj_new</code> (<code>new
+                                        C(&#275;)</code>) &middot; <code>fj_cast</code> (<code>(C)e</code>)</td>
+                            </tr>
+                            <tr>
+                                <td>Arguments</td>
+                                <td><code>fj_arg</code> &mdash; one cons-cell of an actual-argument list</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>A few of these are worth calling out because their names do not quite give them away:</p>
+                <ul>
+                    <li><strong><code>fj_var</code></strong> is one block, one production, for every variable
+                        reference &mdash; <code>this</code> included. FJ treats <code>this</code> as an ordinary
+                        variable bound implicitly at the start of every method body, so there is no separate
+                        <code>this</code> block the way some designs would add one.</li>
+                    <li><strong><code>fj_type_object</code></strong> is <code>Object</code>, FJ's root type
+                        (&ldquo;Top&rdquo;). It is the type every class implicitly extends and every upcast can
+                        target.</li>
+                    <li><strong><code>fj_arg</code></strong> stacks under <code>fj_new</code> and <code>fj_invk</code>,
+                        one block per argument, rather than either call having a fixed arity or a Blockly
+                        &ldquo;mutator&rdquo; gear icon. The same stacking discipline applies to
+                        <code>fj_field</code>/<code>fj_param</code>/<code>fj_method</code>, and it is not incidental
+                        &mdash; see the note on cons-lists below.</li>
+                </ul>
+
+                <p>Confirmed omissions, all deliberate: no interfaces, no assignment or mutation, no <code>null</code>,
+                    no primitive types beyond the implicit <code>Object</code> root, no generics, no overloading. FJ's
+                    entire research value is being small enough to prove things about, and every one of these is a
+                    feature that would make the proofs bigger without changing what the calculus is for.</p>
+
+                <h2 id="ctor">The fixed constructor</h2>
+                <p><code>fj_ctor</code> is not a block you fill in. It has no sockets at all &mdash; it reads
+                    <em>constructor (auto)</em> on the canvas and is synthesized directly from the class's own field
+                    list plus its superclass's fields, in the order FJ's typing rules require.</p>
+
+                <div class="help-callout is-new">
+                    <strong>Why the constructor can't be free-form</strong>
+                    <p>FJ's class-formation rule says the constructor for <code>C</code> is fully determined by
+                        <code>fields(C)</code> &mdash; there is exactly one legal constructor per field list, always.
+                        If <code>fj_ctor</code> were an ordinary editable block, two structurally different block
+                        trees could denote the same program (the same fields, written in a different constructor
+                        shape), which would break a bijection the project states and tests as a theorem: every
+                        block tree corresponds to exactly one AST, and vice versa. Making the constructor derived
+                        rather than authored is what keeps that bijection true rather than aspirational. See
+                        <a href="translation.html#roundtrip">the round-trip chapter</a> for the proof itself.</p>
+                </div>
+
+                <p>The same reasoning is why field, parameter and argument lists are fixed, stackable cons-cells
+                    rather than a variable-arity mutator block: per-position subtype checking (each
+                    <code>C&#8320;</code> against its matching <code>D&#8320;</code>) and the bijection above both
+                    need the list's shape to be unambiguous, and a mutator's internal state is exactly the kind of
+                    extra bookkeeping that would make two equivalent programs look different as blocks.</p>
+
+                <h2 id="renderer">The BFJ-Thrasos renderer</h2>
+                <p>BFJ uses a custom Blockly renderer called <strong>BFJ-Thrasos</strong>. It subclasses Blockly's
+                    Thrasos renderer, built the same way as B-MJ's BMJ-Thrasos &mdash; reimplemented in the same
+                    style for FJ's grammar, not shared code &mdash; and gives each FJ non-terminal a distinct
+                    connector <em>shape</em>, not just a colour.</p>
+
+                <p>Blockly's <code>check</code>-string metadata still does the actual enforcing: you cannot plug a
+                    <code>Type</code> into an <code>Expression</code> socket regardless of what things look like.
+                    What the shapes add is that a mismatch is visible <strong>before</strong> you try the
+                    connection, not discovered by a rejected drag.</p>
+
+                <div class="help-callout">
+                    <strong>Three renderers, three different jobs</strong>
+                    <p><a href="../help-b-mj/blocks.html#renderer">BMJ-Thrasos</a> changes connector shapes so
+                        MiniJava's ten non-terminals are visible; <a href="../help-b-lambda/blocks.html#tude">B-Lambda's
+                            Tude</a> changes block <em>geometry</em> instead, so a &lambda;-term reads as nested
+                        text. BFJ-Thrasos is doing the same thing as BMJ-Thrasos &mdash; grammar-aware connectors,
+                        independently built &mdash; for a much smaller grammar: FJ has far fewer non-terminals than
+                        MiniJava, so BFJ-Thrasos needs fewer shape families than BMJ-Thrasos's ten.</p>
+                </div>
+
+                <h2 id="connectors">Connector shapes</h2>
+                <p>Two orientations, split by what FJ actually needs a socket for: a single value in a slot, or a
+                    sequence of things stacked one after another.</p>
+
+                <h3>Horizontal &mdash; value sockets</h3>
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Shape</th>
+                                <th>Non-terminal</th>
+                                <th>Reads as</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Slim trapezoid</td>
+                                <td><code>Type</code></td>
+                                <td>Any type position</td>
+                            </tr>
+                            <tr>
+                                <td>Wide, welcoming curve</td>
+                                <td><code>Object</code> / &#10216;Object&#10217;</td>
+                                <td>The root type &mdash; it accepts anything, and the curve says so</td>
+                            </tr>
+                            <tr>
+                                <td>Blocky triangular peak</td>
+                                <td><code>FJCtor</code></td>
+                                <td>The constructor slot &mdash; deliberately spiky, to signal
+                                    &ldquo;derived, not normal&rdquo;</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Vertical &mdash; stacking connections</h3>
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Shape</th>
+                                <th>Non-terminal</th>
+                                <th>Reads as</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Narrow diamond zigzag</td>
+                                <td><code>FJField</code></td>
+                                <td>A field, stacked under the class</td>
+                            </tr>
+                            <tr>
+                                <td>Tall, deep chevron</td>
+                                <td><code>FJMethod</code></td>
+                                <td>A method, stacked under the field list</td>
+                            </tr>
+                            <tr>
+                                <td>Smooth rounded arch</td>
+                                <td><code>FJParam</code></td>
+                                <td>A formal parameter, stacked in a method's parameter list</td>
+                            </tr>
+                            <tr>
+                                <td>Repeated saw-tooth</td>
+                                <td><code>FJArg</code></td>
+                                <td>An actual argument, stacked in a call or <code>new</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>The saw-tooth on <code>FJArg</code> is deliberately unlike the arch on <code>FJParam</code>:
+                    arguments and parameters are the two cons-lists in the grammar that are easiest to confuse at a
+                    glance, since a call site and a declaration can look almost identical once both are full of
+                    <code>fj_var</code> blocks.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="getting-started.html">
+                        <span>Previous &mdash; 02</span>
+                        <b>&larr; Getting started</b>
+                    </a>
+                    <a class="is-next" href="types.html">
+                        <span>Next &mdash; 04</span>
+                        <b>Types &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">BFJ is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against the build running at bfj.l-workshop.my.id.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

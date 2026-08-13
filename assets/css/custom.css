@@ -1,0 +1,1836 @@
+/* ===================================================================
+   L-Workshop — site layer
+   Sits on top of style.css. Nothing in style.css is modified.
+
+   Contents
+   00. Tokens
+   01. Base corrections
+   02. Navbar + brand lockup
+   03. Section furniture
+   04. Hero
+   05. Spec strip
+   06. About
+   07. Projects
+   08. Research threads
+   09. Pipeline
+   10. Quote band
+   11. Gallery
+   12. Publications
+   13. Domain notice
+   14. Footer
+   15. Responsive
+   16. Reduced motion
+=================================================================== */
+
+/* ===================================================================
+   00. Tokens
+   The template's accents (#f44646 / #4caf50 / #84a1d2 / #f1c30f) are
+   tuned for large decorative fills. Each one gets an "-ink" companion
+   that clears 4.5:1 on white so the same accent can carry small text.
+
+   Dark mode (data-theme="dark" on <html>, set by the inline bootstrap
+   script in <head> before first paint — see lw-main.js for the toggle).
+   The "-ink" tokens stay theme-constant: they are also used as solid
+   fills (badges, chip dots) paired with white text, and that pairing's
+   contrast has nothing to do with page background. Small accent-coloured
+   TEXT sitting directly on the page background uses the separate "-text"
+   tokens instead, which lighten in dark mode to keep clearing 4.5:1
+   against the dark paper (the light-mode "-ink" value already clears
+   4.5:1 on white, so "-text" == "-ink" there). --lw-ink itself is *not*
+   fill-safe — it inverts with the theme, so anywhere it was relied on as
+   an always-dark fill (skip link, hover-fill buttons, filter chips) now
+   pairs with var(--lw-paper) for the foreground instead of a literal
+   #fff, and the one truly theme-constant dark fill (the yellow badge's
+   text) uses the new --lw-ink-fixed.
+=================================================================== */
+:root {
+    --lw-ink: #212622;
+    --lw-body: #535353;
+    /* #6f7671 measured 4.43:1 on --lw-paper-2; nudged to clear AA on both papers */
+    --lw-muted: #686f6a;
+    --lw-line: #e6e1e1;
+    --lw-line-soft: #f0eeee;
+    --lw-paper: #ffffff;
+    --lw-paper-2: #f9f9f9;
+
+    --lw-red: #f44646;
+    --lw-red-ink: #d32f2f;
+    --lw-red-fill: #d93838;
+    --lw-green: #4caf50;
+    --lw-green-ink: #2e7d32;
+    --lw-blue: #84a1d2;
+    --lw-blue-ink: #3a63b8;
+    --lw-yellow: #f1c30f;
+    --lw-yellow-ink: #8a6d05;
+    --lw-slate: #2a2f3a;
+
+    /* accent-as-text, safe on the page background in either theme */
+    --lw-red-text: var(--lw-red-ink);
+    --lw-green-text: var(--lw-green-ink);
+    --lw-blue-text: var(--lw-blue-ink);
+    --lw-yellow-text: var(--lw-yellow-ink);
+    --lw-slate-text: var(--lw-slate);
+
+    /* always-dark, regardless of theme — pairs with a fill that also
+       never changes with theme (the yellow badge/notice icon) */
+    --lw-ink-fixed: #17191b;
+
+    --lw-notice-bg: #fdf7e0;
+    --lw-notice-border: #efe0a8;
+    --lw-notice-text: #4a4636;
+    --lw-notice-label: var(--lw-yellow-ink);
+
+    --lw-focus: #005fcc;
+    --lw-shadow: 0 18px 44px rgba(33, 38, 34, 0.10);
+    --lw-shadow-lift: 0 26px 60px rgba(33, 38, 34, 0.16);
+
+    --lw-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+        "Liberation Mono", monospace;
+
+    /* per-component accent, overridden inline */
+    --accent: var(--lw-red);
+    --accent-ink: var(--lw-red-ink);
+    --accent-text: var(--lw-red-text);
+}
+
+/* Dark palette. Every value below is a token flip only — no selector in
+   this file needs to know which theme is active. */
+:root[data-theme="dark"] {
+    --lw-ink: #edf0ec;
+    --lw-body: #b6bcb7;
+    --lw-muted: #8d948e;
+    --lw-line: #2b302c;
+    --lw-line-soft: #222623;
+    --lw-paper: #14171a;
+    --lw-paper-2: #1a1e1b;
+
+    /* measured against --lw-paper: red 6.5:1, green 7.6:1, slate 9.8:1;
+       blue/yellow reuse the base hue, which already clears 6.9:1/10.8:1 */
+    --lw-red-text: #ff6b6b;
+    --lw-green-text: #66bb6a;
+    --lw-blue-text: var(--lw-blue);
+    --lw-yellow-text: var(--lw-yellow);
+    --lw-slate-text: #b8c0cc;
+
+    --lw-notice-bg: #2c2410;
+    --lw-notice-border: #4d3f16;
+    --lw-notice-text: #e6dcb8;
+    --lw-notice-label: #e0b93a;
+
+    --lw-focus: #5aa9ff;
+    --lw-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+    --lw-shadow-lift: 0 26px 60px rgba(0, 0, 0, 0.65);
+}
+
+/* ===================================================================
+   01. Base corrections
+=================================================================== */
+
+/* style.css never sets a background on body, so it is transparent to the
+   page's white default — harmless in light mode, but leaves a white flash
+   framing everything once --lw-paper turns dark. */
+body {
+    background: var(--lw-paper);
+}
+
+/* style.css hardcodes both of these — not tokens, so dark mode needs an
+   explicit override rather than a token flip. */
+:root[data-theme="dark"] .black.navbar-top-default .navbar-nav .nav-link,
+:root[data-theme="dark"] .header-appear .navbar-top-default .navbar-nav .nav-link {
+    color: var(--lw-ink);
+}
+
+:root[data-theme="dark"] .header-appear .navbar-top-default {
+    background: var(--lw-paper);
+}
+
+:root[data-theme="dark"] .menu_bars span {
+    background: var(--lw-ink);
+}
+
+:root[data-theme="dark"] .bg-light-gray {
+    background-color: var(--lw-paper-2);
+}
+
+/* style.css sets `outline: none` on every link state. Put focus back. */
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+    outline: 3px solid var(--lw-focus) !important;
+    outline-offset: 3px;
+    border-radius: 2px;
+}
+
+.lw-skip {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 1200;
+    transform: translateY(-180%);
+    background: var(--lw-ink);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 4px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.lw-skip:focus {
+    transform: translateY(0);
+    color: var(--lw-paper);
+}
+
+.lw-mono {
+    font-family: var(--lw-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+}
+
+/* Reveal on scroll.
+   Content is visible by default. `lw-reveal-ready` is added to <html> by
+   lw-main.js only when IntersectionObserver is available and the visitor
+   has not asked for reduced motion, so a script failure can never leave
+   a section invisible. */
+.lw-reveal-ready .lw-reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity .7s ease, transform .7s cubic-bezier(.2, .7, .3, 1);
+    transition-delay: var(--d, 0ms);
+    will-change: opacity, transform;
+}
+
+.lw-reveal-ready .lw-reveal-left {
+    transform: translateX(-28px);
+}
+
+.lw-reveal-ready .lw-reveal.is-in {
+    opacity: 1;
+    transform: none;
+}
+
+/* Buttons.
+   White on the template's #f44646 lands at 3.4:1 and white on #84a1d2 at
+   2.3:1, so the button fills are darkened here rather than in style.css. */
+.lw-btn-primary {
+    background-color: var(--lw-red-fill);
+    border-color: var(--lw-red-fill);
+    color: #fff;
+}
+
+.lw-btn-primary:hover,
+.lw-btn-primary:focus {
+    color: #fff;
+}
+
+.lw-btn-ghost {
+    background-color: transparent;
+    border-color: var(--lw-ink);
+    color: var(--lw-ink);
+}
+
+.lw-btn-ghost:hover,
+.lw-btn-ghost:focus {
+    color: #fff;
+}
+
+/* .btn-setting capitalizes every word, which mangles acronyms */
+.lw-btn-plain {
+    text-transform: none;
+}
+
+.lw-btn-hvr-ink:after {
+    background-color: var(--lw-ink);
+}
+
+.lw-btn-hvr-ink:hover,
+.lw-btn-hvr-ink:focus {
+    border-color: var(--lw-ink);
+    color: var(--lw-paper);
+}
+
+/* ===================================================================
+   02. Navbar + brand lockup
+   The logo mark carries no wordmark, so it is always paired with type.
+=================================================================== */
+.lw-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    max-width: none;
+}
+
+.lw-brand img {
+    width: 42px;
+    height: 42px;
+    flex: none;
+}
+
+.lw-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+}
+
+.lw-brand-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--lw-ink);
+    letter-spacing: 0.01em;
+}
+
+.lw-brand-sub {
+    font-family: var(--lw-mono);
+    font-size: 0.62rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--lw-muted);
+    margin-top: 5px;
+}
+
+/* style.css colours the active nav link #f44646 (3.6:1) and hover #27a964
+   (3.0:1) on white. Same hues, darkened to clear AA at 15px. */
+.nav-three-circles .navbar-nav .nav-item .nav-link.active,
+.black.navbar-top-default .navbar-nav .nav-link.active {
+    color: var(--lw-red-ink);
+}
+
+.nav-three-circles .navbar-nav .nav-item .nav-link:hover,
+.navbar-top-default .navbar-nav .nav-link:hover {
+    color: var(--lw-green-ink);
+}
+
+.navbar-top-default .lw-nav-contact {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--lw-ink);
+    border: 1px solid var(--lw-ink);
+    border-radius: 36px;
+    padding: 8px 20px;
+    white-space: nowrap;
+}
+
+.navbar-top-default .lw-nav-contact:hover,
+.navbar-top-default .lw-nav-contact:focus {
+    background: var(--lw-ink);
+    color: var(--lw-paper);
+}
+
+.lw-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 38px;
+    height: 38px;
+    margin: 0 14px;
+    background: transparent;
+    border: 1px solid var(--lw-line);
+    border-radius: 50%;
+    color: var(--lw-ink);
+    font-size: 0.95rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color .3s ease, transform .3s ease;
+}
+
+.lw-theme-toggle:hover,
+.lw-theme-toggle:focus-visible {
+    border-color: var(--lw-ink);
+    transform: translateY(-2px);
+}
+
+/* side (mobile) menu */
+
+/* close button: template defaults left this as a stark white quarter-circle
+   blob with a flat black X, which clashes with the dark, bordered-pill
+   aesthetic used for everything else in this panel — restyle it to match
+   the .lw-theme-toggle circle-button pattern instead. */
+.side-menu .quarter-circle {
+    background: transparent;
+    border-radius: 0;
+}
+
+.side-menu .menu_bars2 {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 50%;
+    transition: background-color .3s ease, border-color .3s ease, transform .3s ease;
+}
+
+.side-menu .menu_bars2:hover,
+.side-menu .menu_bars2:focus-visible {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #fff;
+    transform: translateY(-2px);
+    outline: none;
+}
+
+.side-menu .menu_bars2 span {
+    background: #fff;
+    height: 2px;
+}
+
+.side-menu .lw-side-logo {
+    width: 92px;
+    height: 92px;
+}
+
+.side-menu .lw-side-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-top: 14px;
+    letter-spacing: 0.02em;
+}
+
+.side-menu .lw-side-sub {
+    font-family: var(--lw-mono);
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: rgba(255, 255, 255, 0.66);
+    margin-top: 6px;
+}
+
+.side-menu .lw-side-domains {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 22px;
+}
+
+.side-menu .lw-side-domains a {
+    font-family: var(--lw-mono);
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 3px;
+    padding: 6px 10px;
+}
+
+/* .side-menu is a permanently dark overlay regardless of site theme, so
+   this hover fill/text pair is intentionally theme-constant, not tokens
+   that would flip with --lw-ink. */
+.side-menu .lw-side-domains a:hover,
+.side-menu .lw-side-domains a:focus {
+    color: var(--lw-ink-fixed);
+    background: #fff;
+    border-color: #fff;
+}
+
+/* the side menu itself is always dark, so this toggle is styled to match
+   it directly rather than through the (theme-flipping) tokens above */
+.lw-theme-toggle-side {
+    /* reset the icon-button sizing from the base .lw-theme-toggle rule —
+       this variant is a labelled pill, not a circular icon button */
+    width: auto;
+    height: auto;
+    justify-content: flex-start;
+    gap: 8px;
+    margin: 18px 0 0;
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 30px;
+    color: rgba(255, 255, 255, 0.82);
+    font-family: var(--lw-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+}
+
+.lw-theme-toggle-side:hover,
+.lw-theme-toggle-side:focus {
+    color: #fff;
+    border-color: #fff;
+}
+
+/* ===================================================================
+   03. Section furniture
+=================================================================== */
+.lw-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--lw-mono);
+    font-size: 0.72rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--lw-muted);
+    margin-bottom: 18px;
+}
+
+.lw-eyebrow::before {
+    content: "";
+    width: 26px;
+    height: 2px;
+    background: var(--accent);
+    flex: none;
+}
+
+.lw-section-title {
+    margin-bottom: 3.5rem;
+}
+
+.lw-section-title h2 {
+    font-weight: 300;
+    color: var(--lw-ink);
+    line-height: 1.15;
+    margin-bottom: 1.1rem;
+    max-width: 760px;
+}
+
+.lw-section-title h2 strong {
+    font-weight: 600;
+}
+
+.lw-section-title p {
+    max-width: 660px;
+    color: var(--lw-body);
+}
+
+.lw-section-title.text-center h2,
+.lw-section-title.text-center p {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.lw-section-title.text-center .lw-eyebrow::before {
+    display: none;
+}
+
+/* accessible accent text */
+.lw-t-red { color: var(--lw-red-ink); }
+.lw-t-green { color: var(--lw-green-ink); }
+.lw-t-blue { color: var(--lw-blue-ink); }
+.lw-t-yellow { color: var(--lw-yellow-ink); }
+
+/* ===================================================================
+   04. Hero
+=================================================================== */
+/* Content-first column: no vertical centering, because the hero content is
+   taller than the viewport on short screens and centering an overflowing
+   flex column pushes its top edge up underneath the navbar. Spare height
+   is absorbed by the spec strip instead (margin-top: auto below). */
+.lw-hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 150px 0 0;
+    background: var(--lw-paper);
+    overflow: hidden;
+}
+
+@supports (min-height: 100svh) {
+    .lw-hero { min-height: 100svh; }
+}
+
+.lw-hero-decor {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+/* The template's "circle" art is a pair of solid puzzle pieces, which the
+   logo mark already speaks in. Used here as faint watermarks bleeding off
+   the edges rather than as objects on the page. */
+.lw-piece {
+    position: absolute;
+    opacity: 0.13;
+}
+
+.lw-piece-1 {
+    top: -70px;
+    left: -104px;
+    width: 300px;
+    transform: rotate(-14deg);
+}
+
+.lw-piece-2 {
+    right: -120px;
+    bottom: -60px;
+    width: 330px;
+    transform: rotate(160deg);
+}
+
+/* real MNL blocks, borrowed as authentic decoration */
+.lw-hero-block {
+    position: absolute;
+    filter: drop-shadow(0 6px 14px rgba(33, 38, 34, 0.13));
+}
+
+.lw-block-1 { top: 25%; left: 3%; width: 127px; animation: lw-float 9s ease-in-out infinite alternate; }
+.lw-block-2 { top: 18%; right: 4%; width: 185px; animation: lw-float 11s ease-in-out infinite alternate-reverse; }
+.lw-block-3 { bottom: 30%; left: 4%; width: 238px; animation: lw-float 13s ease-in-out infinite alternate-reverse; }
+.lw-block-4 { bottom: 25%; right: 3%; width: 242px; animation: lw-float 10s ease-in-out infinite alternate; }
+
+@keyframes lw-float {
+    from { transform: translateY(-9px); }
+    to { transform: translateY(9px); }
+}
+
+.lw-hero-inner {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding-bottom: 46px;
+}
+
+.lw-hero-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    font-family: var(--lw-mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--lw-muted);
+    padding-bottom: 48px;
+}
+
+.lw-hero-mark {
+    width: 82px;
+    height: 82px;
+    margin: 0 auto 26px;
+}
+
+.lw-hero h1 {
+    margin: 0;
+    font-size: 5.4rem;
+    font-weight: 600;
+    line-height: 0.98;
+    letter-spacing: -0.015em;
+    color: var(--lw-ink);
+}
+
+.lw-hero-long {
+    display: block;
+    margin: 20px 0 0;
+    font-family: var(--lw-mono);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--lw-muted);
+}
+
+.lw-rotator-line {
+    margin: 32px 0 0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--lw-ink);
+    min-height: 1.5em;
+}
+
+.lw-rotator-line .lw-rotator-pre {
+    color: var(--lw-muted);
+    font-weight: 400;
+}
+
+#js-rotating {
+    display: inline-block;
+    color: var(--lw-red-text);
+}
+
+.lw-hero-lead {
+    max-width: 690px;
+    margin: 22px auto 0;
+    font-size: 1.05rem;
+    color: var(--lw-body);
+}
+
+.lw-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: center;
+    margin-top: 36px;
+}
+
+.lw-hero .btn-setting {
+    min-width: 196px;
+}
+
+.lw-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 46px;
+}
+
+.lw-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 17px 9px 13px;
+    background: var(--lw-paper);
+    border: 1px solid var(--lw-line);
+    border-radius: 30px;
+    font-family: var(--lw-mono);
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--lw-ink);
+}
+
+.lw-chip::before {
+    content: "";
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex: none;
+}
+
+.lw-chip:hover,
+.lw-chip:focus {
+    border-color: var(--accent);
+    color: var(--lw-ink);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 22px rgba(33, 38, 34, 0.10);
+}
+
+/* ===================================================================
+   05. Spec strip — VPL / AST / IR / CODE
+=================================================================== */
+.lw-spec-wrap {
+    position: relative;
+    z-index: 2;
+    margin-top: auto;
+    padding-top: 34px;
+}
+
+.lw-spec {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-top: 1px solid var(--lw-line);
+}
+
+.lw-spec-cell {
+    padding: 26px 24px 30px 0;
+    border-right: 1px solid var(--lw-line);
+    text-align: left;
+}
+
+.lw-spec-cell:not(:first-child) {
+    padding-left: 24px;
+}
+
+.lw-spec-cell:last-child { border-right: 0; }
+
+.lw-spec-cell strong {
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.45rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--accent-text);
+}
+
+.lw-spec-cell span {
+    display: block;
+    margin-top: 7px;
+    font-size: 0.86rem;
+    color: var(--lw-muted);
+}
+
+/* ===================================================================
+   06. About
+=================================================================== */
+.lw-about-plate {
+    width: 100%;
+    height: 187px;
+    background: var(--lw-red);
+}
+
+.lw-about-shot {
+    position: relative;
+    top: -150px;
+    width: 100%;
+    margin-left: 30px;
+    margin-bottom: -148px;
+    background: #fff;
+    border: 1px solid var(--lw-line);
+    box-shadow: var(--lw-shadow);
+}
+
+/* The shot is pulled up with `top` + a matching negative margin, so the
+   caption already lands just below it and needs no offset of its own. */
+.lw-about-caption {
+    margin: 0 0 0 30px;
+    padding-top: 14px;
+    font-family: var(--lw-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--lw-muted);
+}
+
+.lw-manifesto {
+    margin: 0 0 1.6rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.05rem;
+    font-weight: 300;
+    line-height: 1.22;
+    color: var(--lw-ink);
+}
+
+.lw-manifesto b {
+    font-weight: 600;
+}
+
+.lw-about-body p + p {
+    margin-top: 1.1rem;
+}
+
+.lw-quote-mark {
+    display: block;
+    margin-bottom: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 3rem;
+    line-height: 0.6;
+    color: var(--lw-red);
+}
+
+/* ===================================================================
+   07. Projects
+=================================================================== */
+.lw-project-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 26px;
+}
+
+.lw-project {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 100%;
+    padding: 30px 28px 26px;
+    background: var(--lw-paper);
+    border: 1px solid var(--lw-line);
+    border-radius: 5px 5px 5px 18px;
+    overflow: hidden;
+    transition: transform .4s ease, box-shadow .4s ease, border-color .4s ease;
+}
+
+.lw-project::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--accent);
+    transition: height .4s ease;
+}
+
+.lw-project:hover,
+.lw-project:focus-within {
+    transform: translateY(-8px);
+    box-shadow: var(--lw-shadow-lift);
+    border-color: transparent;
+}
+
+.lw-project:hover::before,
+.lw-project:focus-within::before {
+    height: 8px;
+}
+
+.lw-project-feature {
+    grid-column: span 2;
+}
+
+.lw-project-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.lw-badge {
+    display: inline-flex;
+    align-items: center;
+    flex: none;
+    padding: 5px 9px;
+    background: var(--accent-ink);
+    border-radius: 3px;
+    font-family: var(--lw-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: #fff;
+}
+
+/* yellow needs dark type, not white — and the yellow fill itself never
+   changes with theme, so the text must stay fixed-dark too, not --lw-ink */
+.lw-badge-yellow {
+    background: var(--lw-yellow);
+    color: var(--lw-ink-fixed);
+}
+
+.lw-project h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--lw-ink);
+}
+
+/* Bootstrap colours bare anchors, which would override the heading colour */
+.lw-project h3 a {
+    color: inherit;
+}
+
+.lw-project h3 a:hover,
+.lw-project h3 a:focus {
+    color: var(--accent-text);
+}
+
+.lw-project-feature h3 {
+    font-size: 1.9rem;
+}
+
+.lw-project p {
+    margin: 0;
+    font-size: 0.97rem;
+    color: var(--lw-body);
+}
+
+.lw-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: auto;
+    padding-top: 4px;
+}
+
+.lw-tag {
+    padding: 4px 8px;
+    background: var(--lw-paper-2);
+    border: 1px solid var(--lw-line-soft);
+    border-radius: 3px;
+    font-family: var(--lw-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.03em;
+    color: var(--lw-muted);
+}
+
+/* secondary destination on a project card — the MnL help lives here */
+/* `wrap` + a non-shrinking link is what keeps this row readable across cards of
+   very different widths. Without it, `space-between` squeezes the link instead
+   of wrapping the meta: in the narrow B-Lambda card the link collapsed to 115px
+   and "Read the B-Lambda help" broke over three lines. Now the two sit on one
+   line when they fit, and the chapter count drops below when they do not. */
+.lw-project-help {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    margin: 0;
+    padding: 11px 14px;
+    background: var(--lw-paper-2);
+    border: 1px solid var(--lw-line);
+    border-radius: 4px;
+}
+
+.lw-project-help a {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 9px;
+    font-size: 0.9rem;
+    font-weight: 650;
+    color: var(--accent-text);
+}
+
+.lw-project-help a i {
+    font-size: 0.82rem;
+}
+
+.lw-project-help a:hover,
+.lw-project-help a:focus {
+    color: var(--lw-ink);
+}
+
+/* no uppercase here — it would render the version as "V5.0" */
+.lw-project-help span {
+    flex: none;
+    font-family: var(--lw-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    color: var(--lw-muted);
+}
+
+/* One quiet line, not a card of its own — #686f6a clears 5.15:1 on the white
+   card background, so it stays legible without competing with the primary
+   accent-coloured CTAs above it. */
+.lw-project-legacy {
+    margin: -4px 0 0;
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: var(--lw-muted);
+}
+
+.lw-project-legacy a {
+    color: var(--lw-muted);
+    font-weight: 650;
+    text-decoration: underline !important;
+    text-underline-offset: 2px;
+}
+
+.lw-project-legacy a:hover,
+.lw-project-legacy a:focus {
+    color: var(--lw-ink);
+}
+
+.lw-project-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding-top: 16px;
+    border-top: 1px solid var(--lw-line);
+    font-family: var(--lw-mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent-text);
+    word-break: break-all;
+}
+
+.lw-project-link i {
+    flex: none;
+    font-size: 0.8rem;
+    transition: transform .3s ease;
+}
+
+.lw-project:hover .lw-project-link i {
+    transform: translateX(5px);
+}
+
+/* ===================================================================
+   08. Research threads
+=================================================================== */
+.lw-thread-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.lw-thread {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+    padding: 28px 26px;
+    background: var(--lw-paper);
+    border: 1px solid var(--lw-line);
+    border-left: 4px solid var(--accent);
+    border-radius: 3px;
+    transition: transform .4s ease, box-shadow .4s ease;
+}
+
+.lw-thread:hover,
+.lw-thread:focus-within {
+    transform: translateY(-6px);
+    box-shadow: var(--lw-shadow);
+}
+
+.lw-thread-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.lw-thread-no {
+    font-family: var(--lw-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--accent-text);
+}
+
+.lw-thread-project {
+    padding: 3px 7px;
+    border: 1px solid var(--lw-line);
+    border-radius: 3px;
+    font-family: var(--lw-mono);
+    font-size: 0.64rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--lw-muted);
+}
+
+.lw-thread h3 {
+    margin: 0;
+    font-size: 1.18rem;
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--lw-ink);
+}
+
+.lw-thread p {
+    margin: 0;
+    font-size: 0.94rem;
+    color: var(--lw-body);
+}
+
+.lw-thread-more {
+    margin-top: auto;
+    padding-top: 6px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--accent-text);
+}
+
+.lw-thread-more i {
+    margin-left: 6px;
+    font-size: 0.72rem;
+    transition: transform .3s ease;
+}
+
+.lw-thread-more:hover,
+.lw-thread-more:focus {
+    color: var(--lw-ink);
+}
+
+.lw-thread-more:hover i {
+    transform: translateX(5px);
+}
+
+/* ===================================================================
+   09. Pipeline
+=================================================================== */
+.lw-pipeline {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    background: var(--lw-paper);
+    border: 1px solid var(--lw-line);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+/* flex-start, not space-between: the last step's copy runs to three lines
+   and space-between would push its heading out of line with the others. */
+.lw-step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    min-height: 208px;
+    padding: 26px 24px 30px;
+    border-right: 1px solid var(--lw-line);
+}
+
+.lw-step:last-child { border-right: 0; }
+
+.lw-step-id {
+    font-family: var(--lw-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--lw-blue-text);
+}
+
+.lw-step h3 {
+    margin: 0 0 8px;
+    font-size: 1.12rem;
+    font-weight: 600;
+    color: var(--lw-ink);
+}
+
+.lw-step p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--lw-body);
+}
+
+.lw-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: -13px;
+    z-index: 3;
+    width: 26px;
+    height: 26px;
+    transform: translateY(-50%);
+    background-color: var(--lw-paper);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%233a63b8'%3E%3Cpath d='M6 3.5 10.5 8 6 12.5l-1-1L8.5 8 5 4.5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 15px 15px;
+    border: 1px solid var(--lw-line);
+    border-radius: 50%;
+}
+
+/* ===================================================================
+   10. Quote band
+=================================================================== */
+.lw-quote-band {
+    padding: 6rem 0;
+    background-color: var(--lw-paper-2);
+    background-image: url("../img/parallax1.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    border-top: 1px solid var(--lw-line);
+    border-bottom: 1px solid var(--lw-line);
+}
+
+/* parallax1.png is an opaque, nearly pure-white texture — it would paint
+   a white band straight through dark mode, so fall back to the (dark)
+   background-color instead of trying to source a dark equivalent image. */
+:root[data-theme="dark"] .lw-quote-band {
+    background-image: none;
+}
+
+.lw-quote-band blockquote {
+    max-width: 860px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.lw-quote-band p {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.6rem;
+    font-weight: 300;
+    line-height: 1.18;
+    color: var(--lw-ink);
+}
+
+.lw-quote-band p b {
+    font-weight: 600;
+    color: var(--lw-red-text);
+}
+
+.lw-quote-band cite {
+    display: block;
+    margin-top: 22px;
+    font-family: var(--lw-mono);
+    font-size: 0.76rem;
+    font-style: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--lw-blue-text);
+}
+
+.lw-quote-glyph {
+    margin-bottom: 1.4rem;
+    font-size: 1.4rem;
+    color: #a1a1a1;
+}
+
+/* ===================================================================
+   11. Gallery
+=================================================================== */
+.lw-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 2.6rem;
+}
+
+.lw-filter {
+    padding: 9px 20px;
+    background: transparent;
+    border: 1px solid var(--lw-line);
+    border-radius: 30px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--lw-body);
+    cursor: pointer;
+    transition: all .3s ease;
+}
+
+.lw-filter:hover {
+    border-color: var(--lw-ink);
+    color: var(--lw-ink);
+}
+
+.lw-filter[aria-pressed="true"] {
+    background: var(--lw-ink);
+    border-color: var(--lw-ink);
+    color: var(--lw-paper);
+}
+
+.lw-filter span {
+    margin-left: 6px;
+    font-family: var(--lw-mono);
+    font-size: 0.7rem;
+    opacity: 0.6;
+}
+
+.lw-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.lw-shot {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background: var(--lw-paper);
+    border: 1px solid var(--lw-line);
+    border-radius: 4px;
+}
+
+.lw-shot img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    object-position: top center;
+    background: var(--lw-paper-2);
+    transition: transform .6s ease;
+}
+
+.lw-shot:hover img,
+.lw-shot:focus-visible img {
+    transform: scale(1.05);
+}
+
+.lw-shot-body {
+    position: absolute;
+    inset: auto 0 0 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 16px 18px;
+    background: linear-gradient(180deg, rgba(33, 38, 34, 0) 0%, rgba(33, 38, 34, 0.88) 100%);
+    color: #fff;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity .35s ease, transform .35s ease;
+}
+
+.lw-shot:hover .lw-shot-body,
+.lw-shot:focus-visible .lw-shot-body {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.lw-shot-kind {
+    display: block;
+    margin-bottom: 5px;
+    font-family: var(--lw-mono);
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.lw-shot-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.02rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.lw-shot-body i {
+    flex: none;
+    padding-bottom: 3px;
+    font-size: 0.9rem;
+}
+
+.lw-gallery-note {
+    margin-top: 2rem;
+    font-size: 0.88rem;
+    color: var(--lw-muted);
+    text-align: center;
+}
+
+/* captions must not depend on hover */
+@media (hover: none) {
+    .lw-shot-body {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ===================================================================
+   12. Publications
+=================================================================== */
+.lw-pub-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px;
+    align-items: stretch;
+}
+
+.lw-pub {
+    position: relative;
+    height: 100%;
+    padding: 34px 32px;
+    background: var(--lw-paper);
+    border: 1px solid var(--lw-line);
+    border-radius: 5px;
+    box-shadow: var(--lw-shadow);
+    overflow: hidden;
+}
+
+.lw-pub-flag {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 7px 14px;
+    background: var(--lw-yellow);
+    border-bottom-left-radius: 5px;
+    font-family: var(--lw-mono);
+    font-size: 0.66rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--lw-ink);
+}
+
+.lw-pub-flag-open {
+    background: var(--lw-paper-2);
+    border-left: 1px solid var(--lw-line);
+    border-bottom: 1px solid var(--lw-line);
+    color: var(--lw-muted);
+}
+
+.lw-pub-venue {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--lw-line);
+}
+
+.lw-pub-venue h3 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--lw-ink);
+}
+
+.lw-pub-venue span {
+    font-family: var(--lw-mono);
+    font-size: 0.82rem;
+    color: var(--lw-muted);
+}
+
+.lw-pub-title {
+    margin: 0 0 26px;
+    font-size: 1.05rem;
+    line-height: 1.45;
+    color: var(--lw-ink);
+}
+
+.lw-pub ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.lw-pub ul li {
+    position: relative;
+    margin-bottom: 14px;
+    padding-left: 26px;
+    font-size: 0.97rem;
+    color: var(--lw-body);
+}
+
+.lw-pub ul li:last-child { margin-bottom: 0; }
+
+.lw-pub ul li::before {
+    content: "";
+    position: absolute;
+    top: 11px;
+    left: 0;
+    width: 12px;
+    height: 2px;
+    background: var(--lw-blue);
+}
+
+/* ===================================================================
+   13. Domain notice
+=================================================================== */
+.lw-notice {
+    padding: 2.4rem 0;
+    background: var(--lw-notice-bg);
+    border-top: 1px solid var(--lw-notice-border);
+    border-bottom: 1px solid var(--lw-notice-border);
+}
+
+.lw-notice-inner {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+}
+
+.lw-notice-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 46px;
+    height: 46px;
+    background: var(--lw-yellow);
+    border-radius: 50%;
+    /* the yellow fill never changes with theme, so neither can the text */
+    color: var(--lw-ink-fixed);
+    font-size: 1.05rem;
+}
+
+.lw-notice-text {
+    flex: 1 1 auto;
+}
+
+.lw-notice-text strong {
+    display: block;
+    margin-bottom: 7px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+    color: var(--lw-notice-label);
+}
+
+.lw-notice-text p {
+    margin: 0;
+    color: var(--lw-notice-text);
+}
+
+.lw-notice-text a {
+    font-family: var(--lw-mono);
+    font-size: 0.95em;
+    color: var(--lw-ink);
+    text-decoration: underline !important;
+    text-underline-offset: 3px;
+}
+
+/* ===================================================================
+   14. Footer
+=================================================================== */
+.lw-footer {
+    padding: 4rem 0 0;
+    background: var(--lw-paper-2);
+    border-top: 1px solid var(--lw-line);
+}
+
+.lw-footer-grid {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr 1.25fr;
+    gap: 40px;
+    padding-bottom: 3rem;
+}
+
+.lw-footer h2 {
+    margin: 0 0 16px;
+    font-family: var(--lw-mono);
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--lw-muted);
+}
+
+.lw-footer p {
+    max-width: 340px;
+    font-size: 0.92rem;
+    color: var(--lw-body);
+}
+
+.lw-footer a {
+    color: var(--lw-ink);
+}
+
+.lw-footer a:hover,
+.lw-footer a:focus {
+    color: var(--lw-red-ink);
+}
+
+.lw-footer-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.lw-footer-brand img {
+    width: 38px;
+    height: 38px;
+}
+
+.lw-footer-brand span {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--lw-ink);
+}
+
+.lw-footer-list {
+    display: grid;
+    gap: 9px;
+}
+
+.lw-footer-list a {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-family: var(--lw-mono);
+    font-size: 0.8rem;
+    color: var(--lw-body);
+}
+
+.lw-footer-list a::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex: none;
+}
+
+.lw-footer-mail {
+    max-width: none;
+    font-family: var(--lw-mono);
+    font-size: 0.84rem;
+    overflow-wrap: anywhere;
+}
+
+.lw-footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 1.6rem 0;
+    border-top: 1px solid var(--lw-line);
+    font-size: 0.84rem;
+    color: var(--lw-muted);
+}
+
+.lw-footer-bottom .lw-mono {
+    color: var(--lw-muted);
+}
+
+/* ===================================================================
+   15. Responsive
+=================================================================== */
+@media (max-width: 1199px) {
+    .lw-hero h1 { font-size: 4.6rem; }
+
+    .lw-project-grid,
+    .lw-thread-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .lw-pipeline {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .lw-step:nth-child(2) { border-right: 0; }
+    .lw-step:nth-child(-n + 2) { border-bottom: 1px solid var(--lw-line); }
+    .lw-step:nth-child(2)::after { display: none; }
+}
+
+@media (max-width: 991px) {
+    .lw-hero { padding-top: 132px; }
+    .lw-hero h1 { font-size: 4rem; }
+    .lw-rotator-line { font-size: 1.24rem; }
+
+    .lw-hero-block { display: none; }
+
+    .lw-spec { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .lw-spec-cell:nth-child(2) { border-right: 0; }
+    .lw-spec-cell:nth-child(3) { padding-left: 0; }
+    .lw-spec-cell:nth-child(-n + 2) { border-bottom: 1px solid var(--lw-line); }
+
+    .lw-about-figure { margin-bottom: 3rem; }
+    .lw-about-shot { top: -120px; margin-bottom: -118px; }
+    .lw-about-caption { top: -104px; margin-bottom: -104px; }
+
+    .lw-manifesto { font-size: 1.8rem; }
+
+    .lw-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .lw-quote-band {
+        padding: 4.5rem 0;
+        background-attachment: scroll;
+    }
+
+    .lw-quote-band p { font-size: 2rem; }
+
+    .lw-footer-grid { grid-template-columns: 1fr 1fr; }
+    .lw-footer-grid > div:first-child { grid-column: span 2; }
+}
+
+@media (max-width: 767px) {
+    /* style.css sets `body { text-align: center }` below 768px, which centres
+       card copy and every help page. Centring is opted into per component
+       (the hero, section titles, the quote) rather than inherited. */
+    body { text-align: left; }
+
+    section, .section-padding { padding: 4.5rem 0; }
+
+    .lw-hero {
+        min-height: 0;
+        padding-top: 116px;
+    }
+
+    .lw-spec { grid-template-columns: minmax(0, 1fr); }
+
+    .lw-spec-cell {
+        padding: 18px 0 20px;
+        border-right: 0;
+        border-bottom: 1px solid var(--lw-line);
+    }
+
+    .lw-spec-cell:not(:first-child) { padding-left: 0; }
+    .lw-spec-cell:last-child { border-bottom: 0; }
+
+    .lw-hero-meta {
+        padding-bottom: 30px;
+        font-size: 0.6rem;
+        letter-spacing: 0.1em;
+    }
+
+    .lw-hero-meta span:last-child { display: none; }
+
+    .lw-hero h1 { font-size: 2.9rem; }
+    .lw-hero-long { font-size: 0.66rem; letter-spacing: 0.22em; }
+    .lw-hero-mark { width: 64px; height: 64px; }
+    .lw-rotator-line { margin-top: 24px; font-size: 1.1rem; }
+    .lw-hero-lead { font-size: 1rem; }
+    .lw-hero-actions { gap: 10px; }
+    .lw-hero .btn-setting { min-width: 0; width: 100%; }
+
+    .lw-piece-1, .lw-piece-2 { width: 190px; opacity: 0.1; }
+
+    .lw-section-title { margin-bottom: 2.4rem; }
+    .lw-section-title h2 { font-size: 1.9rem; }
+
+    .lw-project-grid,
+    .lw-thread-grid,
+    .lw-gallery,
+    .lw-pub-grid,
+    .lw-pipeline {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lw-project-feature { grid-column: auto; }
+    .lw-project-feature h3 { font-size: 1.5rem; }
+    .lw-project { padding: 26px 22px 22px; }
+
+    .lw-step {
+        gap: 16px;
+        min-height: 0;
+        border-right: 0;
+        border-bottom: 1px solid var(--lw-line);
+    }
+
+    .lw-step:last-child { border-bottom: 0; }
+
+    .lw-step:not(:last-child)::after {
+        top: auto;
+        right: 22px;
+        bottom: -13px;
+        display: block;
+        transform: rotate(90deg);
+    }
+
+    .lw-manifesto { font-size: 1.55rem; }
+    .lw-quote-band p { font-size: 1.6rem; }
+    .lw-quote-band cite { font-size: 0.68rem; letter-spacing: 0.12em; }
+
+    .lw-pub { padding: 28px 24px; }
+    .lw-pub-venue h3 { font-size: 1.35rem; }
+
+    .lw-notice-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+    }
+
+    .lw-footer { padding-top: 3rem; }
+
+    .lw-footer-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 30px;
+        padding-bottom: 2rem;
+    }
+
+    .lw-footer-grid > div:first-child { grid-column: auto; }
+
+    .lw-footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 359px) {
+    .lw-hero h1 { font-size: 2.4rem; }
+    .lw-chips { gap: 7px; }
+    .lw-chip { padding: 7px 13px 7px 10px; font-size: 0.68rem; }
+}
+
+/* ===================================================================
+   16. Reduced motion
+=================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .lw-reveal {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .lw-project:hover,
+    .lw-thread:hover,
+    .lw-chip:hover,
+    .about-box:hover {
+        transform: none;
+    }
+
+    .lw-shot:hover img { transform: none; }
+    .lw-quote-band { background-attachment: scroll; }
+}

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="How to read an MnL block: the toolbox reference, block anatomy, the gear, warning and info icons, adding and removing inputs, and what the Kolintang shapes and colours encode.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Blocks — MnL Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-mnl/blocks.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>MnL Help</b><span class="help-bar-sub">Macaca nigra Language</span></span>
+        </a>
+        <span class="help-version">v5.0 &middot; build 040726</span>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://mnl.l-workshop.my.id" rel="noopener">Open MnL</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li>
+                    <a href="blocks.html" aria-current="page"><em>03</em> Blocks</a>
+                    <ul class="help-subnav">
+                        <li><a href="#toolbox">The toolbox</a></li>
+                        <li><a href="#block-anatomy">Block anatomy</a></li>
+                        <li><a href="#the-shape-and-color">Shape and colour</a></li>
+                        <li><a href="#block-info">Block info</a></li>
+                        <li><a href="#add-remove-input">Add / remove input</a></li>
+                        <li><a href="#debugger">The debugger</a></li>
+                    </ul>
+                </li>
+                <li><a href="functions.html"><em>04</em> Functions</a></li>
+                <li><a href="data.html"><em>05</em> Data structures</a></li>
+                <li><a href="types.html"><em>06</em> Types</a></li>
+                <li><a href="visualization.html"><em>07</em> Visualization</a></li>
+                <li><a href="compiler.html"><em>08</em> Compiler</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>MnL 5.0</b>, running at
+                <a href="https://mnl.l-workshop.my.id" rel="noopener">mnl.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">03 / Blocks</span>
+                <h1>Reading a block</h1>
+                <p class="help-lede">An MnL block is not just a container for text. Its <em>shape</em> tells you which
+                    part of the grammar it belongs to, its <em>colour</em> tells you the type of the value it produces,
+                    and the icons along its top edge give you its category, its value, and any error it is carrying.</p>
+
+                <h2 id="toolbox">The toolbox</h2>
+                <p>The <strong>Blocks</strong> sidebar groups blocks by the grammar. Click a category to expand it; the
+                    number beside the name is how many blocks it holds. <kbd>Ctrl</kbd>+<kbd>F</kbd> jumps to
+                    <strong>Search blocks</strong> if you already know the name, and <kbd>Ctrl</kbd>+<kbd>B</kbd> hides
+                    the sidebar to give the workspace more room.</p>
+
+                <p>The first seven categories are the syntactic core. The seven below them are operations, and every one
+                    of those produces an expression.</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <caption class="sr-only">The MnL 5.0 toolbox: fourteen categories holding forty blocks</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Category</th>
+                                <th scope="col">Blocks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="help-glyph">x</span> Parameter <em>1</em></td>
+                                <td>Parameter</td>
+                            </tr>
+                            <tr>
+                                <td><span class="help-glyph">id</span> Identity <em>1</em></td>
+                                <td>Identifier</td>
+                            </tr>
+                            <tr>
+                                <td><span class="help-glyph">&#8801;</span> Declarations <em>2</em></td>
+                                <td>Function, Variable</td>
+                            </tr>
+                            <tr>
+                                <td><span class="help-glyph">e</span> Expression <em>6</em></td>
+                                <td>Application, Bound, Lambda, If / Else, Sequence, Let &hellip; in</td>
+                            </tr>
+                            <tr>
+                                <td><span class="help-glyph">&#10216;&#10217;</span> Constructor <em>4</em></td>
+                                <td>List, Tuple, Record, Field</td>
+                            </tr>
+                            <tr>
+                                <td><span class="help-glyph">&#8916;</span> Case &amp; Match <em>8</em></td>
+                                <td>Case of, Match, Pattern Boolean, Pattern Character, Pattern Number, Pattern String,
+                                    Pattern Unit, Pattern Any</td>
+                            </tr>
+                            <tr>
+                                <td><span class="help-glyph">c</span> Constant <em>5</em></td>
+                                <td>String, Character, Boolean, Number, Unit</td>
+                            </tr>
+                            <tr>
+                                <td><span class="help-glyph">+</span> Arithmetic <em>2</em></td>
+                                <td>Arithmetic, Compare</td>
+                            </tr>
+                            <tr>
+                                <td><span class="help-glyph">&#8743;</span> Logic <em>2</em></td>
+                                <td>And / Or, Not</td>
+                            </tr>
+                            <tr>
+                                <td><span class="help-glyph">str</span> String <em>1</em></td>
+                                <td>Concatenate</td>
+                            </tr>
+                            <tr>
+                                <td><span class="help-glyph">ch</span> Character <em>2</em></td>
+                                <td>Char &rarr; ASCII, ASCII &rarr; Char</td>
+                            </tr>
+                            <tr>
+                                <td><span class="help-glyph">::</span> List <em>4</em></td>
+                                <td>Head, Tail, Is empty, Append</td>
+                            </tr>
+                            <tr>
+                                <td><span class="help-glyph">&#960;</span> Tuple <em>1</em></td>
+                                <td>Get item</td>
+                            </tr>
+                            <tr>
+                                <td><span class="help-glyph">.</span> Record <em>1</em></td>
+                                <td>Get field</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="help-callout is-changed">
+                    <strong>Changed in version 5</strong>
+                    <p>The toolbox was reorganised and the search box moved from the bottom of the toolbox to the top of
+                        the sidebar. <strong>Field</strong> joined the Constructor category, and the pattern blocks are
+                        now grouped with <em>Case of</em> and <em>Match</em> rather than sitting on their own.</p>
+                </div>
+
+                <h2 id="block-anatomy">Block anatomy</h2>
+                <p>Every block carries the same furniture. Two layouts exist &mdash; one where inputs enter from the
+                    side, and one where they stack vertically with a horizontal input alongside.</p>
+
+                <div class="help-fig-row">
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/block_anatomy_complete.png" loading="lazy"
+                            alt="A Tuple constructor block showing a gear icon, a warning triangle, an info question mark, its label, and two Inhabitant inputs with notch connectors.">
+                        <figcaption><b>Fig. 1</b> Horizontal input / output.</figcaption>
+                    </figure>
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/block_anatomy_1.png" loading="lazy"
+                            alt="A block with vertically stacked inputs alongside a horizontal input notch.">
+                        <figcaption><b>Fig. 2</b> Vertical inputs with a horizontal input.</figcaption>
+                    </figure>
+                </div>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Part</th>
+                                <th scope="col">Meaning</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>1</code> <span class="help-glyph">&#9881;</span> Gear </td>
+                                <td>Opens the add / remove input toolbox for blocks whose number of inputs can change.
+                                    See <a href="#add-remove-input">below</a>.</td>
+                            </tr>
+                            <tr>
+                                <td><code>2</code> <span class="help-glyph">&#9888;</span> Warning</td>
+                                <td>The <a href="#debugger">debugger</a>. Shows what the block still needs, or the type
+                                    error it is carrying.</td>
+                            </tr>
+                            <tr>
+                                <td><code>3</code><span class="help-glyph">?</span> Info</td>
+                                <td>Shows the block&rsquo;s category, type and value. See
+                                    <a href="#block-info">block info</a>.</td>
+                            </tr>
+                            <tr>
+                                <td>Suggestion box</td>
+                                <td>The coloured stub on an empty input. Its colour is the type MnL expects there, so you
+                                    can see what will fit before you drag anything. See
+                                    <a href="types.html#type-suggestion">type suggestion</a>.</td>
+                            </tr>
+                            <tr>
+                                <td><code>4</code> <code>5</code> Input notch</td>
+                                <td>The shape a block must have to attach here.</td>
+                            </tr>
+                            <tr>
+                                <td><code>6</code> Output notch</td>
+                                <td>The block&rsquo;s own shape &mdash; the hook it offers to a parent block.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 id="the-shape-and-color">Shape and colour</h2>
+                <p>This is the part of MnL that does the most work for you, and it is worth learning deliberately.</p>
+                <ul>
+                    <li>The <strong>shape</strong> of a notch stands for a non-terminal of the grammar. Two blocks fit
+                        together only when the grammar allows it, so an ill-formed program cannot be assembled in the
+                        first place.</li>
+                    <li>The <strong>colour</strong> of a block stands for the type of its value &mdash; blue for a
+                        function, yellow for a number, and so on. Colour is inferred, not declared, so it updates as you
+                        build.</li>
+                </ul>
+
+                <div class="help-callout is-new">
+                    <strong>The Kolintang renderer</strong>
+                    <p>From version 2 onwards MnL draws its blocks with a custom renderer called
+                        <strong>Kolintang</strong>. It uses horizontal-notch connector shapes to keep MnL&rsquo;s
+                        syntactic categories visually apart: <em>expressions</em>, <em>patterns</em>,
+                        <em>parameters</em>, <em>identifiers</em>, <em>types</em>, <em>matches</em> and
+                        <em>fields</em> each get their own silhouette.</p>
+                </div>
+
+                <p>Because shape carries grammar and colour carries type, the two are independent: a green
+                    <em>Compare number</em> block and a yellow <em>number</em> block share an expression silhouette but
+                    announce different result types. The same pairing shows up in the
+                    <a href="compiler.html#typing">typing derivation</a>, where a judgement separates the syntactic
+                    category from the inferred type with <code>&otimes;</code>.</p>
+
+                <h2 id="block-info">Block info</h2>
+                <p>Click the <code>?</code> icon on a block to see what MnL knows about it: the block category taken from
+                    the grammar, the term type, and the value.</p>
+
+                <figure class="help-fig is-block">
+                    <img src="assets/img/type_n_value_info_light.png" loading="lazy"
+                        alt="An info popup above a Tuple constructor block reading: The Expression block, type: tuple of (boolean and string and number), value: (true, &quot;is&quot;, 1).">
+                    <figcaption><b>Fig. 3</b> Block info on a tuple: its category, its type, and its value.</figcaption>
+                </figure>
+
+                <p>Info is the fastest way to check your understanding against the language&rsquo;s. If the type is not
+                    what you expected, the block you need to change is usually one of the children, not this one.</p>
+
+                <h2 id="add-remove-input">Add / remove input</h2>
+                <p>Some blocks take a variable number of inputs &mdash; tuples, records, lists, sequences and case
+                    blocks among them. There are two ways to change the count.</p>
+
+                <div class="help-fig-row">
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/add_input_light.png" loading="lazy" style="max-width: 70%;" width="400"
+                            alt="The gear popup for a Tuple constructor, dragging Item entries into the block to add inhabitants.">
+                        <figcaption><b>Fig. 4</b> The gear popup: drag <em>Item</em> entries in or out.</figcaption>
+                    </figure>
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/plus_minus_button.png" loading="lazy" style="max-width: 50%;" width="400"
+                            alt="Plus and minus buttons on a block for adding and removing an input directly.">
+                        <figcaption><b>Fig. 5</b> The plus / minus buttons on the block itself.</figcaption>
+                    </figure>
+                </div>
+
+                <p>The gear popup is the general mechanism; the plus and minus buttons are a shortcut for adding or
+                    removing one input at a time. Removing an input that still has a block attached detaches that block
+                    rather than deleting it &mdash; it is left loose on the workspace.</p>
+
+                <h2 id="debugger">The debugger</h2>
+                <p>The warning triangle is MnL&rsquo;s debugger. It appears while a block is still incomplete or while it
+                    carries a type error, and it reports one of two things:</p>
+                <ul>
+                    <li><strong>What the block still needs</strong> to be complete &mdash; which inputs are empty.</li>
+                    <li><strong>A term-type error</strong> &mdash; a child block whose type does not fit the input it is
+                        plugged into.</li>
+                </ul>
+                <p>A <em>complete</em> block is one with every requirement satisfied; it loses its warning triangle. The
+                    program as a whole is complete when the <strong>Types</strong> indicator in the status bar reads
+                    <code>OK</code>. Until it does, the <a href="visualization.html">visualization views</a> have nothing
+                    to run.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="getting-started.html">
+                        <span>Previous &mdash; 02</span>
+                        <b>&larr; Getting started</b>
+                    </a>
+                    <a class="is-next" href="functions.html">
+                        <span>Next &mdash; 04</span>
+                        <b>Functions &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">MnL is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against MnL 5.0 (build 040726).</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

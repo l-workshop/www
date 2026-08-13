@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="Build your first term in Block Lambda: the identity function, application, let and letrec bindings, and the two-way code panel that lets you type lambda terms as text.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Getting started — B-Lambda Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-b-lambda/getting-started.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-bl">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>B-Lambda Help</b><span class="help-bar-sub">Block-Based
+                    &lambda;-Calculus</span></span>
+        </a>
+        <span class="help-version">v1.0.0</span>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://b-lambda.l-workshop.my.id" rel="noopener">Open B-Lambda</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li>
+                    <a href="getting-started.html" aria-current="page"><em>02</em> Getting started</a>
+                    <ul class="help-subnav">
+                        <li><a href="#identity">Your first term</a></li>
+                        <li><a href="#application">Applying a function</a></li>
+                        <li><a href="#bindings">let and letrec</a></li>
+                        <li><a href="#code-panel">Typing text instead</a></li>
+                        <li><a href="#running">Running the program</a></li>
+                        <li><a href="#status">Reading the status bar</a></li>
+                    </ul>
+                </li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li><a href="semantics.html"><em>05</em> Semantics</a></li>
+                <li><a href="pipeline.html"><em>06</em> Compiler pipeline</a></li>
+                <li><a href="reference.html"><em>07</em> Reference</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>Block Lambda 1.0.0</b>, running at
+                <a href="https://b-lambda.l-workshop.my.id" rel="noopener">b-lambda.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">02 / Getting started</span>
+                <h1>Your first lambda term</h1>
+                <p class="help-lede">The whole language is three constructs &mdash; a variable, an abstraction, an
+                    application. Everything else in the toolbox is a convenience built on top of them. This chapter
+                    builds each one, then shows you the shortcut for when dragging blocks is slower than typing.</p>
+
+                <h2 id="identity">Your first term</h2>
+                <p>Open B-Lambda on an empty workspace and build the identity function:</p>
+
+                <ol class="help-steps">
+                    <li>From the <strong>Abstraction</strong> category, drag <code>&lambda; x . body</code> onto the
+                        workspace.</li>
+                    <li>Click the <code>x</code> field and name the parameter, or leave it as <code>x</code>.</li>
+                    <li>From <strong>Variables</strong>, drag <code>&lambda; x . x</code> into the
+                        <em>body</em> socket. This block is a variable <em>reference</em>, not a new binder &mdash; set
+                        its field to the same name, <code>x</code>.</li>
+                </ol>
+
+                <p>The Inspector's <em>Code</em> tab now reads <code>lambda x. x</code> and the <em>Types</em> tab
+                    reports <code>'a -&gt; 'a</code>. That type variable is the point: nothing in the term constrains
+                    what <code>x</code> is, so the identity function works at every type. See
+                    <a href="types.html#polymorphism">let-polymorphism</a>.</p>
+
+                <div class="help-callout">
+                    <strong>Bound vs free</strong>
+                    <p>A variable block whose name matches an enclosing binder renders as <strong>bound</strong> and
+                        picks up that binder's type. A name with no enclosing binder stays free, and inference gives it
+                        a fresh type variable. The label on the block tells you which it is, so you can spot an
+                        accidental typo in a parameter name by eye.</p>
+                </div>
+
+                <h2 id="application">Applying a function</h2>
+                <p>Application is its own block, from the <strong>Application</strong> category. It has two sockets,
+                    <em>function</em> and <em>arg</em> &mdash; drawn on the block as <code>func &middot; arg</code>
+                    because in the &lambda;-calculus application is just juxtaposition, with no syntax of its own.</p>
+
+                <p>Also in that category is <code>( term )</code>, labelled <em>grouping</em>. It changes nothing about
+                    evaluation; it exists so that generated text and printed derivations bracket the way you meant.
+                    Application associates to the left, so <code>f g h</code> means <code>(f g) h</code>; wrap the
+                    argument in a grouping block when you want <code>f (g h)</code>.</p>
+
+                <h2 id="bindings">let and letrec</h2>
+                <p>The <strong>Let Binding</strong> category has two blocks, and the difference between them matters:</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Block</th>
+                                <th>Reads</th>
+                                <th>Use it when</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="help-glyph">&#8788;</span> let</td>
+                                <td><code>let x = &hellip; in &hellip;</code></td>
+                                <td>The bound value does not refer to itself. Generalised, so it is
+                                    <strong>polymorphic</strong>.</td>
+                            </tr>
+                            <tr>
+                                <td><span class="help-glyph">&#8635;</span> letrec</td>
+                                <td><code>letrec f = &hellip; in &hellip;</code></td>
+                                <td>The bound value calls itself. Inferred
+                                    <strong>monomorphically</strong>.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>Recursion needs <code>letrec</code>: inside a plain <code>let</code>, the name being bound is not yet
+                    in scope on the right-hand side, so a self-reference would be a free variable. The
+                    <em>Factorial 5</em> example is the canonical shape:</p>
+
+                <pre><code>letrec factorial = &lambda;n. if (n = 0) then 1 else (n * (factorial (n - 1)))
+in (factorial 5)</code></pre>
+
+                <div class="help-callout is-changed">
+                    <strong>Why letrec is monomorphic</strong>
+                    <p>Generalising a binding while you are still inferring its own body is unsound in general, so
+                        <code>letrec</code> types its binding at a single type. In practice this is enough for the
+                        recursive functions you would write here &mdash; factorial, Fibonacci, GCD are all
+                        monomorphic. A <em>polymorphic</em> recursive function would need a type annotation, and
+                        B-Lambda has no annotation syntax.</p>
+                </div>
+
+                <h2 id="code-panel">Typing text instead</h2>
+                <p>The Inspector's <em>Code</em> tab is editable, and it is often the faster way in. Type a term as
+                    text, press <strong>Sync</strong>, and B-Lambda parses it and rebuilds the workspace as blocks.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bl-code.png" loading="lazy" style="max-width: 80%;" width="400"
+                        alt="The Inspector's Code tab showing the factorial term as syntax-highlighted text, with Sync and Copy buttons in the panel header.">
+                    <figcaption><b>Fig. 1</b> The <em>Code</em> tab. <strong>Sync</strong> pushes edited text back into
+                        blocks; <strong>Copy</strong> lifts the term out as plain text.</figcaption>
+                </figure>
+
+                <p>Both spellings of the binder are accepted, so you do not have to hunt for a &lambda; on your
+                    keyboard:</p>
+
+                <pre><code>\x. x        -- backslash
+&lambda;x. x        -- the real thing
+lambda x. x  -- also fine</code></pre>
+
+                <p>The traffic goes both ways. Editing blocks regenerates the text (the panel footer confirms
+                    <em>Synchronized from workspace</em>); editing the text and syncing regenerates the blocks. If a
+                    term will not parse, the workspace is left alone rather than half-rebuilt.</p>
+
+                <h2 id="running">Running the program</h2>
+                <p><strong>Run</strong> in the workspace title bar evaluates the whole program and puts the result on
+                    the bottom panel's <em>Output</em> tab. For anything more detailed than a final answer &mdash;
+                    seeing the reduction happen, or stepping a machine &mdash; use the
+                    <a href="semantics.html">Semantics dock</a> instead.</p>
+
+                <p>Every term block also carries a Blockly comment icon. Open it for a small report: the block's kind,
+                    its inferred type, its reduced value, and any local type problems. <em>More &rarr; Add Type
+                        Comments</em> refreshes all of them at once.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bl-selected-block.png" loading="lazy" style="max-width: 80%;" width="400"
+                        alt="The Inspector's Selected block pane showing an Application block with term (factorial 5), inferred type int, and status Type inference succeeded.">
+                    <figcaption><b>Fig. 2</b> Selecting a block fills the Inspector's <em>Selected block</em> pane with
+                        that sub-term, its type, and its status.</figcaption>
+                </figure>
+
+                <h2 id="status">Reading the status bar</h2>
+                <p>Left to right along the bottom edge:</p>
+
+                <ul>
+                    <li><strong>File name</strong> &mdash; <code>Untitled workspace</code>, or the
+                        <code>.blc</code> you loaded.</li>
+                    <li><strong>Blocks</strong> &mdash; how many blocks the workspace holds. A useful sanity check: the
+                        <em>Factorial 5</em> example is 17.</li>
+                    <li><strong>Problems</strong> &mdash; the type-error count, mirroring the
+                        <a href="types.html#problems">Problems tab</a>.</li>
+                    <li><strong>Autosave</strong> &mdash; <em>Autosave pending</em> or <em>Saved locally</em> with a
+                        time.</li>
+                    <li><strong>Perspective</strong> &mdash; the current layout preset, or <em>Custom</em>.</li>
+                </ul>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="index.html">
+                        <span>Previous &mdash; 01</span>
+                        <b>&larr; Overview</b>
+                    </a>
+                    <a class="is-next" href="blocks.html">
+                        <span>Next &mdash; 03</span>
+                        <b>Blocks &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">Block Lambda is developed at <a href="../index.html">L-Workshop</a>. This help was
+                written against Block Lambda 1.0.0.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

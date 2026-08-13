@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="Types in ViSML: writing real SML type annotations with the chkTyp toggle and the Type category blocks, the grammar-nonterminal Type bubble, and why ViSML deliberately has no type checker or inference.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Types — ViSML Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-visml/types.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-visml">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>ViSML Help</b><span class="help-bar-sub">Visual Standard ML</span></span>
+        </a>
+        <span class="help-version">v5.0.0</span>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://visml.l-workshop.my.id" rel="noopener">Open ViSML</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li>
+                    <a href="types.html" aria-current="page"><em>04</em> Types</a>
+                    <ul class="help-subnav">
+                        <li><a href="#annotations">Writing real annotations</a></li>
+                        <li><a href="#grammar-type">The Type bubble</a></li>
+                        <li><a href="#no-checker">No checker, by design</a></li>
+                    </ul>
+                </li>
+                <li><a href="renderers.html"><em>05</em> Renderers</a></li>
+                <li><a href="codegen.html"><em>06</em> Code Generation</a></li>
+                <li><a href="reference.html"><em>07</em> Reference</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>ViSML 5.0.0</b>, running at
+                <a href="https://visml.l-workshop.my.id" rel="noopener">visml.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">04 / Types</span>
+                <h1>Type syntax, without a type checker</h1>
+                <p class="help-lede">ViSML lets you write everything SML's type syntax allows &mdash; annotations,
+                    type variables, function types, the lot. What it will not do is tell you whether any of it is
+                    correct. That is not an oversight; it is the boundary the project draws around itself.</p>
+
+                <h2 id="annotations">Writing real annotations</h2>
+                <p>A <code>dec_val</code> or <code>dec_fun</code> block carries a small toggle, <code>chkTyp</code>,
+                    that opens or closes an extra socket for a <strong>Type</strong>-category block. Switch it on and
+                    you can write exactly what SML lets you write:</p>
+
+                <pre><code>val x : int = 5
+fun succ (n : int) : int = n + 1</code></pre>
+
+                <p>The Type category itself is small and compositional: <code>typ_var</code> for a type variable like
+                    <code>'a</code>, <code>typ_constructor</code> for an applied type constructor such as
+                    <code>int list</code>, <code>typ_function</code> for the arrow <code>-&gt;</code>,
+                    <code>typ_primtv</code> for the built-in primitives, and dedicated list, tuple and record type
+                    blocks alongside them. Nest them the way you would nest the corresponding text, and the generator
+                    reproduces the annotation exactly &mdash; see <a href="blocks.html#toolbox">Blocks</a> for where
+                    each one sits in the toolbox.</p>
+
+                <p>Nothing about <code>chkTyp</code> is more than syntactic sugar. Toggling it on adds a socket to the
+                    block and, if filled, a printed annotation to the generated text; toggling it off removes both.
+                    No verification happens at any point in that process.</p>
+
+                <h2 id="grammar-type">The Type bubble</h2>
+                <p>Right-click a block and, where it appears, a <strong>Type</strong> context-menu item opens a small
+                    floating bubble &mdash; something like <code>Type: exp | pat | con</code>. Despite the name, this
+                    is not a semantic type in the sense of type theory. It lists which SML grammar
+                    <strong>nonterminals</strong> that block's output can satisfy, read directly off Blockly's
+                    connection <code>check</code> metadata. The research behind ViSML calls this
+                    <strong>Grammar Awareness</strong>: how much of the grammar's structure is explicitly observable
+                    in the notation, rather than left implicit.</p>
+
+                <div class="help-callout">
+                    <strong>This menu item is not on every block</strong>
+                    <p>The <em>Type</em> entry only appears on blocks whose output connection carries a non-empty
+                        <code>check</code> array &mdash; in practice that means it shows up reliably on some blocks
+                        and not at all on others. Treat it as a useful spot-check when it is there rather than a
+                        guaranteed feature of every block in the toolbox.</p>
+                </div>
+
+                <p>The more consistently present affordance is the hover tooltip covered in
+                    <a href="blocks.html#grammar">Blocks &rarr; Tooltips and terminal labels</a>, which shows a full
+                    grammar production rather than a bare nonterminal name and appears on essentially every block
+                    type.</p>
+
+                <h2 id="no-checker">No checker, by design</h2>
+                <div class="help-callout is-changed">
+                    <strong>There is no type checker</strong>
+                    <p>ViSML performs no type inference and no type checking. There are no type errors to report,
+                        because nothing checks whether a program is well-typed &mdash; the <code>chkTyp</code>
+                        annotation and the Type bubble above are both syntactic: one prints a declared type, the other
+                        reports a grammatical category. Neither infers, unifies, or verifies anything.</p>
+                </div>
+
+                <p>This is a deliberate scope boundary, not a missing feature. ViSML's subject is the
+                    <em>correspondence between blocks and grammar</em>, not program correctness &mdash; that is a
+                    different, harder project, and one <a href="../help-b-lambda/types.html">B-Lambda</a> takes on
+                    instead, with full Hindley-Milner inference and a typing derivation view. If you want to know
+                    whether a ViSML program actually type-checks, the honest answer is to paste the generated SML
+                    into a real implementation and ask it &mdash; see
+                    <a href="codegen.html#no-runtime">Code Generation</a> for exactly that workflow.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="blocks.html">
+                        <span>Previous &mdash; 03</span>
+                        <b>&larr; Blocks</b>
+                    </a>
+                    <a class="is-next" href="renderers.html">
+                        <span>Next &mdash; 05</span>
+                        <b>Renderers &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">ViSML is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against ViSML 5.0.0.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

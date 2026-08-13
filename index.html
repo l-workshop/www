@@ -1,553 +1,884 @@
-<!doctype html>
-<html lang="en" data-theme="light">
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="L-Workshop — Linguistic-Digital Workshop. Design and implementation of programming languages with a focus on visual and block-based languages." />
-  <meta name="theme-color" content="#111111" />
-  <title>L-Workshop | Linguistic-Digital Workshop</title>
+    <!-- Meta Tags -->
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="L-Workshop (Language Workshop) is a research workshop on visual and block-based programming languages and compiler construction, home to Macaca Nigra Language, Block Lambda, Block MiniJava, Visual SML and Block Featherweight Java.">
+    <meta name="keywords"
+        content="L-Workshop, Language Workshop, visual programming language, block-based programming language, compiler construction, MNL, Macaca Nigra Language, Block Lambda, Block MiniJava, Visual SML, Block Featherweight Java, program visualization, type inference">
+    <meta name="theme-color" content="#ffffff">
 
-  <script>
-    (function () {
-      const storedMode = localStorage.getItem('lworkshop-theme-mode') || 'system';
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const resolvedTheme = storedMode === 'system' ? (prefersDark ? 'dark' : 'light') : storedMode;
-      document.documentElement.setAttribute('data-theme', resolvedTheme);
-      document.documentElement.setAttribute('data-theme-mode', storedMode);
-    })();
-  </script>
+    <!-- Page Title -->
+    <title>L-Workshop | Language Workshop — Visual and Block-based Language Research</title>
 
-  <link rel="icon" href="favicon.ico" sizes="any">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
-  <link rel="apple-touch-icon" href="favicon-192.png">
+    <link rel="canonical" href="https://www.l-workshop.my.id/">
 
-  <style>
-    :root {
-      --bg: #f5f5f5;
-      --bg-soft: #ececec;
-      --surface: rgba(255,255,255,0.82);
-      --surface-strong: #ffffff;
-      --text: #111111;
-      --muted: #5c5c5c;
-      --line: rgba(17,17,17,0.10);
-      --line-strong: rgba(17,17,17,0.16);
-      --shadow: 0 16px 40px rgba(0,0,0,0.07);
-      --shadow-soft: 0 10px 24px rgba(0,0,0,0.05);
-      --radius: 24px;
-      --max: 1160px;
-    }
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="assets/img/lw-logo.png">
 
-    [data-theme="dark"] {
-      --bg: #0c0c0c;
-      --bg-soft: #151515;
-      --surface: rgba(255,255,255,0.05);
-      --surface-strong: #171717;
-      --text: #f5f5f5;
-      --muted: #c2c2c2;
-      --line: rgba(255,255,255,0.10);
-      --line-strong: rgba(255,255,255,0.16);
-      --shadow: 0 16px 40px rgba(0,0,0,0.35);
-      --shadow-soft: 0 10px 24px rgba(0,0,0,0.28);
-    }
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="L-Workshop">
+    <meta property="og:title" content="L-Workshop | Language Workshop">
+    <meta property="og:description"
+        content="A research workshop on visual and block-based programming languages and compiler construction. Five projects, five domains.">
+    <meta property="og:url" content="https://www.l-workshop.my.id/">
+    <meta property="og:image" content="https://www.l-workshop.my.id/assets/img/lw-logo-large.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="L-Workshop | Language Workshop">
+    <meta name="twitter:description"
+        content="A research workshop on visual and block-based programming languages and compiler construction.">
+    <meta name="twitter:image" content="https://www.l-workshop.my.id/assets/img/lw-logo-large.png">
 
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(128,128,128,0.12), transparent 26rem),
-        radial-gradient(circle at bottom right, rgba(128,128,128,0.10), transparent 24rem),
-        var(--bg);
-      line-height: 1.6;
-    }
+    <!-- Webfonts are pulled in by style.css; warm the connection early -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: -1;
-      opacity: 0.6;
-      background-image:
-        linear-gradient(var(--line) 1px, transparent 1px),
-        linear-gradient(90deg, var(--line) 1px, transparent 1px);
-      background-size: 30px 30px;
-      mask-image: linear-gradient(to bottom, black 35%, transparent 100%);
-    }
-
-    img { max-width: 100%; display: block; }
-    a { color: inherit; text-decoration: none; }
-    .container { width: min(calc(100% - 32px), var(--max)); margin: 0 auto; }
-
-    .skip-link {
-      position: absolute; left: -999px; top: 8px;
-      background: var(--text); color: var(--bg);
-      padding: 10px 14px; border-radius: 999px; z-index: 100;
-    }
-    .skip-link:focus { left: 12px; }
-
-    header {
-      position: sticky; top: 0; z-index: 30;
-      backdrop-filter: blur(14px);
-      background: color-mix(in srgb, var(--bg) 80%, transparent);
-      border-bottom: 1px solid var(--line);
-    }
-
-    .nav {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 16px; min-height: 74px;
-    }
-
-    .brand {
-      display: inline-flex; align-items: center; gap: 12px; font-weight: 800;
-      letter-spacing: -0.04em;
-    }
-
-    .brand img {
-      width: 38px; height: 38px; border-radius: 12px;
-      border: 1px solid var(--line); background: white;
-      box-shadow: var(--shadow-soft);
-    }
-
-    nav ul {
-      display: flex; align-items: center; gap: 6px;
-      list-style: none; margin: 0; padding: 0;
-    }
-
-    nav a {
-      padding: 10px 12px; border-radius: 999px;
-      color: var(--muted); font-weight: 650; font-size: 0.95rem;
-    }
-    nav a:hover { background: var(--surface); color: var(--text); }
-
-    .nav-actions { display: flex; align-items: center; gap: 10px; }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    .theme-select, .menu-toggle {
-      border: 1px solid var(--line-strong);
-      background: var(--surface);
-      color: var(--text);
-      border-radius: 999px;
-      padding: 10px 14px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .theme-select {
-      appearance: none;
-      min-width: 112px;
-      padding-right: 34px;
-      background-image:
-        linear-gradient(45deg, transparent 50%, var(--muted) 50%),
-        linear-gradient(135deg, var(--muted) 50%, transparent 50%);
-      background-position:
-        calc(100% - 18px) 52%,
-        calc(100% - 12px) 52%;
-      background-size: 6px 6px, 6px 6px;
-      background-repeat: no-repeat;
-    }
-
-    .theme-select:focus, .menu-toggle:focus-visible {
-      outline: 2px solid var(--text);
-      outline-offset: 3px;
-    }
-
-    .menu-toggle { display: none; }
-
-    .hero {
-      min-height: calc(100vh - 74px);
-      display: grid; grid-template-columns: 1.05fr 0.95fr;
-      gap: 42px; align-items: center;
-      padding: 58px 0 40px;
-    }
-
-    .eyebrow {
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 8px 14px; border-radius: 999px;
-      border: 1px solid var(--line-strong); background: var(--surface);
-      color: var(--muted); font-weight: 700; font-size: 0.93rem;
-    }
-
-    .dot {
-      width: 9px; height: 9px; border-radius: 50%; background: var(--text);
-      opacity: 0.75;
-    }
-
-    h1 {
-      margin: 18px 0 18px;
-      font-size: clamp(3rem, 8vw, 6rem);
-      line-height: 0.92; letter-spacing: -0.08em;
-    }
-
-    .lead {
-      margin: 0 0 26px; max-width: 650px;
-      font-size: clamp(1.05rem, 1.8vw, 1.28rem);
-      color: var(--muted);
-    }
-
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
-
-    .button {
-      display: inline-flex; align-items: center; justify-content: center;
-      min-height: 48px; padding: 0 18px; border-radius: 999px;
-      font-weight: 800; transition: transform .18s ease, opacity .18s ease;
-      border: 1px solid var(--line-strong);
-    }
-    .button:hover { transform: translateY(-2px); }
-    .button.primary { background: var(--text); color: var(--bg); }
-    .button.secondary { background: var(--surface); color: var(--text); }
-
-    .hero-meta {
-      display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px;
-    }
-
-    .meta-card, .card {
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--surface);
-      box-shadow: var(--shadow-soft);
-      backdrop-filter: blur(16px);
-    }
-
-    .meta-card {
-      padding: 16px 18px;
-    }
-    .meta-card strong { display: block; font-size: 1.12rem; margin-bottom: 4px; }
-    .meta-card span { color: var(--muted); font-size: 0.95rem; }
-
-    .hero-visual {
-      position: relative; padding: 26px;
-      border: 1px solid var(--line);
-      border-radius: 32px;
-      background: linear-gradient(180deg, var(--surface), color-mix(in srgb, var(--bg-soft) 64%, transparent));
-      box-shadow: var(--shadow);
-    }
-
-    .hero-visual::before,
-    .hero-visual::after {
-      content: ""; position: absolute; border-radius: 50%; z-index: 0;
-      background: rgba(128,128,128,0.12);
-      filter: blur(2px);
-    }
-
-    .hero-visual::before { width: 180px; height: 180px; top: 18px; right: 18px; }
-    .hero-visual::after { width: 120px; height: 120px; bottom: 22px; left: 20px; }
-
-    .hero-visual .logo-frame {
-      position: relative; z-index: 1;
-      border-radius: 24px; padding: 18px; background: #fff;
-      border: 1px solid rgba(0,0,0,0.08);
-      box-shadow: 0 18px 40px rgba(0,0,0,0.08);
-      margin-bottom: 18px;
-    }
-
-    .hero-visual .caption {
-      position: relative; z-index: 1; color: var(--muted); font-size: 0.98rem;
-    }
-
-    section { padding: 40px 0; }
-
-    .section-head {
-      display: flex; align-items: end; justify-content: space-between; gap: 18px;
-      margin-bottom: 20px;
-    }
-
-    .section-tag {
-      margin: 0 0 8px; color: var(--muted); font-size: 0.92rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.12em;
-    }
-
-    h2 {
-      margin: 0; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.04; letter-spacing: -0.06em;
-    }
-
-    .muted { color: var(--muted); }
-
-    .description-grid {
-      display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 18px;
-    }
-
-    .card { padding: 24px; }
-
-    .bullet-list {
-      display: grid; gap: 12px; margin: 0; padding: 0; list-style: none;
-    }
-
-    .bullet-list li {
-      display: flex; gap: 12px; align-items: flex-start; color: var(--muted);
-      padding-bottom: 12px; border-bottom: 1px solid var(--line);
-    }
-
-    .bullet-list li:last-child { border-bottom: 0; padding-bottom: 0; }
-
-    .bullet-list .bullet {
-      flex: 0 0 auto; width: 12px; height: 12px; border-radius: 50%;
-      background: var(--text); margin-top: 7px; opacity: 0.72;
-    }
-
-    .pill-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
-
-    .pill {
-      padding: 10px 14px; border-radius: 999px;
-      border: 1px solid var(--line-strong); background: var(--bg-soft);
-      color: var(--muted); font-weight: 700; font-size: 0.92rem;
-    }
-
-    .projects-grid {
-      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px;
-    }
-
-    .project-card { padding: 24px; }
-
-    .project-no {
-      display: inline-flex; min-width: 42px; min-height: 42px; align-items: center; justify-content: center;
-      border-radius: 14px; border: 1px solid var(--line-strong);
-      background: var(--bg-soft); font-weight: 800; margin-bottom: 16px;
-    }
-
-    .project-card h3 {
-      margin: 0 0 10px; font-size: 1.34rem; letter-spacing: -0.04em;
-    }
-
-    footer {
-      padding: 38px 0 56px;
-      color: var(--muted);
-    }
-
-    .footer-box {
-      display: flex; align-items: center; justify-content: space-between; gap: 18px;
-      padding: 18px 20px; border-radius: 20px;
-      border: 1px solid var(--line); background: var(--surface);
-      box-shadow: var(--shadow-soft);
-    }
-
-    @media (max-width: 960px) {
-      .hero, .description-grid, .projects-grid { grid-template-columns: 1fr; }
-      .hero { min-height: auto; padding-top: 42px; }
-      .hero-meta { grid-template-columns: 1fr; }
-    }
-
-    @media (max-width: 760px) {
-      .menu-toggle { display: inline-flex; }
-      nav {
-        position: absolute; top: calc(100% + 10px); left: 16px; right: 16px;
-        display: none; padding: 12px;
-        border: 1px solid var(--line); border-radius: 20px;
-        background: color-mix(in srgb, var(--bg) 92%, transparent);
-        box-shadow: var(--shadow);
-      }
-      nav.open { display: block; }
-      nav ul { flex-direction: column; align-items: stretch; }
-      nav a { width: 100%; }
-      .nav-actions .theme-select { padding: 10px 32px 10px 12px; min-width: 106px; }
-      .section-head, .footer-box { flex-direction: column; align-items: flex-start; }
-    }
-  </style>
+    <!-- Bundle: Bootstrap 4 + Font Awesome + Animate.css -->
+    <link rel="stylesheet" href="vendor/css/bundle.min.css">
+    <!-- Plugin Css -->
+    <link rel="stylesheet" href="vendor/css/jquery.fancybox.min.css">
+    <!-- Style Sheet -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Custom Style CSS File -->
+    <link rel="stylesheet" href="assets/css/custom.css">
 </head>
-<body>
-  <a class="skip-link" href="#main">Skip to content</a>
 
-  <header>
-    <div class="container nav">
-      <a class="brand" href="#welcome" aria-label="L-Workshop Home">
-        <img src="favicon-32.png" alt="L-Workshop icon" />
-        <span>L-Workshop</span>
-      </a>
+<body data-spy="scroll" data-target="#lw-nav" data-offset="120">
 
-      <nav id="site-nav" aria-label="Primary navigation">
-        <ul>
-          <li><a href="#welcome">Welcome</a></li>
-          <li><a href="#description">Description</a></li>
-          <li><a href="#projects">Projects</a></li>
-        </ul>
-      </nav>
+    <a class="lw-skip" href="#main">Skip to content</a>
 
-      <div class="nav-actions">
-        <label class="sr-only" for="themeSelect">Color mode</label>
-        <select class="theme-select" id="themeSelect" aria-label="Color mode">
-          <option value="system">System</option>
-          <option value="light">Day</option>
-          <option value="dark">Dark</option>
-        </select>
-        <button class="menu-toggle" id="menuToggle" type="button" aria-controls="site-nav" aria-expanded="false">Menu</button>
-      </div>
-    </div>
-  </header>
+    <!-- Header start -->
+    <header>
+        <nav class="navbar navbar-top-default navbar-expand-lg nav-three-circles black nav-box-shadow no-animation">
+            <div class="container-fluid">
+                <a class="logo lw-brand ml-lg-1" href="#home" aria-label="L-Workshop, home">
+                    <img src="assets/img/lw-logo.png" alt="L-Workshop" width="336" height="336">
+                    <span class="lw-brand-text">
+                        <span class="lw-brand-name">L-Workshop</span>
+                        <span class="lw-brand-sub">Language Workshop</span>
+                    </span>
+                </a>
+                <div class="collapse navbar-collapse d-none d-lg-block">
+                    <ul class="nav navbar-nav mx-auto" id="lw-nav">
+                        <li class="nav-item"><a href="#home" class="scroll nav-link">home</a></li>
+                        <li class="nav-item"><a href="#about" class="scroll nav-link">about</a></li>
+                        <li class="nav-item"><a href="#projects" class="scroll nav-link">projects</a></li>
+                        <li class="nav-item"><a href="#research" class="scroll nav-link">research</a></li>
+                        <li class="nav-item"><a href="#in-action" class="scroll nav-link">in action</a></li>
+                        <li class="nav-item"><a href="#publications" class="scroll nav-link">publications</a></li>
+                    </ul>
+                </div>
+                <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+                    <i class="fa fa-moon" aria-hidden="true"></i>
+                </button>
+                <a class="lw-nav-contact d-none d-lg-inline-block mr-lg-6"
+                    href="mailto:linguistic.digital.workshop@gmail.com">Contact</a>
+                <!-- side menu open button (small screens) -->
+                <a class="menu_bars d-inline-block menu-bars-setting sidemenu_toggle d-block d-lg-none" href="#side-menu"
+                    role="button" aria-label="Open menu" aria-expanded="false" aria-controls="side-menu">
+                    <div class="menu-lines">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </a>
+            </div>
+        </nav>
 
-  <main id="main">
-    <section class="container hero" id="welcome">
-      <div>
-        <div class="eyebrow"><span class="dot"></span> Linguistic-Digital Workshop</div>
-        <h1>Welcome to <br>L-Workshop.</h1>
-        <p class="lead">
-          L-Workshop explores the design and implementation of programming languages, with a strong focus on visual programming languages and block-based language systems.
-        </p>
-        <div class="hero-actions">
-          <a class="button primary" href="#projects">View Projects</a>
-          <a class="button secondary" href="#description">Learn More</a>
+        <!-- Side Menu -->
+        <div class="side-menu center" id="side-menu" aria-label="Site menu">
+            <div class="quarter-circle">
+                <button class="menu_bars2 active" id="btn_sideNavClose" type="button" aria-label="Close menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <div class="inner-wrapper justify-content-center">
+                <div class="col-md-12 text-center">
+                    <img class="lw-side-logo" src="assets/img/lw-logo.png" alt="" width="336" height="336">
+                    <div class="lw-side-name">L-Workshop</div>
+                    <div class="lw-side-sub">Language Workshop</div>
+                </div>
+                <nav class="side-nav m-0" aria-label="Menu">
+                    <ul class="navbar-nav flex-lg-row">
+                        <li class="nav-item"><a href="#home" class="scroll nav-link">home</a></li>
+                        <li class="nav-item"><a href="#about" class="scroll nav-link">about</a></li>
+                        <li class="nav-item"><a href="#projects" class="scroll nav-link">projects</a></li>
+                        <li class="nav-item"><a href="#research" class="scroll nav-link">research</a></li>
+                        <li class="nav-item"><a href="#in-action" class="scroll nav-link">in action</a></li>
+                        <li class="nav-item"><a href="#publications" class="scroll nav-link">publications</a></li>
+                        <li class="nav-item"><a href="mailto:linguistic.digital.workshop@gmail.com" class="nav-link">contact</a></li>
+                    </ul>
+                </nav>
+
+                <div class="side-footer text-white w-100">
+                    <div class="lw-side-domains">
+                        <a href="https://mnl.l-workshop.my.id" rel="noopener">mnl</a>
+                        <a href="https://b-lambda.l-workshop.my.id" rel="noopener">b-lambda</a>
+                        <a href="https://b-mj.l-workshop.my.id" rel="noopener">b-mj</a>
+                        <a href="https://visml.l-workshop.my.id" rel="noopener">visml</a>
+                        <a href="https://bfj.l-workshop.my.id" rel="noopener">bfj</a>
+                        <a href="https://mnl-legacy.l-workshop.my.id" rel="noopener">mnl-legacy</a>
+                    </div>
+                    <button class="lw-theme-toggle lw-theme-toggle-side" type="button" aria-pressed="false"
+                        aria-label="Switch to dark theme">
+                        <i class="fa fa-moon" aria-hidden="true"></i> <span>Theme</span>
+                    </button>
+                    <p class="text-white mt-4">&copy; 2020&ndash;2026 L-Workshop</p>
+                </div>
+            </div>
         </div>
-        <div class="hero-meta" aria-label="Workshop highlights">
-          <div class="meta-card"><strong>Programming Languages</strong><span>Design, semantics, and implementation.</span></div>
-          <div class="meta-card"><strong>Visual Languages</strong><span>Research on visual syntax and interaction.</span></div>
-          <div class="meta-card"><strong>Block-Based Systems</strong><span>Tools and ideas for structured programming.</span></div>
-        </div>
-      </div>
+        <a id="close_side_menu" href="#side-menu" tabindex="-1" aria-hidden="true"></a>
+    </header>
+    <!-- Header end -->
 
-      <div class="hero-visual">
-        <div class="logo-frame">
-          <img src="logo.png" alt="L-Workshop logo proposal" />
-        </div>
-        <p class="caption">
-          A picture is worth a thousand words. ~Unknown~
-        </p>
-      </div>
-    </section>
+    <main id="main">
 
-    <section class="container" id="description">
-      <div class="section-head">
-        <div>
-          <p class="section-tag">Description</p>
-          <h2>What L-Workshop does.</h2>
-        </div>
-      </div>
+        <!-- Hero start -->
+        <section class="lw-hero" id="home" aria-labelledby="hero-title">
+            <div class="lw-hero-decor" aria-hidden="true">
+                <img class="lw-piece lw-piece-1" src="assets/img/circle-top-left.png" alt="" width="393" height="394">
+                <img class="lw-piece lw-piece-2" src="assets/img/circle-top-right.png" alt="" width="381" height="380">
+                <img class="lw-hero-block lw-block-1" src="assets/img/mnl-ex1.png" alt="" width="131" height="162">
+                <img class="lw-hero-block lw-block-2" src="assets/img/visml-ex1.png" alt="" width="177" height="104">
+                <img class="lw-hero-block lw-block-3" src="assets/img/b-lambda-ex1.png" alt="" width="464" height="224">
+                <img class="lw-hero-block lw-block-4" src="assets/img/b-mj-ex1.png" alt="" width="456" height="167">
+            </div>
 
-      <div class="description-grid">
-        <article class="card">
-          <p class="muted">
-            L-Workshop works at the intersection of programming language research, software tooling, and visual computing. The organization studies how programming languages can be designed, implemented, and presented through interfaces that are more structured, more visual, and more approachable.
-          </p>
-          <div class="pill-row" aria-label="Focus areas">
-            <span class="pill">Language Design</span>
-            <span class="pill">Compiler & Tooling</span>
-            <span class="pill">Visual Programming</span>
-            <span class="pill">Block-Based Languages</span>
-            <span class="pill">Human-Centered Systems</span>
-          </div>
-        </article>
+            <div class="container lw-hero-inner">
+                <div class="lw-hero-meta">
+                    <span>L-Workshop / research index</span>
+                    <span>www.l-workshop.my.id</span>
+                </div>
 
-        <aside class="card">
-          <ul class="bullet-list">
-            <li><span class="bullet"></span><span>Designing programming language concepts that support visual and structured interaction.</span></li>
-            <li><span class="bullet"></span><span>Building prototypes, editors, and language tools for block-based and visual programming environments.</span></li>
-            <li><span class="bullet"></span><span>Exploring how visual representations can improve understanding, learning, and language usability.</span></li>
-          </ul>
+                <img class="lw-hero-mark" src="assets/img/lw-logo.png" alt="" width="336" height="336">
+
+                <h1 id="hero-title">L-Workshop</h1>
+                <p class="lw-hero-long">Language Workshop</p>
+
+                <!-- The visible line rotates one phrase at a time; the full sentence is
+                     exposed to assistive tech below, and the rotation is skipped entirely
+                     when the visitor prefers reduced motion. -->
+                <p class="lw-rotator-line" aria-hidden="true">
+                    <span class="lw-rotator-pre">We work on</span>
+                    <span id="js-rotating">visual notation, structured interaction, compiler pipelines, executable semantics</span>
+                </p>
+                <p class="sr-only">We work on visual notation, structured interaction, compiler pipelines and
+                    executable semantics.</p>
+
+                <p class="lw-hero-lead">A research workshop on visual and block-based programming languages and
+                    compiler construction &mdash; building languages and tools that make program structure directly
+                    inspectable.</p>
+
+                <div class="lw-hero-actions">
+                    <a class="btn-setting btn-hvr-up lw-btn-primary lw-btn-hvr-ink scroll" href="#projects">View projects</a>
+                    <a class="btn-setting btn-hvr-up lw-btn-ghost lw-btn-hvr-ink"
+                        href="mailto:linguistic.digital.workshop@gmail.com">Discuss research</a>
+                </div>
+
+                <div class="lw-chips">
+                    <a class="lw-chip" style="--accent: var(--lw-red)" href="https://mnl.l-workshop.my.id" rel="noopener">MNL</a>
+                    <a class="lw-chip" style="--accent: var(--lw-green)" href="https://b-lambda.l-workshop.my.id" rel="noopener">B-Lambda</a>
+                    <a class="lw-chip" style="--accent: var(--lw-blue)" href="https://b-mj.l-workshop.my.id" rel="noopener">B-MJ</a>
+                    <a class="lw-chip" style="--accent: var(--lw-yellow)" href="https://visml.l-workshop.my.id" rel="noopener">ViSML</a>
+                    <a class="lw-chip" style="--accent: var(--lw-slate)" href="https://bfj.l-workshop.my.id" rel="noopener">BFJ</a>
+                </div>
+            </div>
+
+            <div class="lw-spec-wrap">
+                <div class="container">
+                    <div class="lw-spec" aria-label="What the workshop builds">
+                        <div class="lw-spec-cell" style="--accent-ink: var(--lw-red-ink); --accent-text: var(--lw-red-text)">
+                            <strong>VPL</strong><span>visual language design</span>
+                        </div>
+                        <div class="lw-spec-cell" style="--accent-ink: var(--lw-green-ink); --accent-text: var(--lw-green-text)">
+                            <strong>AST</strong><span>structured representation</span>
+                        </div>
+                        <div class="lw-spec-cell" style="--accent-ink: var(--lw-blue-ink); --accent-text: var(--lw-blue-text)">
+                            <strong>IR</strong><span>intermediate models</span>
+                        </div>
+                        <div class="lw-spec-cell" style="--accent-ink: var(--lw-ink); --accent-text: var(--lw-ink)">
+                            <strong>CODE</strong><span>compiler output</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Hero end -->
+
+        <!-- About start -->
+        <section id="about" aria-labelledby="about-title">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 pr-lg-5 lw-about-figure lw-reveal lw-reveal-left">
+                        <div class="lw-about-plate"></div>
+                        <img class="lw-about-shot" src="assets/img/mnl-block-info.png" width="693" height="569" loading="lazy"
+                            alt="The MNL environment, with declaration and expression blocks annotated by callouts showing each block's type and value.">
+                        <p class="lw-about-caption">MNL &mdash; blocks annotated with their type and value</p>
+                    </div>
+                    <div class="col-lg-6 pl-lg-5 lw-reveal" data-lw-delay="200">
+                        <span class="lw-eyebrow">01 / About the workshop</span>
+                        <h2 class="lw-manifesto" id="about-title">A visual editor is not decoration around a language.
+                            <b>It is part of the language architecture.</b></h2>
+                        <div class="lw-about-body">
+                            <p>L-Workshop &mdash; Language Workshop &mdash; is a research workshop on visual and
+                                block-based programming languages and compiler construction. It designs languages where
+                                the notation itself carries grammar and type information, and builds the compiler paths
+                                that take those notations to running code.</p>
+                            <p>Five projects are developed here, from a block-based functional language used in
+                                programming education to block front ends for Standard ML, MiniJava and Featherweight
+                                Java. Each one is published on its own domain.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- About end -->
+
+        <!-- Projects start -->
+        <section id="projects" class="bg-light-gray" aria-labelledby="projects-title">
+            <div class="container">
+                <div class="lw-section-title text-center lw-reveal">
+                    <span class="lw-eyebrow">02 / Project index</span>
+                    <h2 id="projects-title">Five languages, <strong>five domains</strong>.</h2>
+                    <p>Every project runs on its own subdomain of l-workshop.my.id.</p>
+                </div>
+
+                <div class="lw-project-grid">
+
+                    <article class="lw-project lw-project-feature lw-reveal"
+                        style="--accent: var(--lw-red); --accent-ink: var(--lw-red-ink); --accent-text: var(--lw-red-text)">
+                        <div class="lw-project-head">
+                            <h3><a href="https://mnl.l-workshop.my.id" rel="noopener">Macaca Nigra Language</a></h3>
+                            <span class="lw-badge">MNL</span>
+                        </div>
+                        <p>A block-based functional programming language built for programming education. It visualizes
+                            computational processes &mdash; beta reduction, function evaluation &mdash; and uses visual
+                            means to carry semantic information: shape represents grammar, color indicates value type.</p>
+                        <div class="lw-tags">
+                            <span class="lw-tag">block-based</span>
+                            <span class="lw-tag">functional</span>
+                            <span class="lw-tag">type inference</span>
+                            <span class="lw-tag">program visualization</span>
+                            <span class="lw-tag">YAKI compiler</span>
+                        </div>
+                        <p class="lw-project-help">
+                            <a href="help-mnl/index.html"><i class="fa fa-book" aria-hidden="true"></i> Read the MnL
+                                help</a>
+                            <span>8 chapters &middot; v5.0</span>
+                        </p>
+                        <!-- A quiet pointer, not a sixth card — mnl-legacy is kept reachable for
+                             anyone still on the old version, without competing with the "Read the
+                             MnL help" CTA above or breaking the "five languages, five domains" count. -->
+                        <p class="lw-project-legacy">
+                            <i class="fa fa-archive" aria-hidden="true"></i> Looking for the older MnL?
+                            <a href="https://mnl-legacy.l-workshop.my.id" rel="noopener">mnl-legacy.l-workshop.my.id</a>
+                            &middot;
+                            <a href="help-mnl-legacy/index.html">legacy docs</a>
+                        </p>
+                        <p class="lw-project-link"><span>mnl.l-workshop.my.id</span><i class="fa fa-arrow-right" aria-hidden="true"></i></p>
+                    </article>
+
+                    <article class="lw-project lw-reveal" data-lw-delay="100"
+                        style="--accent: var(--lw-green); --accent-ink: var(--lw-green-ink); --accent-text: var(--lw-green-text)">
+                        <div class="lw-project-head">
+                            <h3><a href="https://b-lambda.l-workshop.my.id" rel="noopener">Block Lambda</a></h3>
+                            <span class="lw-badge">B-Lambda</span>
+                        </div>
+                        <p>A compact visual environment for composing lambda expressions and inspecting reduction and
+                            evaluation as explicit steps.</p>
+                        <div class="lw-tags">
+                            <span class="lw-tag">lambda calculus</span>
+                            <span class="lw-tag">reduction</span>
+                            <span class="lw-tag">evaluation</span>
+                        </div>
+                        <!-- Non-breaking hyphen (&#8209;) in the product name: this card is one of the
+                             narrow ones, and a normal hyphen lets the label break as "Read the B-" /
+                             "Lambda help". A wrapper <span> is not an option here — `.lw-project-help span`
+                             styles the chapter count, and would capture it. -->
+                        <p class="lw-project-help">
+                            <a href="help-b-lambda/index.html"><i class="fa fa-book" aria-hidden="true"></i> Read the
+                                B&#8209;Lambda help</a>
+                            <span>7 chapters &middot; v1.0.0</span>
+                        </p>
+                        <p class="lw-project-link"><span>b-lambda.l-workshop.my.id</span><i class="fa fa-arrow-right" aria-hidden="true"></i></p>
+                    </article>
+
+                    <article class="lw-project lw-reveal"
+                        style="--accent: var(--lw-blue); --accent-ink: var(--lw-blue-ink); --accent-text: var(--lw-blue-text)">
+                        <div class="lw-project-head">
+                            <h3><a href="https://b-mj.l-workshop.my.id" rel="noopener">Block MiniJava</a></h3>
+                            <span class="lw-badge">B-MJ</span>
+                        </div>
+                        <p>A visual programming environment and compiler path that preserves structural intent while
+                            translating Blockly programs into readable MiniJava source.</p>
+                        <div class="lw-tags">
+                            <span class="lw-tag">Blockly</span>
+                            <span class="lw-tag">MiniJava</span>
+                            <span class="lw-tag">AST</span>
+                            <span class="lw-tag">code generation</span>
+                        </div>
+                        <p class="lw-project-help">
+                            <a href="help-b-mj/index.html"><i class="fa fa-book" aria-hidden="true"></i> Read the
+                                B&#8209;MJ help</a>
+                            <span>7 chapters</span>
+                        </p>
+                        <p class="lw-project-link"><span>b-mj.l-workshop.my.id</span><i class="fa fa-arrow-right" aria-hidden="true"></i></p>
+                    </article>
+
+                    <article class="lw-project lw-reveal" data-lw-delay="100"
+                        style="--accent: var(--lw-yellow); --accent-ink: var(--lw-yellow-ink); --accent-text: var(--lw-yellow-text)">
+                        <div class="lw-project-head">
+                            <h3><a href="https://visml.l-workshop.my.id" rel="noopener">Visual SML</a></h3>
+                            <span class="lw-badge lw-badge-yellow">ViSML</span>
+                        </div>
+                        <p>A block-based front end for Standard ML, and the setting for the workshop&rsquo;s work on how
+                            much of a textual grammar&rsquo;s structure survives its transformation into blocks.</p>
+                        <div class="lw-tags">
+                            <span class="lw-tag">Standard ML</span>
+                            <span class="lw-tag">grammar transformation</span>
+                            <span class="lw-tag">block syntax</span>
+                        </div>
+                        <p class="lw-project-help">
+                            <a href="help-visml/index.html"><i class="fa fa-book" aria-hidden="true"></i> Read the
+                                ViSML help</a>
+                            <span>7 chapters &middot; v5.0.0</span>
+                        </p>
+                        <p class="lw-project-link"><span>visml.l-workshop.my.id</span><i class="fa fa-arrow-right" aria-hidden="true"></i></p>
+                    </article>
+
+                    <article class="lw-project lw-reveal" data-lw-delay="200"
+                        style="--accent: var(--lw-slate); --accent-ink: var(--lw-slate); --accent-text: var(--lw-slate-text)">
+                        <div class="lw-project-head">
+                            <h3><a href="https://bfj.l-workshop.my.id" rel="noopener">Block Featherweight Java</a></h3>
+                            <span class="lw-badge">BFJ</span>
+                        </div>
+                        <p>A block-based treatment of Featherweight Java, the core calculus for class-based
+                            object-oriented languages, developed alongside Block MiniJava.</p>
+                        <div class="lw-tags">
+                            <span class="lw-tag">Featherweight Java</span>
+                            <span class="lw-tag">object calculus</span>
+                            <span class="lw-tag">block syntax</span>
+                        </div>
+                        <p class="lw-project-help">
+                            <a href="help-bfj/index.html"><i class="fa fa-book" aria-hidden="true"></i> Read the BFJ
+                                help</a>
+                            <span>7 chapters</span>
+                        </p>
+                        <p class="lw-project-link"><span>bfj.l-workshop.my.id</span><i class="fa fa-arrow-right" aria-hidden="true"></i></p>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+        <!-- Projects end -->
+
+        <!-- Research start -->
+        <section id="research" aria-labelledby="research-title">
+            <div class="container">
+                <div class="lw-section-title text-center lw-reveal">
+                    <span class="lw-eyebrow">03 / Research threads</span>
+                    <h2 id="research-title">What the workshop is <strong>actually studying</strong>.</h2>
+                    <p>Seven threads run across the projects. Each one is grounded in a working environment rather than
+                        a specification alone.</p>
+                </div>
+
+                <div class="lw-thread-grid">
+
+                    <article class="lw-thread lw-reveal"
+                        style="--accent: var(--lw-red); --accent-ink: var(--lw-red-ink); --accent-text: var(--lw-red-text)">
+                        <div class="lw-thread-top">
+                            <span class="lw-thread-no">01</span>
+                            <span class="lw-thread-project">MNL</span>
+                        </div>
+                        <h3>Reactive environments</h3>
+                        <p>Every edit is answered immediately: the environment returns the result of evaluation, or the
+                            error, while the program is still being built.</p>
+                        <a class="lw-thread-more" href="https://mnl.l-workshop.my.id" rel="noopener">Reactive blocks <i
+                                class="fa fa-arrow-right" aria-hidden="true"></i></a>
+                    </article>
+
+                    <article class="lw-thread lw-reveal" data-lw-delay="100"
+                        style="--accent: var(--lw-green); --accent-ink: var(--lw-green-ink); --accent-text: var(--lw-green-text)">
+                        <div class="lw-thread-top">
+                            <span class="lw-thread-no">02</span>
+                            <span class="lw-thread-project">MNL &middot; B-Lambda &middot; B-MJ &middot; ViSML &middot;
+                                BFJ</span>
+                        </div>
+                        <h3>Shape and color as semantics</h3>
+                        <p>Every project pairs a grammar-aware Blockly renderer with its own connector shapes and
+                            category colors, so shape signals grammar and color signals type before a term is read.</p>
+                        <a class="lw-thread-more" href="https://mnl.l-workshop.my.id" rel="noopener">Shape and color <i
+                                class="fa fa-arrow-right" aria-hidden="true"></i></a>
+                    </article>
+
+                    <article class="lw-thread lw-reveal" data-lw-delay="200"
+                        style="--accent: var(--lw-blue); --accent-ink: var(--lw-blue-ink); --accent-text: var(--lw-blue-text)">
+                        <div class="lw-thread-top">
+                            <span class="lw-thread-no">03</span>
+                            <span class="lw-thread-project">MNL</span>
+                        </div>
+                        <h3>Type inference and typing suggestions</h3>
+                        <p>Types are inferred rather than declared, and candidate types are offered in place, aligned
+                            with the constraints of the surrounding term.</p>
+                        <a class="lw-thread-more" href="https://mnl.l-workshop.my.id" rel="noopener">Type system <i
+                                class="fa fa-arrow-right" aria-hidden="true"></i></a>
+                    </article>
+
+                    <article class="lw-thread lw-reveal"
+                        style="--accent: var(--lw-yellow); --accent-ink: var(--lw-yellow-ink); --accent-text: var(--lw-yellow-text)">
+                        <div class="lw-thread-top">
+                            <span class="lw-thread-no">04</span>
+                            <span class="lw-thread-project">MNL &middot; B-Lambda &middot; B-MJ &middot; BFJ</span>
+                        </div>
+                        <h3>Evaluation strategies, cross-checked</h3>
+                        <p>Call-by-value and call-by-structure reduction shown step by step in MNL; independently
+                            implemented evaluators &mdash; substitution, abstract machines, even a register VM &mdash;
+                            run in lockstep elsewhere to test that they agree.</p>
+                        <a class="lw-thread-more" href="https://mnl.l-workshop.my.id" rel="noopener">Program
+                            visualization <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+                    </article>
+
+                    <article class="lw-thread lw-reveal" data-lw-delay="100"
+                        style="--accent: var(--lw-slate); --accent-ink: var(--lw-slate); --accent-text: var(--lw-slate-text)">
+                        <div class="lw-thread-top">
+                            <span class="lw-thread-no">05</span>
+                            <span class="lw-thread-project">MNL &middot; B-Lambda &middot; B-MJ &middot; ViSML &middot;
+                                BFJ</span>
+                        </div>
+                        <h3>Text &#8646; blocks, structure preserved</h3>
+                        <p>Every project keeps a written and a block form of the same program in sync, from live
+                            text-to-block parsing to a block&ndash;AST correspondence BFJ has proved as a theorem.</p>
+                        <a class="lw-thread-more" href="https://visml.l-workshop.my.id" rel="noopener">Visual SML <i
+                                class="fa fa-arrow-right" aria-hidden="true"></i></a>
+                    </article>
+
+                    <article class="lw-thread lw-reveal" data-lw-delay="200"
+                        style="--accent: var(--lw-red); --accent-ink: var(--lw-red-ink); --accent-text: var(--lw-red-text)">
+                        <div class="lw-thread-top">
+                            <span class="lw-thread-no">06</span>
+                            <span class="lw-thread-project">B-MJ</span>
+                        </div>
+                        <h3>Aliasing, made visible</h3>
+                        <p>The same B-MJ program runs under two value models side by side &mdash; one heap-referenced,
+                            one copy-on-write &mdash; so where object assignment aliases, and where it doesn&rsquo;t,
+                            becomes something you can watch.</p>
+                        <a class="lw-thread-more" href="https://b-mj.l-workshop.my.id" rel="noopener">Value models <i
+                                class="fa fa-arrow-right" aria-hidden="true"></i></a>
+                    </article>
+
+                    <article class="lw-thread lw-reveal"
+                        style="--accent: var(--lw-green); --accent-ink: var(--lw-green-ink); --accent-text: var(--lw-green-text)">
+                        <div class="lw-thread-top">
+                            <span class="lw-thread-no">07</span>
+                            <span class="lw-thread-project">MNL / YAKI</span>
+                        </div>
+                        <h3>Compiler interfaces</h3>
+                        <p>YAKI, the Yet Another Compiler Interface, converts block-based MNL into text-based languages
+                            including SML and Scala, and writes MNL&rsquo;s typing derivations.</p>
+                        <a class="lw-thread-more" href="https://mnl.l-workshop.my.id" rel="noopener">Compiler <i
+                                class="fa fa-arrow-right" aria-hidden="true"></i></a>
+                    </article>
+
+                </div>
+
+                <div class="lw-section-title mt-66px mb-0 lw-reveal">
+                    <span class="lw-eyebrow" style="--accent: var(--lw-blue)">Compiler route</span>
+                    <h2 class="h4 mb-3" style="font-size: 1.6rem;">From workspace to target code</h2>
+                    <p class="mb-4">Each stage preserves language structure while moving from interactive visual
+                        construction to a target program.</p>
+                </div>
+
+                <div class="lw-pipeline lw-reveal">
+                    <article class="lw-step">
+                        <span class="lw-step-id">01 / input</span>
+                        <div>
+                            <h3>Visual blocks</h3>
+                            <p>Typed connections express a grammar-constrained program.</p>
+                        </div>
+                    </article>
+                    <article class="lw-step">
+                        <span class="lw-step-id">02 / model</span>
+                        <div>
+                            <h3>Workspace model</h3>
+                            <p>Block relations become a normalized intermediate structure.</p>
+                        </div>
+                    </article>
+                    <article class="lw-step">
+                        <span class="lw-step-id">03 / ast</span>
+                        <div>
+                            <h3>Abstract syntax</h3>
+                            <p>Language rules are validated in a target-independent tree.</p>
+                        </div>
+                    </article>
+                    <article class="lw-step">
+                        <span class="lw-step-id">04 / output</span>
+                        <div>
+                            <h3>Target code</h3>
+                            <p>Readable source is emitted from the validated program &mdash; MiniJava, SML, Scala, or
+                                WebAssembly.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+        <!-- Research end -->
+
+        <!-- Quote start -->
+        <section class="lw-quote-band">
+            <div class="container">
+                <blockquote class="lw-reveal">
+                    <div class="lw-quote-glyph"><i class="fa fa-quote-left" aria-hidden="true"></i></div>
+                    <p><b>A picture</b> is worth a thousand words</p>
+                    <cite>Anonymous</cite>
+                </blockquote>
+            </div>
+        </section>
+        <!-- Quote end -->
+
+        <!-- In action start -->
+        <section id="in-action" aria-labelledby="in-action-title">
+            <div class="container">
+                <div class="lw-section-title text-center lw-reveal">
+                    <span class="lw-eyebrow" style="--accent: var(--lw-blue)">04 / Case studies</span>
+                    <h2 id="in-action-title">The <strong>notation</strong> at work.</h2>
+                    <p>Captures from the MNL, B-MJ, B-Lambda, BFJ, and ViSML environments: evaluation strategies, compiler
+                        pipelines, type derivations, and renderer notation as they appear on screen.</p>
+                </div>
+
+                <div class="lw-filters" role="group" aria-label="Filter case studies">
+                    <button class="lw-filter" type="button" data-filter="all" aria-pressed="true">All <span>14</span></button>
+                    <button class="lw-filter" type="button" data-filter="eval-vpl" aria-pressed="false">VPL-Eval <span>5</span></button>
+                    <button class="lw-filter" type="button" data-filter="compiler" aria-pressed="false">Compiler <span>2</span></button>
+                    <button class="lw-filter" type="button" data-filter="hof" aria-pressed="false">Higher-order functions <span>2</span></button>
+                    <button class="lw-filter" type="button" data-filter="fcf" aria-pressed="false">First-class functions <span>1</span></button>
+                    <button class="lw-filter" type="button" data-filter="typing" aria-pressed="false">Type derivations <span>2</span></button>
+                    <button class="lw-filter" type="button" data-filter="notation" aria-pressed="false">Renderer notation <span>2</span></button>
+                </div>
+
+                <div class="lw-gallery" id="lw-gallery">
+                    <a class="lw-shot" data-kind="fcf" data-fancybox="cases" data-caption="Factorial — first-class functions in MNL"
+                        href="assets/img/case-factorial.png">
+                        <img src="assets/img/case-factorial.png" width="892" height="554" loading="lazy"
+                            alt="MNL workspace defining a factorial function from blocks.">
+                        <span class="lw-shot-body">
+                            <span>
+                                <span class="lw-shot-kind">First-class functions</span>
+                                <span class="lw-shot-title">Factorial</span>
+                            </span>
+                            <i class="fa fa-search-plus" aria-hidden="true"></i>
+                        </span>
+                    </a>
+
+                    <a class="lw-shot" data-kind="eval-vpl" data-fancybox="cases"
+                        data-caption="Call-by-value evaluation, visualized step by step"
+                        href="assets/img/case-eval-cbv.png">
+                        <img src="assets/img/case-eval-cbv.png" width="538" height="1191" loading="lazy"
+                            alt="Call-by-value beta reduction shown as a sequence of substituted MNL blocks.">
+                        <span class="lw-shot-body">
+                            <span>
+                                <span class="lw-shot-kind">Program visualization</span>
+                                <span class="lw-shot-title">Call-by-Value</span>
+                            </span>
+                            <i class="fa fa-search-plus" aria-hidden="true"></i>
+                        </span>
+                    </a>
+
+                    <a class="lw-shot" data-kind="eval-vpl" data-fancybox="cases"
+                        data-caption="Call-by-structure evaluation, visualized step by step"
+                        href="assets/img/case-eval-cbs.png">
+                        <img src="assets/img/case-eval-cbs.png" width="714" height="896" loading="lazy"
+                            alt="Call-by-structure evaluation shown as a sequence of MNL blocks.">
+                        <span class="lw-shot-body">
+                            <span>
+                                <span class="lw-shot-kind">Program visualization</span>
+                                <span class="lw-shot-title">Call-by-Structure</span>
+                            </span>
+                            <i class="fa fa-search-plus" aria-hidden="true"></i>
+                        </span>
+                    </a>
+
+                    <a class="lw-shot" data-kind="eval-vpl" data-fancybox="cases"
+                        data-caption="The CESK machine mid-program, with reachability-based garbage collection"
+                        href="help-b-mj/assets/img/bmj-cesk.png">
+                        <img src="help-b-mj/assets/img/bmj-cesk.png" width="1568" height="249" loading="lazy"
+                            alt="The B-MJ CESK machine at step 9: Control, Stack and Environment, Store, and Kontinuation columns, with arrows connecting stack references to store boxes.">
+                        <span class="lw-shot-body">
+                            <span>
+                                <span class="lw-shot-kind">Program visualization</span>
+                                <span class="lw-shot-title">CESK Machine &middot; GC</span>
+                            </span>
+                            <i class="fa fa-search-plus" aria-hidden="true"></i>
+                        </span>
+                    </a>
+
+                    <a class="lw-shot" data-kind="eval-vpl" data-fancybox="cases"
+                        data-caption="Two evaluation models compared side by side in B-MJ"
+                        href="help-b-mj/assets/img/bmj-avsb.jpg">
+                        <img src="help-b-mj/assets/img/bmj-avsb.jpg" width="1512" height="810" loading="lazy"
+                            alt="The B-MJ A vs B tab after both machines finished in 51 steps, with Model A showing a heap containing a Cell whose field is 41 and output 4141, and Model B showing no heap and output 41, under a badge reading Both finished, different output.">
+                        <span class="lw-shot-body">
+                            <span>
+                                <span class="lw-shot-kind">Program visualization</span>
+                                <span class="lw-shot-title">A vs B &middot; Compare</span>
+                            </span>
+                            <i class="fa fa-search-plus" aria-hidden="true"></i>
+                        </span>
+                    </a>
+
+                    <a class="lw-shot" data-kind="eval-vpl" data-fancybox="cases"
+                        data-caption="The BFJ CK machine mid-run on a Pair swap example"
+                        href="help-bfj/assets/img/bfj-ck.png">
+                        <img src="help-bfj/assets/img/bfj-ck.png" width="1566" height="221" loading="lazy"
+                            alt="The BFJ CK Machine tab mid-run, showing the Control, Control-recomposed and Kontinuation-stack columns for the Pair swap example.">
+                        <span class="lw-shot-body">
+                            <span>
+                                <span class="lw-shot-kind">Program visualization</span>
+                                <span class="lw-shot-title">CK Machine</span>
+                            </span>
+                            <i class="fa fa-search-plus" aria-hidden="true"></i>
+                        </span>
+                    </a>
+
+                    <a class="lw-shot" data-kind="compiler" data-fancybox="cases"
+                        data-caption="Factorial as a control-flow graph, compiled from B-Lambda"
+                        href="help-b-lambda/assets/img/bl-cfg.png">
+                        <img src="help-b-lambda/assets/img/bl-cfg.png" width="658" height="630" loading="lazy"
+                            alt="The CFG stage for factorial: two functions and four basic blocks, with edges drawn between them and a conditional branch.">
+                        <span class="lw-shot-body">
+                            <span>
+                                <span class="lw-shot-kind">Compiler</span>
+                                <span class="lw-shot-title">Control-Flow Graph</span>
+                            </span>
+                            <i class="fa fa-search-plus" aria-hidden="true"></i>
+                        </span>
+                    </a>
+
+                    <a class="lw-shot" data-kind="compiler" data-fancybox="cases"
+                        data-caption="Compiled to WebAssembly — a 292-byte WASM module"
+                        href="help-b-lambda/assets/img/bl-wasm.png">
+                        <img src="help-b-lambda/assets/img/bl-wasm.png" width="658" height="545" loading="lazy"
+                            alt="The WASM stage showing 292 bytes of WebAssembly as a hex dump with an ASCII gutter, beginning with the bytes 00 61 73 6d 01 00 00 00.">
+                        <span class="lw-shot-body">
+                            <span>
+                                <span class="lw-shot-kind">Compiler</span>
+                                <span class="lw-shot-title">WebAssembly</span>
+                            </span>
+                            <i class="fa fa-search-plus" aria-hidden="true"></i>
+                        </span>
+                    </a>
+
+                    <a class="lw-shot" data-kind="hof" data-fancybox="cases" data-caption="FMap — a recursive higher-order function in MNL"
+                        href="assets/img/case-fmap-large.jpg">
+                        <img src="assets/img/case-fmap.jpg" width="832" height="412" loading="lazy"
+                            alt="An MNL fmap function definition: a recursive walk over a list applying a bound function f_a2b to the head and appending it to the mapped tail.">
+                        <span class="lw-shot-body">
+                            <span>
+                                <span class="lw-shot-kind">Higher-order functions</span>
+                                <span class="lw-shot-title">FMap</span>
+                            </span>
+                            <i class="fa fa-search-plus" aria-hidden="true"></i>
+                        </span>
+                    </a>
+
+                    <a class="lw-shot" data-kind="hof" data-fancybox="cases" data-caption="List filter — a higher-order function in MNL"
+                        href="assets/img/case-list-filter-large.jpg">
+                        <img src="assets/img/case-list-filter.jpg" width="1068" height="535" loading="lazy"
+                            alt="An MNL list-filter function definition: a recursive walk over a list that applies a bound predicate the_filter to the head and appends it only when true.">
+                        <span class="lw-shot-body">
+                            <span>
+                                <span class="lw-shot-kind">Higher-order functions</span>
+                                <span class="lw-shot-title">List Filter</span>
+                            </span>
+                            <i class="fa fa-search-plus" aria-hidden="true"></i>
+                        </span>
+                    </a>
+
+                    <a class="lw-shot" data-kind="typing" data-fancybox="cases"
+                        data-caption="B-MJ's Types tab, deriving the typing judgement for main"
+                        href="help-b-mj/assets/img/bmj-typing.png">
+                        <img src="help-b-mj/assets/img/bmj-typing.png" width="390" height="180" loading="lazy"
+                            alt="The MiniJava Inspector's Types tab with a Derivation for dropdown set to main, the context gamma equals args colon String array, and a collapsed WF-Print row.">
+                        <span class="lw-shot-body">
+                            <span>
+                                <span class="lw-shot-kind">Type derivation</span>
+                                <span class="lw-shot-title">B-MJ &middot; Types Tab</span>
+                            </span>
+                            <i class="fa fa-search-plus" aria-hidden="true"></i>
+                        </span>
+                    </a>
+
+                    <a class="lw-shot" data-kind="typing" data-fancybox="cases"
+                        data-caption="A stupid cast, fully derived as a BFJ natural-deduction proof tree"
+                        href="help-bfj/assets/img/bfj-typing.png">
+                        <img src="help-bfj/assets/img/bfj-typing.png" width="624" height="226" loading="lazy"
+                            alt="The BFJ Typing tab showing a natural-deduction proof tree for a stupid cast: T-New derives new B() : B, and T-SCast derives (A) new B() : A with a warning.">
+                        <span class="lw-shot-body">
+                            <span>
+                                <span class="lw-shot-kind">Type derivation</span>
+                                <span class="lw-shot-title">BFJ &middot; Stupid Cast</span>
+                            </span>
+                            <i class="fa fa-search-plus" aria-hidden="true"></i>
+                        </span>
+                    </a>
+
+                    <a class="lw-shot" data-kind="notation" data-fancybox="cases"
+                        data-caption="The same ViSML program under the Macaca Nigra renderer"
+                        href="help-visml/assets/img/visml-macaca.png">
+                        <img src="help-visml/assets/img/visml-macaca.png" width="916" height="473" loading="lazy"
+                            alt="A ViSML program rendered with the Macaca Nigra renderer: expression blocks show chevron-shaped notches, pattern blocks show rounded-pill notches, declaration blocks show plain rectangular notches.">
+                        <span class="lw-shot-body">
+                            <span>
+                                <span class="lw-shot-kind">Renderer notation</span>
+                                <span class="lw-shot-title">Macaca Nigra</span>
+                            </span>
+                            <i class="fa fa-search-plus" aria-hidden="true"></i>
+                        </span>
+                    </a>
+
+                    <a class="lw-shot" data-kind="notation" data-fancybox="cases"
+                        data-caption="The same ViSML program under the Goropa renderer"
+                        href="help-visml/assets/img/visml-goropa.png">
+                        <img src="help-visml/assets/img/visml-goropa.png" width="1555" height="784" loading="lazy"
+                            alt="The same ViSML program rendered with the Goropa renderer, laid out to resemble indented text code.">
+                        <span class="lw-shot-body">
+                            <span>
+                                <span class="lw-shot-kind">Renderer notation</span>
+                                <span class="lw-shot-title">Goropa</span>
+                            </span>
+                            <i class="fa fa-search-plus" aria-hidden="true"></i>
+                        </span>
+                    </a>
+                </div>
+
+                <p class="lw-gallery-note" id="lw-gallery-status" role="status">All captures come from MNL, B-MJ, B-Lambda, BFJ, or ViSML, and are taken from
+                    the live environment.</p>
+            </div>
+        </section>
+        <!-- In action end -->
+
+        <!-- Publications start -->
+        <section id="publications" class="bg-light-gray" aria-labelledby="publications-title">
+            <div class="container">
+                <div class="lw-section-title text-center lw-reveal">
+                    <span class="lw-eyebrow" style="--accent: var(--lw-yellow)">05 / Publications</span>
+                    <h2 id="publications-title">Written up, and <strong>being written</strong>.</h2>
+                </div>
+
+                <div class="lw-pub-grid">
+                    <article class="lw-pub lw-reveal">
+                        <span class="lw-pub-flag">Published</span>
+                        <div class="lw-pub-venue">
+                            <h3>PAINT</h3>
+                            <span>2025</span>
+                        </div>
+                        <p class="lw-pub-title">The MNL: A Block-Based Functional Programming Language with Reactive
+                            Blocks</p>
+                        <a class="btn-setting btn-hvr-up lw-btn-primary lw-btn-hvr-ink lw-btn-plain"
+                            href="https://dl.acm.org/doi/10.1145/3759534.3762684" rel="noopener">Read on ACM DL</a>
+                    </article>
+
+                    <article class="lw-pub lw-reveal" data-lw-delay="150">
+                        <span class="lw-pub-flag lw-pub-flag-open">In preparation</span>
+                        <div class="lw-pub-venue">
+                            <h3>Ongoing</h3>
+                            <span>work in progress</span>
+                        </div>
+                        <ul>
+                            <li>Evaluation strategies for block-based languages.</li>
+                            <li>Preserving the structure of a textual grammar when it becomes a block language.</li>
+                            <li>Live types: principal typing suggestions for incrementally built programs.</li>
+                            <li>An abstract machine for visual programming languages.</li>
+                        </ul>
+                    </article>
+                </div>
+            </div>
+        </section>
+        <!-- Publications end -->
+
+        <!-- Domain notice start -->
+        <aside class="lw-notice" aria-labelledby="notice-title">
+            <div class="container">
+                <div class="lw-notice-inner">
+                    <span class="lw-notice-icon" aria-hidden="true"><i class="fa fa-info-circle"></i></span>
+                    <div class="lw-notice-text">
+                        <strong id="notice-title">Domain notice</strong>
+                        <p>The old domain was <a href="https://www.mnl-pl.org" rel="noopener">www.mnl-pl.org</a>.
+                            Starting in February 2027, <a href="https://www.mnl-pl.org" rel="noopener">www.mnl-pl.org</a>
+                            will no longer be available. Please use the L-Workshop project domains listed above.</p>
+                    </div>
+                    <a class="btn-setting btn-hvr-up lw-btn-ghost lw-btn-hvr-ink scroll flex-shrink-0" href="#projects">View projects</a>
+                </div>
+            </div>
         </aside>
-      </div>
-    </section>
+        <!-- Domain notice end -->
 
-    <section class="container" id="projects">
-      <div class="section-head">
-        <div>
-          <p class="section-tag">Projects</p>
-          <h2>Selected work and directions.</h2>
+    </main>
+
+    <!-- Footer starts -->
+    <footer class="lw-footer">
+        <div class="container">
+            <div class="lw-footer-grid">
+                <div>
+                    <a class="lw-footer-brand" href="#home">
+                        <img src="assets/img/lw-logo.png" alt="" width="336" height="336">
+                        <span>L-Workshop</span>
+                    </a>
+                    <p>Visual and block-based programming language design and compiler construction.</p>
+                </div>
+                <div>
+                    <h2>Project network</h2>
+                    <div class="lw-footer-list">
+                        <a style="--accent: var(--lw-red)" href="https://mnl.l-workshop.my.id" rel="noopener">mnl.l-workshop.my.id</a>
+                        <a style="--accent: var(--lw-green)" href="https://b-lambda.l-workshop.my.id" rel="noopener">b-lambda.l-workshop.my.id</a>
+                        <a style="--accent: var(--lw-blue)" href="https://b-mj.l-workshop.my.id" rel="noopener">b-mj.l-workshop.my.id</a>
+                        <a style="--accent: var(--lw-yellow)" href="https://visml.l-workshop.my.id" rel="noopener">visml.l-workshop.my.id</a>
+                        <a style="--accent: var(--lw-slate)" href="https://bfj.l-workshop.my.id" rel="noopener">bfj.l-workshop.my.id</a>
+                    </div>
+                </div>
+                <div>
+                    <h2>Contact</h2>
+                    <p class="lw-footer-mail"><a
+                            href="mailto:linguistic.digital.workshop@gmail.com">linguistic.digital.workshop@gmail.com</a>
+                    </p>
+                </div>
+            </div>
+            <div class="lw-footer-bottom">
+                <span>&copy; 2020&ndash;2026 L-Workshop</span>
+                <span class="lw-mono">www.l-workshop.my.id</span>
+            </div>
         </div>
-        <p class="muted">Current research and implementation directions.</p>
-      </div>
+    </footer>
+    <!-- Footer ends -->
 
-      <div class="projects-grid">
-        <article class="card project-card">
-          <div class="project-no">01</div>
-          <h3>ViSML (Visual SML)</h3>
-          <p class="muted">
-            A visual language for Standard ML that explores how typed functional programming can be represented through structured visual notation and block-based interaction.
-          </p>
-        </article>
+    <!-- JavaScript: jQuery 3 + Bootstrap 4 + Popper -->
+    <script src="vendor/js/bundle.min.js"></script>
+    <!-- Lightbox -->
+    <script src="vendor/js/jquery.fancybox.min.js"></script>
+    <!-- Rotating headline -->
+    <script src="assets/js/morphext.min.js"></script>
+    <!-- Site script -->
+    <script src="assets/js/lw-main.js"></script>
 
-        <article class="card project-card">
-          <div class="project-no">02</div>
-          <h3>Block-Based MiniJava</h3>
-          <p class="muted">
-            A block-based version of MiniJava for studying object-oriented language structure, grammar-aware composition, and visual programming-language implementation.
-          </p>
-        </article>
-
-        <article class="card project-card">
-          <div class="project-no">03</div>
-          <h3>Block-Based Lambda Calculus</h3>
-          <p class="muted">
-            A visual and block-based representation of the lambda calculus for experimenting with functional abstraction, application, variables, and evaluation structure.
-          </p>
-        </article>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="container footer-box">
-      <div>
-        <strong>L-Workshop</strong><br />
-        <span><a href="mailto:linguistic.digital.workshop@gmail.com">Linguistic-Digital Workshop</a></span>
-        
-      </div>
-      <div>&copy;2026 by L-Workshop</div>
-    </div>
-  </footer>
-
-  <script>
-    const root = document.documentElement;
-    const themeSelect = document.getElementById('themeSelect');
-    const menuToggle = document.getElementById('menuToggle');
-    const nav = document.getElementById('site-nav');
-    const systemPreference = window.matchMedia('(prefers-color-scheme: dark)');
-
-    function resolveTheme(mode) {
-      return mode === 'system' ? (systemPreference.matches ? 'dark' : 'light') : mode;
-    }
-
-    function applyTheme(mode) {
-      root.setAttribute('data-theme', resolveTheme(mode));
-      root.setAttribute('data-theme-mode', mode);
-      localStorage.setItem('lworkshop-theme-mode', mode);
-      if (themeSelect) themeSelect.value = mode;
-    }
-
-    const savedMode = localStorage.getItem('lworkshop-theme-mode') || localStorage.getItem('lworkshop-theme') || 'system';
-    applyTheme(savedMode);
-
-    themeSelect.addEventListener('change', (event) => {
-      applyTheme(event.target.value);
-    });
-
-    const handleSystemChange = () => {
-      const activeMode = localStorage.getItem('lworkshop-theme-mode') || 'system';
-      if (activeMode === 'system') applyTheme('system');
-    };
-
-    if (systemPreference.addEventListener) {
-      systemPreference.addEventListener('change', handleSystemChange);
-    } else if (systemPreference.addListener) {
-      systemPreference.addListener(handleSystemChange);
-    }
-
-    menuToggle.addEventListener('click', () => {
-      const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
-      menuToggle.setAttribute('aria-expanded', String(!expanded));
-      nav.classList.toggle('open');
-    });
-
-    nav.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        if (window.innerWidth <= 760) {
-          nav.classList.remove('open');
-          menuToggle.setAttribute('aria-expanded', 'false');
-        }
-      });
-    });
-  </script>
 </body>
+
 </html>

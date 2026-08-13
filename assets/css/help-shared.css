@@ -1,0 +1,933 @@
+/* ===================================================================
+   L-Workshop Help — shared documentation layer
+
+   One stylesheet behind every project's help sub-site (MnL, B-Lambda,
+   B-MJ, …). Inherits the L-Workshop tokens from assets/css/custom.css
+   (--lw-ink, --lw-mono, …) so the docs read as the same site. Only
+   doc-specific furniture lives here.
+
+   Per-project accent
+   ------------------
+   Each help site sets its own accent to match its card on the main
+   page, by overriding two custom properties on `body.help`:
+
+       body.help { --help-accent: var(--lw-green);
+                   --help-accent-ink: var(--lw-green-ink); }
+
+   The default below is MnL's red, so a page that forgets to set an
+   accent still renders correctly rather than falling back to nothing.
+   `--help-accent-ink` must clear 4.5:1 on --lw-paper: it is used for
+   body-copy links, so the *-ink companions in custom.css are the only
+   safe values here — never the raw hues.
+
+   `.help-callout.is-legacy` deliberately keeps red in every theme: it
+   marks superseded behaviour, which is a meaning, not an accent.
+
+   Contents
+   00. Shell
+   01. Top bar
+   02. Sidebar
+   03. Prose
+   04. Figures
+   05. Callouts
+   06. Tables
+   07. Key / glyph chips
+   08. Step lists
+   09. Pager
+   10. Responsive
+   11. Reduced motion / print
+=================================================================== */
+
+/* ===================================================================
+   00. Shell
+=================================================================== */
+:root {
+    --help-bar: 62px;
+    --help-rail: 292px;
+}
+
+body.help {
+    --help-accent: var(--lw-red);
+    --help-accent-ink: var(--lw-red-ink);
+    /* -ink also does duty as a solid fill (.is-primary), so it stays
+       theme-constant like the --lw-*-ink tokens it's built from — see
+       custom.css §00. -text is the dark-mode-safe variant for links and
+       other small text sitting on the page background. */
+    --help-accent-text: var(--lw-red-text);
+    background: var(--lw-paper);
+    color: var(--lw-body);
+    overflow-x: hidden;
+}
+
+/* Per-project accents. These match each project's card on the main page, so
+   a reader arriving from a card lands on a page tinted the colour they just
+   clicked. Adding a help site means adding one line here — not a stylesheet.
+   MnL keeps the red default above and needs no class. */
+body.help-bl {
+    --help-accent: var(--lw-green);
+    --help-accent-ink: var(--lw-green-ink);
+    --help-accent-text: var(--lw-green-text);
+}
+
+body.help-bmj {
+    --help-accent: var(--lw-blue);
+    --help-accent-ink: var(--lw-blue-ink);
+    --help-accent-text: var(--lw-blue-text);
+}
+
+body.help-visml {
+    --help-accent: var(--lw-yellow);
+    --help-accent-ink: var(--lw-yellow-ink);
+    --help-accent-text: var(--lw-yellow-text);
+}
+
+body.help-bfj {
+    --help-accent: var(--lw-slate);
+    --help-accent-ink: var(--lw-slate);
+    --help-accent-text: var(--lw-slate-text);
+}
+
+.help-shell {
+    display: grid;
+    grid-template-columns: var(--help-rail) minmax(0, 1fr);
+    align-items: start;
+    max-width: 1560px;
+    margin-inline: auto;
+}
+
+/* ===================================================================
+   01. Top bar
+=================================================================== */
+.help-bar {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    height: var(--help-bar);
+    padding-inline: 22px;
+    background: rgba(255, 255, 255, 0.94);
+    border-bottom: 1px solid var(--lw-line);
+    backdrop-filter: blur(14px);
+}
+
+:root[data-theme="dark"] .help-bar {
+    /* --lw-paper's dark value (#14171a) at the same translucency */
+    background: rgba(20, 23, 26, 0.94);
+}
+
+.help-bar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    flex: none;
+}
+
+.help-bar-brand img {
+    width: 34px;
+    height: 34px;
+}
+
+.help-bar-text {
+    display: block;
+}
+
+/* Product names are cased deliberately ("MnL", "B-MJ", "B-Lambda") — keep
+   text-transform off this wrapper, or it inherits into the brand name and
+   flattens MnL to MNL. Only .help-bar-sub below is uppercased. */
+.help-bar-brand b {
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--lw-ink);
+    line-height: 1;
+}
+
+.help-bar-sub {
+    display: block;
+    margin-top: 4px;
+    font-family: var(--lw-mono);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--lw-muted);
+}
+
+.help-version {
+    flex: none;
+    padding: 5px 10px;
+    background: var(--lw-paper-2);
+    border: 1px solid var(--lw-line);
+    border-radius: 30px;
+    font-family: var(--lw-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    color: var(--lw-muted);
+    white-space: nowrap;
+}
+
+.help-bar-spacer {
+    flex: 1 1 auto;
+}
+
+.help-bar-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: none;
+}
+
+.help-bar-links a {
+    padding: 8px 14px;
+    border: 1px solid var(--lw-line);
+    border-radius: 30px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--lw-ink);
+    white-space: nowrap;
+}
+
+.help-bar-links a:hover,
+.help-bar-links a:focus {
+    border-color: var(--lw-ink);
+    color: var(--lw-ink);
+    transform: translateY(-2px);
+}
+
+.help-bar-links .is-primary {
+    background: var(--lw-ink);
+    border-color: var(--lw-ink);
+    color: var(--lw-paper);
+}
+
+.help-bar-links .is-primary:hover,
+.help-bar-links .is-primary:focus {
+    background: var(--help-accent-ink);
+    border-color: var(--help-accent-ink);
+    color: #fff;
+}
+
+.help-menu-toggle {
+    display: none;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 1px solid var(--lw-line);
+    border-radius: 5px;
+    color: var(--lw-ink);
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+/* ===================================================================
+   02. Sidebar
+=================================================================== */
+.help-rail {
+    position: sticky;
+    top: var(--help-bar);
+    max-height: calc(100vh - var(--help-bar));
+    overflow-y: auto;
+    padding: 30px 20px 60px 22px;
+    border-right: 1px solid var(--lw-line);
+}
+
+.help-rail h2 {
+    margin: 0 0 14px;
+    font-family: var(--lw-mono);
+    font-size: 0.66rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--lw-muted);
+}
+
+.help-nav {
+    display: grid;
+    gap: 2px;
+    margin: 0 0 30px;
+    padding: 0;
+    list-style: none;
+}
+
+.help-nav > li > a {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 9px 11px;
+    border-radius: 5px;
+    border-left: 3px solid transparent;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--lw-ink);
+}
+
+.help-nav > li > a em {
+    flex: none;
+    font-family: var(--lw-mono);
+    font-size: 0.68rem;
+    font-style: normal;
+    color: var(--lw-muted);
+}
+
+.help-nav > li > a:hover,
+.help-nav > li > a:focus {
+    background: var(--lw-paper-2);
+    color: var(--lw-ink);
+}
+
+.help-nav > li > a[aria-current="page"] {
+    background: var(--lw-paper-2);
+    border-left-color: var(--help-accent);
+    color: var(--help-accent-text);
+}
+
+.help-nav > li > a[aria-current="page"] em {
+    color: var(--help-accent-text);
+}
+
+/* in-page anchors under the current chapter */
+.help-subnav {
+    display: grid;
+    gap: 1px;
+    margin: 2px 0 8px;
+    padding: 0 0 0 15px;
+    list-style: none;
+    border-left: 1px solid var(--lw-line);
+}
+
+.help-subnav a {
+    display: block;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.84rem;
+    color: var(--lw-body);
+}
+
+.help-subnav a:hover,
+.help-subnav a:focus {
+    background: var(--lw-paper-2);
+    color: var(--lw-ink);
+}
+
+.help-subnav a.is-active {
+    color: var(--help-accent-text);
+    font-weight: 650;
+}
+
+.help-rail-note {
+    padding: 14px 15px;
+    background: var(--lw-paper-2);
+    border: 1px solid var(--lw-line);
+    border-radius: 5px;
+    font-size: 0.8rem;
+    color: var(--lw-muted);
+}
+
+.help-rail-note a {
+    color: var(--lw-ink);
+    font-weight: 650;
+    text-decoration: underline !important;
+    text-underline-offset: 2px;
+}
+
+/* ===================================================================
+   03. Prose
+=================================================================== */
+.help-main {
+    min-width: 0;
+    padding: 46px 40px 90px;
+}
+
+.help-doc {
+    max-width: 860px;
+}
+
+.help-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    font-family: var(--lw-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--lw-muted);
+}
+
+.help-kicker::before {
+    content: "";
+    width: 24px;
+    height: 2px;
+    background: var(--help-accent);
+}
+
+.help-doc h1 {
+    margin: 0 0 18px;
+    font-size: 3rem;
+    font-weight: 600;
+    line-height: 1.06;
+    letter-spacing: -0.015em;
+    color: var(--lw-ink);
+}
+
+.help-lede {
+    margin: 0 0 42px;
+    font-size: 1.12rem;
+    line-height: 1.6;
+    color: var(--lw-body);
+}
+
+.help-doc h2 {
+    margin: 62px 0 18px;
+    padding-top: 22px;
+    border-top: 1px solid var(--lw-line);
+    font-size: 1.8rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--lw-ink);
+    scroll-margin-top: calc(var(--help-bar) + 20px);
+}
+
+.help-doc h3 {
+    margin: 38px 0 14px;
+    font-size: 1.2rem;
+    font-weight: 650;
+    color: var(--lw-ink);
+    scroll-margin-top: calc(var(--help-bar) + 20px);
+}
+
+.help-doc h4 {
+    margin: 26px 0 10px;
+    font-family: var(--lw-mono);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--lw-muted);
+    scroll-margin-top: calc(var(--help-bar) + 20px);
+}
+
+.help-doc p {
+    margin: 0 0 1.15rem;
+    font-size: 1rem;
+    line-height: 1.72;
+    color: var(--lw-body);
+}
+
+.help-doc > ul,
+.help-doc > ol,
+.help-callout ul {
+    margin: 0 0 1.3rem;
+    padding-left: 0;
+    list-style: none;
+}
+
+.help-doc > ul > li,
+.help-callout ul > li {
+    position: relative;
+    margin-bottom: 0.6rem;
+    padding-left: 24px;
+    line-height: 1.68;
+}
+
+.help-doc > ul > li::before,
+.help-callout ul > li::before {
+    content: "";
+    position: absolute;
+    top: 12px;
+    left: 2px;
+    width: 11px;
+    height: 2px;
+    background: var(--help-accent);
+}
+
+.help-doc a:not(.help-btn) {
+    color: var(--help-accent-text);
+    font-weight: 600;
+    text-decoration: underline !important;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+}
+
+.help-doc a:not(.help-btn):hover,
+.help-doc a:not(.help-btn):focus {
+    color: var(--lw-ink);
+}
+
+.help-doc strong {
+    color: var(--lw-ink);
+    font-weight: 650;
+}
+
+.help-doc code {
+    padding: 2px 6px;
+    background: var(--lw-paper-2);
+    border: 1px solid var(--lw-line-soft);
+    border-radius: 3px;
+    font-family: var(--lw-mono);
+    font-size: 0.86em;
+    color: var(--lw-ink);
+}
+
+.help-doc pre {
+    margin: 0 0 1.4rem;
+    padding: 18px 20px;
+    overflow-x: auto;
+    background: #16211c;
+    border-radius: 5px;
+    color: #e8efe9;
+}
+
+.help-doc pre code {
+    padding: 0;
+    background: none;
+    border: 0;
+    font-size: 0.84rem;
+    line-height: 1.65;
+    color: inherit;
+    white-space: pre;
+}
+
+/* ===================================================================
+   04. Figures
+=================================================================== */
+.help-fig {
+    margin: 0 0 1.9rem;
+}
+
+.help-fig img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    background: var(--lw-paper-2);
+    border: 1px solid var(--lw-line);
+    border-radius: 5px;
+}
+
+.help-fig.is-shot img {
+    width: 100%;
+}
+
+.help-fig.is-block img {
+    padding: 16px;
+}
+
+/* Not a flex container: the caption holds inline markup (<em>, <code>,
+   punctuation) and flex would break each of those onto its own flex item,
+   inserting a gap before every period. */
+.help-fig figcaption {
+    margin-top: 11px;
+    font-size: 0.86rem;
+    color: var(--lw-muted);
+    line-height: 1.6;
+}
+
+.help-fig figcaption b {
+    margin-right: 9px;
+    font-family: var(--lw-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--lw-blue-text);
+    white-space: nowrap;
+}
+
+.help-fig-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 22px;
+    margin-bottom: 1.9rem;
+}
+
+.help-fig-row .help-fig {
+    margin: 0;
+}
+
+/* ===================================================================
+   05. Callouts
+=================================================================== */
+.help-callout {
+    --tone: var(--lw-blue);
+    --tone-ink: var(--lw-blue-ink);
+    --tone-text: var(--lw-blue-text);
+    margin: 0 0 1.7rem;
+    padding: 20px 22px;
+    background: var(--lw-paper-2);
+    border: 1px solid var(--lw-line);
+    border-left: 4px solid var(--tone);
+    border-radius: 4px;
+}
+
+.help-callout > strong:first-child {
+    display: block;
+    margin-bottom: 8px;
+    font-family: var(--lw-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--tone-text);
+}
+
+.help-callout p:last-child,
+.help-callout ul:last-child {
+    margin-bottom: 0;
+}
+
+.help-callout.is-new {
+    --tone: var(--lw-green);
+    --tone-ink: var(--lw-green-ink);
+    --tone-text: var(--lw-green-text);
+}
+
+/* Reuses the main page's notice-band tokens (custom.css §00) so the one
+   pale-yellow warning surface on the site — here and the domain notice —
+   gets the same dark-mode treatment instead of a second hardcoded pair. */
+.help-callout.is-changed {
+    --tone: var(--lw-yellow);
+    --tone-ink: var(--lw-yellow-ink);
+    --tone-text: var(--lw-notice-label);
+    background: var(--lw-notice-bg);
+    border-color: var(--lw-notice-border);
+}
+
+/* .help-callout.is-legacy deliberately keeps red in every theme — see the
+   file banner comment. --tone-text still flips so the label stays legible;
+   only the hue's meaning ("superseded"), not its contrast, is fixed. */
+.help-callout.is-legacy {
+    --tone: var(--lw-red);
+    --tone-ink: var(--lw-red-ink);
+    --tone-text: var(--lw-red-text);
+}
+
+/* ===================================================================
+   06. Tables
+=================================================================== */
+.help-table-wrap {
+    margin: 0 0 1.9rem;
+    overflow-x: auto;
+    border: 1px solid var(--lw-line);
+    border-radius: 5px;
+}
+
+.help-table {
+    width: 100%;
+    min-width: 460px;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.help-table th,
+.help-table td {
+    padding: 11px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--lw-line-soft);
+    vertical-align: top;
+}
+
+.help-table thead th {
+    background: var(--lw-paper-2);
+    border-bottom: 1px solid var(--lw-line);
+    font-family: var(--lw-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--lw-muted);
+    white-space: nowrap;
+}
+
+.help-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.help-table tbody tr:hover td {
+    background: var(--lw-paper-2);
+}
+
+.help-table td:first-child {
+    color: var(--lw-ink);
+    font-weight: 600;
+}
+
+.help-table .help-glyph {
+    display: inline-grid;
+    place-items: center;
+    min-width: 26px;
+    height: 24px;
+    padding: 0 6px;
+    background: var(--lw-paper-2);
+    border: 1px solid var(--lw-line);
+    border-radius: 4px;
+    font-family: var(--lw-mono);
+    font-size: 0.8rem;
+    color: var(--lw-ink);
+}
+
+/* ===================================================================
+   07. Key / glyph chips
+=================================================================== */
+kbd {
+    display: inline-block;
+    min-width: 22px;
+    padding: 3px 7px;
+    background: var(--lw-paper);
+    border: 1px solid var(--lw-line);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    box-shadow: 0 1px 0 rgba(33, 38, 34, 0.06);
+    font-family: var(--lw-mono);
+    font-size: 0.78rem;
+    color: var(--lw-ink);
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* ===================================================================
+   08. Step lists
+=================================================================== */
+.help-steps {
+    counter-reset: step;
+    margin: 0 0 1.9rem;
+    padding: 0;
+    list-style: none;
+}
+
+.help-steps > li {
+    position: relative;
+    margin-bottom: 1.15rem;
+    padding-left: 46px;
+    line-height: 1.68;
+}
+
+.help-steps > li::before {
+    counter-increment: step;
+    content: counter(step, decimal-leading-zero);
+    position: absolute;
+    top: 1px;
+    left: 0;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 26px;
+    background: var(--lw-ink);
+    border-radius: 4px;
+    color: var(--lw-paper);
+    font-family: var(--lw-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+/* ===================================================================
+   09. Pager
+=================================================================== */
+.help-pager {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 70px;
+    padding-top: 34px;
+    border-top: 1px solid var(--lw-line);
+}
+
+.help-pager a {
+    display: block;
+    padding: 18px 20px;
+    background: var(--lw-paper);
+    border: 1px solid var(--lw-line);
+    border-radius: 5px;
+    text-decoration: none !important;
+    transition: transform .3s ease, box-shadow .3s ease;
+}
+
+.help-pager a:hover,
+.help-pager a:focus {
+    transform: translateY(-4px);
+    box-shadow: var(--lw-shadow);
+}
+
+.help-pager a span {
+    display: block;
+    margin-bottom: 6px;
+    font-family: var(--lw-mono);
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--lw-muted);
+}
+
+.help-pager a b {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.02rem;
+    font-weight: 650;
+    color: var(--lw-ink);
+}
+
+.help-pager .is-next {
+    grid-column: 2;
+    text-align: right;
+}
+
+.help-foot {
+    max-width: 860px;
+    margin-top: 46px;
+    padding-top: 22px;
+    border-top: 1px solid var(--lw-line);
+    font-size: 0.82rem;
+    color: var(--lw-muted);
+}
+
+.help-foot a {
+    color: var(--lw-ink);
+    font-weight: 650;
+}
+
+/* ===================================================================
+   10. Responsive
+=================================================================== */
+@media (max-width: 1023px) {
+    .help-shell {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .help-menu-toggle {
+        display: grid;
+        place-items: center;
+        order: -1;
+    }
+
+    .help-rail {
+        position: fixed;
+        top: var(--help-bar);
+        left: 0;
+        z-index: 55;
+        width: min(320px, 86vw);
+        max-height: calc(100vh - var(--help-bar));
+        background: var(--lw-paper);
+        box-shadow: var(--lw-shadow-lift);
+        transform: translateX(-102%);
+        transition: transform .3s ease;
+    }
+
+    .help-rail.is-open {
+        transform: translateX(0);
+    }
+
+    .help-scrim {
+        position: fixed;
+        inset: var(--help-bar) 0 0;
+        z-index: 50;
+        background: rgba(33, 38, 34, 0.42);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .3s ease;
+    }
+
+    /* against an already-dark page, the light-mode scrim tint barely
+       registers — go straight to black for real dimming */
+    :root[data-theme="dark"] .help-scrim {
+        background: rgba(0, 0, 0, 0.6);
+    }
+
+    .help-scrim.is-open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .help-main {
+        padding: 34px 24px 70px;
+    }
+
+    .help-bar-sub {
+        display: none;
+    }
+}
+
+@media (max-width: 767px) {
+    .help-bar {
+        gap: 12px;
+        padding-inline: 14px;
+    }
+
+    .help-version,
+    .help-bar-links .is-secondary {
+        display: none;
+    }
+
+    .help-main {
+        padding: 26px 16px 60px;
+    }
+
+    .help-doc h1 {
+        font-size: 2.1rem;
+    }
+
+    .help-lede {
+        font-size: 1.02rem;
+    }
+
+    .help-doc h2 {
+        margin-top: 46px;
+        font-size: 1.45rem;
+    }
+
+    .help-pager {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .help-pager .is-next {
+        grid-column: 1;
+        text-align: left;
+    }
+
+    /* figures set a per-image max-width (e.g. style="max-width: 70%")
+       to keep small screenshots from dominating a desktop-width column;
+       that inline percentage shrinks the same screenshot to an
+       unreadable sliver on a phone-width column, so let it go full
+       width again here regardless of the inline value */
+    .help-fig img {
+        max-width: 100% !important;
+    }
+}
+
+/* ===================================================================
+   11. Reduced motion / print
+=================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    .help-rail,
+    .help-scrim,
+    .help-pager a,
+    .help-bar-links a {
+        transition: none;
+    }
+
+    .help-pager a:hover,
+    .help-bar-links a:hover {
+        transform: none;
+    }
+}
+
+@media print {
+    .help-bar,
+    .help-rail,
+    .help-scrim,
+    .help-pager,
+    .help-menu-toggle {
+        display: none !important;
+    }
+
+    .help-shell {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .help-main {
+        padding: 0;
+    }
+}

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="The five MnL visualization views: call-by-structure, call-by-value, function value, the CEK machine and lockstep — how to run each one and what it shows.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Visualization — MnL Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-mnl/visualization.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>MnL Help</b><span class="help-bar-sub">Macaca nigra Language</span></span>
+        </a>
+        <span class="help-version">v5.0 &middot; build 040726</span>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://mnl.l-workshop.my.id" rel="noopener">Open MnL</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="functions.html"><em>04</em> Functions</a></li>
+                <li><a href="data.html"><em>05</em> Data structures</a></li>
+                <li><a href="types.html"><em>06</em> Types</a></li>
+                <li>
+                    <a href="visualization.html" aria-current="page"><em>07</em> Visualization</a>
+                    <ul class="help-subnav">
+                        <li><a href="#panel">The visualization panel</a></li>
+                        <li><a href="#function-value">Function value</a></li>
+                        <li><a href="#beta-reduction">Call-by-structure and call-by-value</a></li>
+                        <li><a href="#cek">The CEK machine</a></li>
+                        <li><a href="#lockstep">Lockstep</a></li>
+                        <li><a href="#tools">Panel tools</a></li>
+                    </ul>
+                </li>
+                <li><a href="compiler.html"><em>08</em> Compiler</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>MnL 5.0</b>, running at
+                <a href="https://mnl.l-workshop.my.id" rel="noopener">mnl.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">07 / Visualization</span>
+                <h1>Watching a program run</h1>
+                <p class="help-lede">MnL&rsquo;s program visualization tool is called <strong>Tarsius</strong>. It was
+                    designed so that evaluation happens <em>in the visual workspace</em> &mdash; the steps are drawn as
+                    blocks, not printed as text. That makes it possible to show two things which are awkward to show in a
+                    text language: what a function value actually <em>is</em>, and how an application reduces.</p>
+
+                <h2 id="panel">The visualization panel</h2>
+                <p>The panel sits along the bottom of the window. Open it with <kbd>Ctrl</kbd>+<kbd>J</kbd>, from the
+                    activity bar, or by switching to the <strong>Debug</strong> perspective, which arranges the workspace
+                    above it. It carries five views:</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">View</th>
+                                <th scope="col">Scope</th>
+                                <th scope="col">Shows</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Call-by-Structure</td>
+                                <td>A selected application</td>
+                                <td>Substitution steps that keep the original parameter block structure.</td>
+                            </tr>
+                            <tr>
+                                <td>Call-by-Value</td>
+                                <td>A selected application</td>
+                                <td>Substitution steps where the parameter is replaced by its evaluated value.</td>
+                            </tr>
+                            <tr>
+                                <td>Function Value</td>
+                                <td>A selected function</td>
+                                <td>The lambda that the function denotes, drawn as blocks.</td>
+                            </tr>
+                            <tr>
+                                <td>CEK Machine</td>
+                                <td>The whole program</td>
+                                <td>Control, environment and continuation, one machine step at a time.</td>
+                            </tr>
+                            <tr>
+                                <td>Lockstep</td>
+                                <td>The whole program</td>
+                                <td>Substitution rewriting and the machine, advanced side by side.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="help-callout">
+                    <strong>Two ways in</strong>
+                    <p>The first three views need a <em>selection</em>: right-click an <strong>Application</strong> block
+                        and choose Call-by-Structure or Call-by-Value, or right-click a <strong>Function</strong> to see
+                        its value. The <strong>CEK Machine</strong> and <strong>Lockstep</strong> views need no selection
+                        &mdash; press <strong>Load</strong> and they step the whole program.</p>
+                </div>
+
+                <h2 id="function-value">Function value</h2>
+                <p>When a block&rsquo;s type is <code>function</code>, right-click it and choose
+                    <strong>Function value</strong>. The panel renders the value &mdash; for a named function, the lambda
+                    it stands for.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/v5-function-value.jpg" width="1499" height="807" loading="lazy"
+                        alt="The MnL Function Value view showing the factorial function rendered as a Lambda block with its parameter and body, below the workspace.">
+                    <figcaption><b>MnL 5.0</b> The value of <code>factorial</code>, drawn as the lambda it denotes.</figcaption>
+                </figure>
+
+                <p>This is the quickest way to understand a partially applied function: apply one argument, then look at
+                    the value of what comes back.</p>
+
+                <h2 id="beta-reduction">Call-by-structure and call-by-value</h2>
+                <p>Right-click an <strong>Application</strong> block to reduce it. The view lists each substitution step
+                    in order from top to bottom, with its value. MnL&rsquo;s beta reduction uses
+                    <strong>eager evaluation</strong>; the two views differ in what they do to the parameter:</p>
+                <ul>
+                    <li><strong>Call-by-Structure</strong> keeps the original parameter block structure, which makes it
+                        easy to trace where a value came from.</li>
+                    <li><strong>Call-by-Value</strong> replaces the parameter structure with a new one built from the
+                        parameter&rsquo;s value after evaluation.</li>
+                </ul>
+
+                <div class="help-callout is-changed">
+                    <strong>Renamed since version 4</strong>
+                    <p>If you learned MnL on an earlier build, these two were called <em>Beta Reduction</em> and
+                        <em>Beta Reduction &mdash; CBV</em> in the block menu. <em>Beta Reduction</em> is now
+                        <strong>Call-by-Structure</strong>; <em>Beta Reduction &mdash; CBV</em> is now
+                        <strong>Call-by-Value</strong>. The semantics are unchanged &mdash; only the names and the place
+                        they appear.</p>
+                </div>
+
+                <h2 id="cek">The CEK machine</h2>
+                <p>New in version 5. Where the reduction views rewrite a selected redex, the CEK machine runs the
+                    <em>whole</em> program as an abstract machine and lets you step it. Press <strong>Load</strong>, then
+                    <strong>Step</strong> to advance, <strong>Back</strong> to retreat, or <strong>Play</strong> to run.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/v5-cek-machine.jpg" width="1499" height="807" loading="lazy"
+                        alt="The CEK machine view at step 2, rule dec-var: the Control panel holds an expression to evaluate, Environment binds factorial, Kontinuation holds a bind frame, and Globals lists factorial.">
+                    <figcaption><b>MnL 5.0</b> The CEK machine at step 2, applying the <code>dec-var</code> rule. The
+                        block being evaluated is highlighted in the workspace above.</figcaption>
+                </figure>
+
+                <p>The machine state is split across four panels:</p>
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Panel</th>
+                                <th scope="col">Holds</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="help-glyph">C</span> Control</td>
+                                <td>What the machine is working on right now &mdash; the expression being evaluated, and
+                                    the name of the rule being applied.</td>
+                            </tr>
+                            <tr>
+                                <td><span class="help-glyph">E</span> Environment</td>
+                                <td>The bindings in scope, each name against its value.</td>
+                            </tr>
+                            <tr>
+                                <td><span class="help-glyph">K</span> Kontinuation</td>
+                                <td>The stack of work still to be done once the current expression produces a value.</td>
+                            </tr>
+                            <tr>
+                                <td>Globals</td>
+                                <td>The top-level bindings of the program.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>The step counter and the current rule name appear at the right of the control strip &mdash;
+                    <code>step 2 &middot; dec-var</code> in the figure above. As you step, MnL highlights the
+                    corresponding block in the workspace, so the machine state and the program stay connected.</p>
+
+                <div class="help-callout is-new">
+                    <strong>Why a machine as well as a rewriter</strong>
+                    <p>Substitution shows you <em>what</em> a program reduces to. A machine shows you <em>how</em> an
+                        implementation would get there &mdash; including the continuation stack, which is invisible in a
+                        pure rewriting account. Recursion is the case where the difference is most instructive: load the
+                        <strong>Factorial</strong> example and watch <code>K</code> grow on the way down and unwind on the
+                        way back up.</p>
+                </div>
+
+                <h2 id="lockstep">Lockstep</h2>
+                <p>Also new in version 5, and the view that ties the other two accounts together. Lockstep advances
+                    substitution rewriting and the CEK machine <em>at the same time</em>, so you can read one against the
+                    other.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/v5-lockstep.jpg" width="1499" height="807" loading="lazy"
+                        alt="The Lockstep view with a Substitution — literal rewriting panel on the left and Machine, Environment and Continuation panels on the right, before loading.">
+                    <figcaption><b>MnL 5.0</b> Lockstep, before loading: substitution on the left, machine state on the
+                        right.</figcaption>
+                </figure>
+
+                <p>The left panel is <strong>Substitution &mdash; literal rewriting</strong>. The right-hand column
+                    carries <strong>Machine</strong>, <strong>Environment</strong> and <strong>Continuation</strong>. Press
+                    <strong>Load</strong> to rewrite and run the machine together, then step through both.</p>
+
+                <h2 id="tools">Panel tools</h2>
+                <p>The icons at the right of the view strip apply to whichever view is open:</p>
+                <ul>
+                    <li><strong>Re-run</strong> &mdash; recompute the current view after you change the program.</li>
+                    <li><strong>Arrange</strong> &mdash; lay the rendered blocks out again.</li>
+                    <li><strong>Download screenshot</strong> &mdash; save the view as an image, which is what the figures
+                        in this chapter are.</li>
+                    <li><strong>Maximize</strong> / <strong>Hide</strong> &mdash; give the panel the whole window, or put
+                        it away.</li>
+                </ul>
+                <p>You can also drag the divider between the workspace and the panel to resize it.</p>
+
+                <div class="help-callout">
+                    <strong>Nothing to run?</strong>
+                    <p>Every view needs a program that type-checks. If a view stays empty, check that the status bar reads
+                        <strong>Types: OK</strong> and that no block still carries a
+                        <a href="blocks.html#debugger">warning triangle</a>.</p>
+                </div>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="types.html">
+                        <span>Previous &mdash; 06</span>
+                        <b>&larr; Types</b>
+                    </a>
+                    <a class="is-next" href="compiler.html">
+                        <span>Next &mdash; 08</span>
+                        <b>Compiler &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">MnL is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against MnL 5.0 (build 040726).</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

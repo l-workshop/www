@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="BFJ's nominal-subtyping type checker: T-Var, T-Field, T-Invk, T-New, T-UCast/T-DCast/T-SCast, the exact-match override rule, Hazel-style holes, and the Typing tab's natural-deduction proof tree.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Types — BFJ Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-bfj/types.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-bfj">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>BFJ Help</b><span class="help-bar-sub">Block-based Featherweight
+                    Java</span></span>
+        </a>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://bfj.l-workshop.my.id" rel="noopener">Open BFJ</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li>
+                    <a href="types.html" aria-current="page"><em>04</em> Types</a>
+                    <ul class="help-subnav">
+                        <li><a href="#checker">The type checker</a></li>
+                        <li><a href="#derivation">The Typing tab</a></li>
+                        <li><a href="#problems">The Problems tab</a></li>
+                    </ul>
+                </li>
+                <li><a href="semantics.html"><em>05</em> Semantics</a></li>
+                <li><a href="translation.html"><em>06</em> Translation</a></li>
+                <li><a href="reference.html"><em>07</em> Reference</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>BFJ</b>, running at
+                <a href="https://bfj.l-workshop.my.id" rel="noopener">bfj.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">04 / Types</span>
+                <h1>Every judgement, drawn as a proof</h1>
+                <p class="help-lede">FJ's type system is small enough that its checker does not just accept or
+                    reject a program &mdash; it can show you the entire derivation for any expression you build,
+                    the way a paper would print it, and it never lets one unfinished socket paint the rest of the
+                    program red.</p>
+
+                <h2 id="checker">The type checker</h2>
+                <p><code>fjTypeChecker.ts</code> implements FJ's typing rules directly: <code>T-Var</code>,
+                    <code>T-Field</code>, <code>T-Invk</code>, <code>T-New</code>, and the three cast rules,
+                    alongside class and field well-formedness and FJ's override rule. Subtyping is
+                    <strong>nominal</strong> &mdash; class <code>B</code> is a subtype of <code>A</code> exactly when
+                    it declares <code>extends A</code>, transitively, with <code>Object</code> at the root.</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Rule</th>
+                                <th>Judges</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>T-Var</code></td>
+                                <td>A variable, including <code>this</code>, looked up in &Gamma;</td>
+                            </tr>
+                            <tr>
+                                <td><code>T-Field</code></td>
+                                <td><code>e.f</code> &mdash; the field's declared type on <code>e</code>'s class</td>
+                            </tr>
+                            <tr>
+                                <td><code>T-Invk</code></td>
+                                <td><code>e.m(&#275;)</code> &mdash; the method's return type, with each argument
+                                    checked against its parameter type</td>
+                            </tr>
+                            <tr>
+                                <td><code>T-New</code></td>
+                                <td><code>new C(&#275;)</code> &mdash; typed <code>C</code>, with each argument
+                                    checked against the matching field's type</td>
+                            </tr>
+                            <tr>
+                                <td><code>T-UCast</code></td>
+                                <td>An upcast &mdash; the target is a supertype of the source. Always safe.</td>
+                            </tr>
+                            <tr>
+                                <td><code>T-DCast</code></td>
+                                <td>A downcast &mdash; the target is a subtype of the source. Safe if the runtime
+                                    class actually matches; a <a href="semantics.html#stuck">stuck cast</a> if it
+                                    doesn't.</td>
+                            </tr>
+                            <tr>
+                                <td><code>T-SCast</code></td>
+                                <td>A &ldquo;stupid&rdquo; cast &mdash; source and target are unrelated. Type-checks
+                                    anyway, with a warning; see <a href="#problems">Problems</a> below.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>The override rule is stricter than it might look coming from ordinary Java: FJ has no overloading
+                    and no covariant returns, so an overriding method must match the inherited signature
+                    <strong>exactly</strong> &mdash; same parameter types, same return type, in the same order. There
+                    is exactly one legal signature for a given method name once a superclass has declared it.</p>
+
+                <div class="help-callout is-new">
+                    <strong>Incomplete is not the same as wrong</strong>
+                    <p>An empty socket types as a first-class <code>Hole</code>, in the style of the Hazel language.
+                        A hole is consistent with everything, so it never cascades into the rest of the program:
+                        finish one field and leave a method body empty, and the field still checks cleanly while the
+                        empty method reports exactly one problem, not a wall of them. The whole workspace re-checks
+                        on every edit, and this is what makes that tolerable rather than noisy.</p>
+                </div>
+
+                <h2 id="derivation">The Typing tab</h2>
+                <p>The FJ Inspector's <em>Typing</em> tab renders a genuine natural-deduction proof tree for any
+                    expression: premises over a rule bar over a conclusion, each node showing the judgement
+                    <code>&Gamma; &vdash; e : C</code> and the rule that produced it. Every node is clickable, and
+                    clicking one selects and centres the block it is about.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bfj-typing.png" loading="lazy"
+                        alt="The BFJ Typing tab showing a natural-deduction proof tree for a stupid cast: T-New derives new B() : B, and T-SCast derives (A) new B() : A with a warning.">
+                    <figcaption><b>Fig. 1</b> The <em>Stupid cast</em> example, fully derived. <code>T-New</code>
+                        types the fresh <code>B</code>; <code>T-SCast</code> then types the cast to the unrelated
+                        <code>A</code>, flagged with a warning rather than a hard failure.</figcaption>
+                </figure>
+
+                <p>Loading <em>Stupid cast</em> and building it produces exactly this two-line derivation:</p>
+
+                <pre><code>&empty; &vdash; new B() : B          (T-New)
+------------------------------------
+&empty; &vdash; (A) new B() : A       (T-SCast)</code></pre>
+
+                <p>Read bottom-up as usual: the conclusion is <code>(A) new B() : A</code>, justified by
+                    <code>T-SCast</code>, whose single premise &mdash; <code>new B() : B</code>, justified by
+                    <code>T-New</code> &mdash; sits above the bar. Nothing about the tree hides that this is a cast
+                    between unrelated classes; the warning that goes with it lives in the Problems tab, not in the
+                    derivation.</p>
+
+                <h2 id="problems">The Problems tab</h2>
+                <p>The bottom dock's <em>Problems</em> tab surfaces the same checker's diagnostics as a clickable
+                    list, and the same offending blocks get in-canvas warning-triangle icons. Loading and building
+                    <em>Stupid cast</em> produces exactly one entry: <em>&ldquo;Stupid cast: (A) applied to unrelated
+                        type B always fails at run time (T-SCast).&rdquo;</em></p>
+
+                <p>That entry is shown as a <strong>warning</strong>, not an error. The program still type-checks
+                    and still runs &mdash; a stupid cast is a distinct, permitted rule in FJ's own type system, not
+                    a type error, and the Problems tab is honest about that distinction rather than flattening every
+                    diagnostic into red. What actually happens when you run it &mdash; a
+                    <code>ClassCastException</code>, not a crash &mdash; is the subject of
+                    <a href="semantics.html#stuck">Semantics &sect; Stuck-but-safe casts</a>.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="blocks.html">
+                        <span>Previous &mdash; 03</span>
+                        <b>&larr; Blocks</b>
+                    </a>
+                    <a class="is-next" href="semantics.html">
+                        <span>Next &mdash; 05</span>
+                        <b>Semantics &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">BFJ is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against the build running at bfj.l-workshop.my.id.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

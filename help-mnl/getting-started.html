@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="Write your first MnL program: the top-level block, declarations, expressions, operators, selection, sequence, pattern matching and let-in, each with its SML and Scala equivalent.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Getting started — MnL Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-mnl/getting-started.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>MnL Help</b><span class="help-bar-sub">Macaca nigra Language</span></span>
+        </a>
+        <span class="help-version">v5.0 &middot; build 040726</span>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://mnl.l-workshop.my.id" rel="noopener">Open MnL</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li>
+                    <a href="getting-started.html" aria-current="page"><em>02</em> Getting started</a>
+                    <ul class="help-subnav">
+                        <li><a href="#first-program">Your first program</a></li>
+                        <li><a href="#declaration">Declaration</a></li>
+                        <li><a href="#expression">Expression</a></li>
+                        <li><a href="#operator">Operators</a></li>
+                        <li><a href="#selection">Selection</a></li>
+                        <li><a href="#sequence">Sequence</a></li>
+                        <li><a href="#pattern-matching">Pattern matching</a></li>
+                        <li><a href="#let-in">Let &hellip; in</a></li>
+                    </ul>
+                </li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="functions.html"><em>04</em> Functions</a></li>
+                <li><a href="data.html"><em>05</em> Data structures</a></li>
+                <li><a href="types.html"><em>06</em> Types</a></li>
+                <li><a href="visualization.html"><em>07</em> Visualization</a></li>
+                <li><a href="compiler.html"><em>08</em> Compiler</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>MnL 5.0</b>, running at
+                <a href="https://mnl.l-workshop.my.id" rel="noopener">mnl.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">02 / Getting started</span>
+                <h1>Your first program</h1>
+                <p class="help-lede">MnL programs are built by dragging blocks out of the toolbox and attaching them to
+                    each other. Nothing is typed except names and literal values, and a block will only connect where
+                    the grammar allows it &mdash; so a program that assembles is a program that parses.</p>
+
+                <h2 id="first-program">Drag, drop, attach</h2>
+                <p>Open <a href="https://mnl.l-workshop.my.id" rel="noopener">MnL</a> and you start with an empty
+                    workspace holding one block: the black <strong>top-level block</strong> marked <code>MNL</code>. It
+                    is the parent of the whole program, and it accepts <em>declaration</em> blocks only.</p>
+
+                <ol class="help-steps">
+                    <li>Open a category in the <strong>Blocks</strong> sidebar &mdash; start with
+                        <strong>Declarations</strong>.</li>
+                    <li>Drag a <strong>Variable</strong> or <strong>Function</strong> block onto the workspace.</li>
+                    <li>Drop it against the top-level block until the notches line up and it snaps into place.</li>
+                    <li>Fill the block&rsquo;s inputs with more blocks &mdash; an identifier, an expression, and so on
+                        &mdash; until the warning triangle disappears.</li>
+                </ol>
+
+                <p>Watch the status bar as you go: <strong>Blocks</strong> counts what is on the workspace, and
+                    <strong>Types</strong> reads <code>OK</code> once everything type-checks. Drag a block to the bin at
+                    the lower right of the workspace to delete it, or use
+                    <strong>Workspace: Fit Blocks in View</strong> when a program grows past the edge.</p>
+
+                <div class="help-callout is-changed">
+                    <strong>Renamed in version 5</strong>
+                    <p>Earlier versions of this guide called the drawing area the <em>playground</em>. In version 5 it is
+                        the <strong>workspace</strong>, and the toolbox lives in the <strong>Blocks</strong> sidebar.</p>
+                </div>
+
+                <h2 id="declaration">Declaration</h2>
+                <p>A declaration binds a name to a value. MnL has two declaration blocks:</p>
+                <ul>
+                    <li><strong>Variable</strong> &mdash; binds a name to any expression.</li>
+                    <li><strong>Function</strong> &mdash; binds a name to a function. It is a convenience for a variable
+                        block bound to a <a href="functions.html#lambda">lambda block</a>.</li>
+                </ul>
+
+                <h3>Variable</h3>
+                <p>A complete variable block needs an <strong>identity</strong> block for the name and an
+                    <strong>expression</strong> block for the value. Below, the name <code>variable_in_MNL</code> is
+                    bound to the string <code>"MNL is easy to learn"</code>. Anywhere you later need that string, you
+                    reach it through a <a href="functions.html#bound">Bound</a> block carrying the same name.</p>
+
+                <figure class="help-fig is-block">
+                    <img src="assets/img/variable_binding.png" loading="lazy" style="max-width: 40%;" width="400"
+                        alt="A Variable block named variable_in_MNL bound to a string block containing 'MNL is easy to learn'.">
+                    <figcaption><b>Fig. 1</b> Variable binding.</figcaption>
+                </figure>
+
+                <h4>SML</h4>
+                <pre><code>val variable_in_MNL = "MNL is easy to learn"</code></pre>
+                <h4>Scala</h4>
+                <pre><code>val variable_in_MNL = "MNL is easy to learn"</code></pre>
+
+                <h2 id="expression">Expression</h2>
+                <p>An expression is a value. Every expression block has one &mdash; that includes operators, constants
+                    and constructors. Hover the <code>?</code> icon on any block to read the type and value MnL has
+                    worked out for it; see <a href="blocks.html#block-info">block info</a>.</p>
+
+                <h2 id="operator">Operators</h2>
+                <p>Primitive operators come in two shapes, by how many inputs they take: <strong>unary</strong> (one) and
+                    <strong>binary</strong> (two).</p>
+
+                <h3>Unary</h3>
+                <div class="help-fig-row">
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/unary_operator_boolean.png" loading="lazy" style="max-width: 80%;" width="400"
+                            alt="A unary boolean Not operator block applied to the boolean literal false.">
+                        <figcaption><b>Fig. 2</b> The boolean operator <em>not</em>.</figcaption>
+                    </figure>
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/unary_operator_boolean_binding.png" loading="lazy"
+                            alt="The same Not operator bound to a variable named unary_operator.">
+                        <figcaption><b>Fig. 3</b> The same operator, bound to a name.</figcaption>
+                    </figure>
+                </div>
+
+                <h4>SML</h4>
+                <pre><code>(not false)
+
+val unary_operator = (not false)</code></pre>
+                <h4>Scala</h4>
+                <pre><code>(!false)
+
+val unary_operator = (!false)</code></pre>
+
+                <h3>Binary</h3>
+                <div class="help-fig-row">
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/binary_operator_arithmetic.png" loading="lazy" style="max-width: 80%;" width="400"
+                            alt="A binary arithmetic block adding the numbers 111 and 222.">
+                        <figcaption><b>Fig. 4</b> An arithmetic operator.</figcaption>
+                    </figure>
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/binary_operator_binding.png" loading="lazy"
+                            alt="A function named increment that adds one to its parameter, and a variable three bound to increment applied to 2.">
+                        <figcaption><b>Fig. 5</b> An arithmetic operator inside a function.</figcaption>
+                    </figure>
+                </div>
+
+                <h4>SML</h4>
+                <pre><code>(111 + 222)
+
+fun increment (n) = (1 + n)
+val three = increment (2)</code></pre>
+                <h4>Scala</h4>
+                <pre><code>(111 + 222)
+
+def increment (n : Float) : Float = (1 + n)
+val three = increment (2)</code></pre>
+
+                <h2 id="selection">Selection</h2>
+                <p>The <strong>If / Else</strong> block &mdash; labelled <em>Condition</em> on the workspace &mdash; takes
+                    a boolean <em>When</em>, an <em>Is true</em> branch and an <em>Otherwise</em> branch. Both branches
+                    must have the same type, and that type is the type of the whole block.</p>
+
+                <figure class="help-fig is-block">
+                    <img src="assets/img/selection.png" loading="lazy"
+                        alt="A function the_greater taking a pair, comparing its two items and returning the larger one.">
+                    <figcaption><b>Fig. 6</b> Selection: returning the greater item of a pair.</figcaption>
+                </figure>
+
+                <h4>SML</h4>
+                <pre><code>(* SML does not support type inference for a tuple as a parameter.
+   Other ML languages may support the syntax below. *)
+fun the_greater (pair) =
+  if ((#1 pair) &lt; (#2 pair)) then (#2 pair) else (#1 pair)
+
+val two_or_three = the_greater ((2, 3))</code></pre>
+                <h4>Scala</h4>
+                <pre><code>def the_greater (pair : (Float, Float)) : Float =
+  if ((pair(0)) &lt; (pair(1))) then (pair(1)) else (pair(0))
+
+val two_or_three = the_greater ((2, 3))</code></pre>
+
+                <h2 id="sequence">Sequence</h2>
+                <p>A sequence is a collection of expressions evaluated one after another. The <strong>last</strong>
+                    expression gives the sequence block its type and its value.</p>
+
+                <figure class="help-fig is-block">
+                    <img src="assets/img/sequence_light.png" loading="lazy" style="max-width: 70%;" width="400"
+                        alt="A sequence block holding two string expressions, 'Hi, there!' followed by 'I am MNL'.">
+                    <figcaption><b>Fig. 7</b> A sequence of two expressions.</figcaption>
+                </figure>
+
+                <h4>SML</h4>
+                <pre><code>val sequence = ("Hi, there!" ; "I am MNL")</code></pre>
+                <h4>Scala</h4>
+                <pre><code>val sequence = (() =&gt; {
+  "Hi, there!"
+  "I am MNL"
+})()</code></pre>
+
+                <h2 id="pattern-matching">Pattern matching</h2>
+                <p>A <strong>Case of</strong> block matches an expression against a list of <strong>Match</strong>
+                    blocks. Each match pairs a pattern with a result. The patterns available in the toolbox are
+                    <em>Pattern Boolean</em>, <em>Pattern Character</em>, <em>Pattern Number</em>, <em>Pattern
+                        String</em>, <em>Pattern Unit</em> and <em>Pattern Any</em> &mdash; the last being the catch-all,
+                    written <code>_</code>.</p>
+
+                <figure class="help-fig is-block">
+                    <img src="assets/img/pattern_matching.png" loading="lazy"
+                        alt="A function translator_good_morning matching a language code against five string patterns and returning a greeting.">
+                    <figcaption><b>Fig. 8</b> Pattern matching on a language code.</figcaption>
+                </figure>
+
+                <h4>SML</h4>
+                <pre><code>fun translator_good_morning (lang_code) =
+  case lang_code of
+      "en" =&gt; "Good Morning"
+    | "de" =&gt; "Guten Morgen"
+    | "jp" =&gt; "おはよう"
+    | "id" =&gt; "Selamat Pagi"
+    | _    =&gt; "Unknown"
+
+val greetings = translator_good_morning ("de")</code></pre>
+                <h4>Scala</h4>
+                <pre><code>def translator_good_morning (lang_code : String) : String =
+  lang_code match
+    case "en" =&gt; "Good Morning"
+    case "de" =&gt; "Guten Morgen"
+    case "jp" =&gt; "おはよう"
+    case "id" =&gt; "Selamat Pagi"
+    case _    =&gt; "Unknown"
+
+val greetings = translator_good_morning ("de")</code></pre>
+
+                <div class="help-callout">
+                    <strong>Catch-all last</strong>
+                    <p>Put <em>Pattern Any</em> at the end. Matches are tried in the order they appear, so a catch-all
+                        placed early will shadow every pattern below it.</p>
+                </div>
+
+                <h2 id="let-in">Let &hellip; in</h2>
+                <p><strong>Let &hellip; in</strong> binds declarations locally, visible only inside the expression that
+                    follows.</p>
+
+                <figure class="help-fig is-block">
+                    <img src="assets/img/let_in.png" loading="lazy"
+                        alt="A let-in block declaring a string hello and a function speech, then applying speech to 'MNL'.">
+                    <figcaption><b>Fig. 9</b> A local binding with <em>let &hellip; in</em>.</figcaption>
+                </figure>
+
+                <h4>SML</h4>
+                <pre><code>val let_in =
+  let
+    val hello = "Hello "
+    fun speech (name) = (hello ^ name)
+  in
+    speech ("MNL")
+  end</code></pre>
+                <h4>Scala</h4>
+                <pre><code>val let_in = (() =&gt; {
+  val hello = "Hello "
+  def speech (name : String) : String = (hello + name)
+  speech ("MNL")
+})()</code></pre>
+
+                <p>With declarations, expressions and these four control constructs you can already write most of the
+                    bundled examples. Next, a closer look at the blocks themselves &mdash; what their shapes and colours
+                    mean, and how to read the icons they carry.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="index.html">
+                        <span>Previous &mdash; 01</span>
+                        <b>&larr; Overview</b>
+                    </a>
+                    <a class="is-next" href="blocks.html">
+                        <span>Next &mdash; 03</span>
+                        <b>Blocks &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">MnL is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against MnL 5.0 (build 040726).</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

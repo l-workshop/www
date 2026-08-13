@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="Help for MnL (Macaca nigra Language) version 5 — a tour of the block-based IDE: the workspace shell, perspectives, command palette, files and autosave.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Overview — MnL Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-mnl/">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>MnL Help</b><span class="help-bar-sub">Macaca nigra Language</span></span>
+        </a>
+        <span class="help-version">v5.0 &middot; build 040726</span>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://mnl.l-workshop.my.id" rel="noopener">Open MnL</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li>
+                    <a href="index.html" aria-current="page"><em>01</em> Overview</a>
+                    <ul class="help-subnav">
+                        <li><a href="#whats-new">What&rsquo;s new in 5</a></li>
+                        <li><a href="#workspace">The workspace</a></li>
+                        <li><a href="#perspectives">Perspectives</a></li>
+                        <li><a href="#palette">Command palette</a></li>
+                        <li><a href="#files">Files and autosave</a></li>
+                        <li><a href="#examples">Examples</a></li>
+                    </ul>
+                </li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="functions.html"><em>04</em> Functions</a></li>
+                <li><a href="data.html"><em>05</em> Data structures</a></li>
+                <li><a href="types.html"><em>06</em> Types</a></li>
+                <li><a href="visualization.html"><em>07</em> Visualization</a></li>
+                <li><a href="compiler.html"><em>08</em> Compiler</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>MnL 5.0</b>, running at
+                <a href="https://mnl.l-workshop.my.id" rel="noopener">mnl.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">01 / Overview</span>
+                <h1>MnL, at a glance</h1>
+                <p class="help-lede"><strong>MnL</strong> &mdash; Macaca nigra Language &mdash; is a block-based
+                    functional programming language built for teaching and studying programming. You build a program by
+                    dragging blocks together; MnL infers types as you go, evaluates the program, and can show you the
+                    evaluation itself as a sequence of steps.</p>
+
+                <div class="help-callout is-changed">
+                    <strong>Reading this help</strong>
+                    <p>Version 5 replaced the old floating-window layout with a single docked shell, so every
+                        screenshot of the application chrome here was taken from the current build. Figures that show an
+                        individual block are unchanged from earlier versions &mdash; the block shapes have been stable
+                        since the <strong>Kolintang</strong> renderer arrived in version 2.</p>
+                </div>
+
+                <h2 id="whats-new">What&rsquo;s new in 5</h2>
+                <p>Version 5 is a rebuild: MnL moved to TypeScript and Blockly 12, gained a new visualization panel, and
+                    got faster. The parts most likely to surprise you if you used version 3 or 4:</p>
+                <ul>
+                    <li>A single docked <strong>workspace shell</strong> &mdash; application bar, activity bar, blocks
+                        sidebar, workspace, code panel, bottom tools and status bar &mdash; instead of floating windows.</li>
+                    <li>Three <strong>perspectives</strong> (Edit, Debug, Presentation) that rearrange the shell for the
+                        task at hand.</li>
+                    <li>A <strong>command palette</strong> on <kbd>Ctrl</kbd>+<kbd>P</kbd> for every command in the
+                        application.</li>
+                    <li>The <strong>CEK machine</strong> and <strong>Lockstep</strong> views, which step the whole
+                        program through an abstract machine rather than only rewriting a selected redex.</li>
+                    <li>A <strong>bidirectional code panel</strong>: editing the MNL text rebuilds the blocks.</li>
+                    <li>Workspaces save to disk as <code>.mnl</code> files, plus a timed autosave.</li>
+                </ul>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <caption class="sr-only">MnL version history, as reported by Help &rsaquo; About MnL</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Version</th>
+                                <th scope="col">Build</th>
+                                <th scope="col">Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>5.0 &nbsp;<span class="help-glyph">now</span></td>
+                                <td><code>040726</code></td>
+                                <td>New visualization features, migrating to TypeScript and Blockly 12, and improved
+                                    performance.</td>
+                            </tr>
+                            <tr>
+                                <td>4.0</td>
+                                <td><code>170126</code></td>
+                                <td>First stable release with the windowing layout, showing call-by-structure and
+                                    call-by-value semantics.</td>
+                            </tr>
+                            <tr>
+                                <td>3.0</td>
+                                <td><code>080125</code></td>
+                                <td>Initial release of the MnL language to the public.</td>
+                            </tr>
+                            <tr>
+                                <td>2.0</td>
+                                <td><code>170323</code></td>
+                                <td>Live type inference, and color for encoding type information.</td>
+                            </tr>
+                            <tr>
+                                <td>1.0</td>
+                                <td><code>220920</code></td>
+                                <td>First stable release of the MnL language.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>You can check which build you are running at any time from <strong>Help &rsaquo; About MnL</strong>.</p>
+
+                <h2 id="workspace">The workspace</h2>
+                <p>Everything happens in one window. The screenshot below is the <em>Edit</em> perspective with the
+                    bundled <strong>Factorial</strong> example loaded.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/v5-workspace.jpg" width="1499" height="807" loading="lazy"
+                        alt="The MnL 5 workspace: application bar across the top, activity bar down the left, blocks sidebar, the factorial program rendered as blocks in the centre, and the generated code panel on the right.">
+                    <figcaption><b>MnL 5.0</b> The Edit perspective with the Factorial example loaded.</figcaption>
+                </figure>
+
+                <p>Reading the shell from the outside in:</p>
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Region</th>
+                                <th scope="col">What it holds</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Application bar</td>
+                                <td>The MnL mark, the <strong>File</strong>, <strong>View</strong>,
+                                    <strong>Examples</strong> and <strong>Help</strong> menus, the command search box,
+                                    the perspective switch and the dark/light theme toggle.</td>
+                            </tr>
+                            <tr>
+                                <td>Activity bar</td>
+                                <td>Four icons down the left edge that show or hide the blocks sidebar, the block
+                                    search, the bottom tools and the code panel.</td>
+                            </tr>
+                            <tr>
+                                <td>Blocks sidebar</td>
+                                <td>The toolbox, grouped into named categories with a count each, and a
+                                    <strong>Search blocks</strong> field. See <a href="blocks.html#toolbox">the toolbox
+                                        reference</a>.</td>
+                            </tr>
+                            <tr>
+                                <td>Workspace</td>
+                                <td>Where you assemble blocks. Its own toolbar carries undo, redo, zoom out, the current
+                                    zoom level, zoom in, <strong>fit blocks in view</strong>, and the panel toggles. Drag
+                                    a block to the bin at the lower right to delete it.</td>
+                            </tr>
+                            <tr>
+                                <td>Code panel</td>
+                                <td>Four tabs &mdash; <strong>MNL</strong>, <strong>SML</strong>,
+                                    <strong>Scala</strong> and <strong>Typing</strong>. See
+                                    <a href="compiler.html">the compiler</a>.</td>
+                            </tr>
+                            <tr>
+                                <td>Bottom tools</td>
+                                <td>The visualization panel, with the five views described in
+                                    <a href="visualization.html">visualization</a>.</td>
+                            </tr>
+                            <tr>
+                                <td>Status bar</td>
+                                <td>Autosave state and interval, the <strong>Blocks</strong> count, and
+                                    <strong>Types</strong> &mdash; <code>OK</code> when the whole program type-checks.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="help-callout">
+                    <strong>Types: OK</strong>
+                    <p>The <strong>Types</strong> indicator in the status bar is the quickest health check you have. If
+                        it does not read <code>OK</code>, a block somewhere is carrying a type error &mdash; look for the
+                        warning triangle on the block itself, described under
+                        <a href="blocks.html#block-info">block info</a>.</p>
+                </div>
+
+                <h2 id="perspectives">Perspectives</h2>
+                <p>The three buttons at the right of the application bar rearrange the shell. They do not change your
+                    program &mdash; only which panels are on screen.</p>
+                <ul>
+                    <li><strong>Edit</strong> &mdash; blocks sidebar, workspace and code panel. The layout for writing a
+                        program.</li>
+                    <li><strong>Debug (CEK Machine)</strong> &mdash; hides the sidebar and opens the bottom tools, so the
+                        workspace sits above the machine views.</li>
+                    <li><strong>Presentation</strong> &mdash; strips the chrome back for showing a program to other
+                        people.</li>
+                </ul>
+                <p>Each one is also a command, so <kbd>Ctrl</kbd>+<kbd>P</kbd> then <code>persp</code> gets you
+                    there without reaching for the mouse.</p>
+
+                <h2 id="palette">Command palette</h2>
+                <p>Press <kbd>Ctrl</kbd>+<kbd>P</kbd>, or click the search box in the middle of the application bar.
+                    Type to filter, <kbd>&uarr;</kbd> <kbd>&darr;</kbd> to move, <kbd>Enter</kbd> to run,
+                    <kbd>Esc</kbd> to close.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/v5-command-palette.jpg" width="1499" height="807" loading="lazy"
+                        alt="The MnL command palette open over the workspace, listing file, view, perspective and workspace commands with their keyboard shortcuts.">
+                    <figcaption><b>MnL 5.0</b> The command palette lists all twenty commands with their shortcuts.</figcaption>
+                </figure>
+
+                <p>The commands that carry a keyboard shortcut of their own:</p>
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Shortcut</th>
+                                <th scope="col">Command</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><kbd>Ctrl</kbd>+<kbd>P</kbd></td><td>Open the command palette</td></tr>
+                            <tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd></td><td>File: Save As&hellip;</td></tr>
+                            <tr><td><kbd>Ctrl</kbd>+<kbd>B</kbd></td><td>View: Toggle Blocks Sidebar</td></tr>
+                            <tr><td><kbd>Ctrl</kbd>+<kbd>F</kbd></td><td>View: Search Blocks</td></tr>
+                            <tr><td><kbd>Ctrl</kbd>+<kbd>J</kbd></td><td>View: Toggle Bottom Tools</td></tr>
+                            <tr><td><kbd>Ctrl</kbd>+<kbd>Enter</kbd></td><td>Apply an edit made in the MNL text pane immediately</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>The remainder are palette-only: <em>New Workspace</em>, <em>Open .mnl&hellip;</em>, <em>Load
+                        Autosave</em>, <em>Toggle Code Panel</em>, <em>Maximize Code Panel</em>, <em>Toggle Dark/Light
+                        Theme</em>, the three perspectives, <em>Undo</em>, <em>Redo</em>, <em>Zoom In</em>, <em>Zoom
+                        Out</em>, <em>Reset Zoom</em>, <em>Fit Blocks in View</em> and <em>About MnL</em>.</p>
+
+                <h2 id="files">Files and autosave</h2>
+                <p>A workspace is a JSON payload saved with the <code>.mnl</code> extension.</p>
+                <ul>
+                    <li><strong>File &rsaquo; Save As&hellip;</strong> (<kbd>Ctrl</kbd>+<kbd>S</kbd>) asks for a file
+                        name and downloads <code>&lt;name&gt;.mnl</code>.</li>
+                    <li><strong>File &rsaquo; Open .mnl&hellip;</strong> loads a workspace back from disk.</li>
+                    <li><strong>File &rsaquo; New Workspace</strong> clears the workspace and starts over.</li>
+                    <li><strong>File &rsaquo; Load Autosave</strong> restores the last automatic save.</li>
+                </ul>
+                <p>Autosave runs on the interval shown in the status bar &mdash; drag the slider beside it to change how
+                    often. The label to its left reports the state, either <em>Autosave ready</em> or the time of the
+                    last save.</p>
+
+                <div class="help-callout is-new">
+                    <strong>Version 5</strong>
+                    <p>Autosave and <code>.mnl</code> files are per-browser. If you want to keep a program, use
+                        <strong>Save As&hellip;</strong> and hold on to the file &mdash; clearing site data clears the
+                        autosave with it.</p>
+                </div>
+
+                <h2 id="examples">Examples</h2>
+                <p>The <strong>Examples</strong> menu carries ready-made programs, grouped as <em>Basic</em> (Identity
+                    function, Factorial, Partial application, Sum list, Count list), <em>Lists</em> (Filter list in
+                    three variants, fmap over list, Fold list) and <em>Records &amp; tuples</em>.</p>
+                <p>If your workspace already has blocks in it, MnL asks before loading:</p>
+                <ul>
+                    <li><strong>Replace</strong> &mdash; discard what is there and load the example on its own.</li>
+                    <li><strong>Merge</strong> &mdash; keep your blocks and add the example alongside them.</li>
+                    <li><strong>Cancel</strong> &mdash; leave the workspace untouched.</li>
+                </ul>
+                <p>Loading an example is the fastest way to get something worth stepping through in the
+                    <a href="visualization.html">visualization views</a>. Every worked example in this help uses the
+                    bundled <strong>Factorial</strong> program.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a class="is-next" href="getting-started.html">
+                        <span>Next &mdash; 02</span>
+                        <b>Getting started &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">MnL is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against MnL 5.0 (build 040726). It supersedes the retired
+                <code>help.mnl-pl.org</code>.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

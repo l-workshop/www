@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="Data structures in MnL: constructing empty and non-empty lists, the head, tail, is-empty and append operators, tuples and their projection, and records with named fields.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Data structures — MnL Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-mnl/data.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>MnL Help</b><span class="help-bar-sub">Macaca nigra Language</span></span>
+        </a>
+        <span class="help-version">v5.0 &middot; build 040726</span>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://mnl.l-workshop.my.id" rel="noopener">Open MnL</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="functions.html"><em>04</em> Functions</a></li>
+                <li>
+                    <a href="data.html" aria-current="page"><em>05</em> Data structures</a>
+                    <ul class="help-subnav">
+                        <li><a href="#list">The list</a></li>
+                        <li><a href="#list-operators">List operators</a></li>
+                        <li><a href="#list-example">Example: sum a list</a></li>
+                        <li><a href="#tuple">The tuple</a></li>
+                        <li><a href="#record">The record</a></li>
+                    </ul>
+                </li>
+                <li><a href="types.html"><em>06</em> Types</a></li>
+                <li><a href="visualization.html"><em>07</em> Visualization</a></li>
+                <li><a href="compiler.html"><em>08</em> Compiler</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>MnL 5.0</b>, running at
+                <a href="https://mnl.l-workshop.my.id" rel="noopener">mnl.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">05 / Data structures</span>
+                <h1>Lists, tuples and records</h1>
+                <p class="help-lede">MnL has three containers, and they differ in exactly the way you would want them
+                    to: a <strong>list</strong> holds any number of items of one type, a <strong>tuple</strong> holds a
+                    fixed number of items of possibly different types, and a <strong>record</strong> is a tuple whose
+                    parts have names.</p>
+
+                <div class="help-callout">
+                    <strong>All three resize the same way</strong>
+                    <p>Lists, tuples and records take a variable number of inputs, so you add and remove members with
+                        the gear popup or the plus / minus buttons described under
+                        <a href="blocks.html#add-remove-input">add / remove input</a>.</p>
+                </div>
+
+                <h2 id="list">The list</h2>
+                <p>A list is a container holding a collection of items <em>of the same type</em>. It may be empty, or
+                    hold one or more items.</p>
+
+                <h3>Empty list</h3>
+                <p>To build an empty list, remove every member from the gear popup <span class="help-glyph">&#9881;</span>.</p>
+
+                <div class="help-fig-row">
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/list_empty.png" loading="lazy" style="max-width: 70%;" width="400"
+                            alt="An empty list constructor block.">
+                        <figcaption><b>Fig. 1</b> The empty list block.</figcaption>
+                    </figure>
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/list_empty_binding.png" loading="lazy" style="max-width: 90%;" width="400"
+                            alt="An empty list bound to a variable named list_constructor.">
+                        <figcaption><b>Fig. 2</b> Bound to a name.</figcaption>
+                    </figure>
+                </div>
+
+                <h4>SML</h4>
+                <pre><code>[]
+
+val list_constructor = []</code></pre>
+                <h4>Scala</h4>
+                <pre><code>List ()
+
+val list_constructor = List ()</code></pre>
+
+                <h3>Non-empty list</h3>
+                <div class="help-fig-row">
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/list_non_empty.png" loading="lazy"
+                            alt="A list constructor holding three string items: 'my name ', 'is ' and 'MNL'.">
+                        <figcaption><b>Fig. 3</b> Three inhabitants.</figcaption>
+                    </figure>
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/list_non_empty_binding.png" loading="lazy"
+                            alt="The same three-item list bound to a variable named list_constructor.">
+                        <figcaption><b>Fig. 4</b> Bound to a name.</figcaption>
+                    </figure>
+                </div>
+
+                <h4>SML</h4>
+                <pre><code>["my name ", "is ", "MNL"]
+
+val list_constructor = ["my name ", "is ", "MNL"]</code></pre>
+                <h4>Scala</h4>
+                <pre><code>List ("my name ", "is ", "MNL")
+
+val list_constructor = List ("my name ", "is ", "MNL")</code></pre>
+
+                <h2 id="list-operators">List operators</h2>
+                <p>Four operators live in the <span class="help-glyph">::</span> <strong>List</strong> category.</p>
+
+                <h3>Is empty</h3>
+                <p>Returns <code>true</code> when the list is empty and <code>false</code> otherwise.</p>
+
+                <div class="help-fig-row">
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/list_is_empty_true.png" loading="lazy"
+                            alt="The is-empty operator applied to an empty list, giving true.">
+                        <figcaption><b>Fig. 5</b> On an empty list.</figcaption>
+                    </figure>
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/list_is_empty_false.png" loading="lazy"
+                            alt="The is-empty operator applied to a non-empty list, giving false.">
+                        <figcaption><b>Fig. 6</b> On a non-empty list.</figcaption>
+                    </figure>
+                </div>
+
+                <h4>SML</h4>
+                <pre><code>null ([])</code></pre>
+                <h4>Scala</h4>
+                <pre><code>List ().isEmpty</code></pre>
+
+                <h3>Head</h3>
+                <p>Retrieves the first inhabitant.</p>
+                <figure class="help-fig is-block">
+                    <img src="assets/img/list_head.png" loading="lazy"
+                        alt="The head operator applied to a three-item string list.">
+                    <figcaption><b>Fig. 7</b> The <em>head</em> operator.</figcaption>
+                </figure>
+                <h4>SML</h4>
+                <pre><code>hd (["My name ", "is ", "MNL"])</code></pre>
+                <h4>Scala</h4>
+                <pre><code>List ("My name ", "is ", "MNL").head</code></pre>
+
+                <h3>Tail</h3>
+                <p>Everything from the second inhabitant to the last.</p>
+                <figure class="help-fig is-block">
+                    <img src="assets/img/list_tail.png" loading="lazy"
+                        alt="The tail operator applied to a three-item string list.">
+                    <figcaption><b>Fig. 8</b> The <em>tail</em> operator.</figcaption>
+                </figure>
+                <h4>SML</h4>
+                <pre><code>tl (["My name ", "is ", "MNL"])</code></pre>
+                <h4>Scala</h4>
+                <pre><code>List ("My name ", "is ", "MNL").tail</code></pre>
+
+                <h3>Append</h3>
+                <p>Inserts a new inhabitant at the <em>front</em> of the list.</p>
+
+                <div class="help-fig-row">
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/list_append.png" loading="lazy"
+                            alt="The append operator putting the string 'Hello, ' in front of a three-item list.">
+                        <figcaption><b>Fig. 9</b> The <em>append</em> operator.</figcaption>
+                    </figure>
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/list_append_ex_1.png" loading="lazy"
+                            alt="A variable my_name_is_mnl holding a list, and a variable hello appending 'Hello, ' to it.">
+                        <figcaption><b>Fig. 10</b> Appending to a bound list.</figcaption>
+                    </figure>
+                </div>
+
+                <h4>SML</h4>
+                <pre><code>("Hello, " :: ["My name ", "is ", "MNL"])
+
+val my_name_is_mnl = ["My name", "is", "MNL"]
+val hello = ("Hello, " :: my_name_is_mnl)</code></pre>
+                <h4>Scala</h4>
+                <pre><code>("Hello, " :: List ("My name ", "is ", "MNL"))
+
+val my_name_is_mnl = List ("My name", "is", "MNL")
+val hello = ("Hello, " :: my_name_is_mnl)</code></pre>
+
+                <h2 id="list-example">Example: sum a list</h2>
+                <p>The three list operators together give you the standard recursive shape &mdash; test for empty, take
+                    the head, recurse on the tail.</p>
+
+                <figure class="help-fig is-block">
+                    <img src="assets/img/list_ex_sum.png" loading="lazy"
+                        alt="A recursive sum_list function returning 0 for an empty list and otherwise the head plus the sum of the tail.">
+                    <figcaption><b>Fig. 11</b> Summing a list of numbers.</figcaption>
+                </figure>
+
+                <h4>SML</h4>
+                <pre><code>fun sum_list (list_a) =
+  if null (list_a) then 0
+  else (hd (list_a) + sum_list (tl (list_a)))
+
+val sum_list_application = sum_list ([17, 2, 200, 4])</code></pre>
+                <h4>Scala</h4>
+                <pre><code>def sum_list (list_a : List[Float]) : Float =
+  if (list_a.isEmpty) then 0
+  else ((list_a.head) + sum_list ((list_a.tail)))
+
+val sum_list_application = sum_list (List (17, 2, 200, 4))</code></pre>
+
+                <p><strong>Examples &rsaquo; Basic &rsaquo; Sum list</strong> loads this program directly, and
+                    <strong>Examples &rsaquo; Lists</strong> has filter, fmap and fold built the same way.</p>
+
+                <h2 id="tuple">The tuple</h2>
+                <p>A tuple holds a collection of inhabitants whose types may be the same or different. Its size is fixed,
+                    and it cannot be empty.</p>
+
+                <div class="help-fig-row">
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/tuple_constructor.png" loading="lazy"
+                            alt="A tuple constructor holding true, the string 'is' and the number 1.">
+                        <figcaption><b>Fig. 12</b> Tuple constructor.</figcaption>
+                    </figure>
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/tuple_constructor_binding.png" loading="lazy"
+                            alt="The same tuple bound to a variable named tuple_constructor.">
+                        <figcaption><b>Fig. 13</b> Bound to a name.</figcaption>
+                    </figure>
+                </div>
+
+                <h4>SML</h4>
+                <pre><code>(true, "is", 1)
+
+val tuple_constructor = (true, "is", 1)</code></pre>
+                <h4>Scala</h4>
+                <pre><code>(true, "is", 1)
+
+val tuple_constructor = (true, "is", 1)</code></pre>
+
+                <h3>Projection</h3>
+                <p><strong>Get item</strong> &mdash; the <span class="help-glyph">&#960;</span> operator &mdash; retrieves
+                    one element by position.</p>
+
+                <figure class="help-fig is-block">
+                    <img src="assets/img/tuple_projection.png" loading="lazy"  style="max-width: 100%;" width="500"
+                        alt="A projection operator retrieving the first item from a bound tuple.">
+                    <figcaption><b>Fig. 14</b> Tuple projection.</figcaption>
+                </figure>
+
+                <h4>SML</h4>
+                <pre><code>val tuple_constructor = (true, "is", 1)
+val projection = (#1 tuple_constructor)</code></pre>
+                <h4>Scala</h4>
+                <pre><code>val tuple_constructor = (true, "is", 1)
+val projection = (tuple_constructor(1))</code></pre>
+
+                <div class="help-callout is-changed">
+                    <strong>Counting from where?</strong>
+                    <p>SML numbers tuple positions from <code>1</code> and Scala from <code>0</code>, which is why the
+                        two snippets above disagree. Read the position off the block label rather than assuming, and check
+                        the result with <a href="blocks.html#block-info">block info</a>.</p>
+                </div>
+
+                <h2 id="record">The record</h2>
+                <p>A record has a fixed number of <strong>fields</strong>, each pairing an identifier with an expression.
+                    Where a tuple names its parts implicitly by order, a record lets you name them.</p>
+
+                <div class="help-fig-row">
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/record_constructor.png" loading="lazy"
+                            alt="A record constructor with fields bool, str and num holding false, 'is' and 0.">
+                        <figcaption><b>Fig. 15</b> Record constructor.</figcaption>
+                    </figure>
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/record_constructor_binding.png" loading="lazy"
+                            alt="The same record bound to a variable named record_constructor.">
+                        <figcaption><b>Fig. 16</b> Bound to a name.</figcaption>
+                    </figure>
+                </div>
+
+                <h4>SML</h4>
+                <pre><code>{bool = false, str = "is", num = 0}
+
+val record_constructor = {bool = false, str = "is", num = 0}</code></pre>
+                <h4>Scala</h4>
+                <pre><code>/* Scala has no primitive Record type */</code></pre>
+
+                <h3>Projection</h3>
+                <p><strong>Get field</strong> retrieves a field by <em>name</em>.</p>
+
+                <div class="help-fig-row">
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/record_projection.png" loading="lazy"
+                            alt="A projection operator retrieving the str field from a record literal.">
+                        <figcaption><b>Fig. 17</b> Record projection.</figcaption>
+                    </figure>
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/record_projection_binding.png" loading="lazy"
+                            alt="A projection retrieving the str field from a bound record variable.">
+                        <figcaption><b>Fig. 18</b> Projection over a bound record.</figcaption>
+                    </figure>
+                </div>
+
+                <h4>SML</h4>
+                <pre><code>(#str {bool = false, str = "is", num = 0})
+
+val record_constructor = {bool = false, str = "is", num = 0}
+val projection = (#str record_constructor)</code></pre>
+                <h4>Scala</h4>
+                <pre><code>/* Scala has no primitive Record type */</code></pre>
+
+                <p>Records and tuples are also how you pass more than one value into a function &mdash; see
+                    <a href="functions.html#many-parameters">two or more parameters</a>.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="functions.html">
+                        <span>Previous &mdash; 04</span>
+                        <b>&larr; Functions</b>
+                    </a>
+                    <a class="is-next" href="types.html">
+                        <span>Next &mdash; 06</span>
+                        <b>Types &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">MnL is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against MnL 5.0 (build 040726).</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="BFJ's bidirectional block-text translation: the printer that generates real Java-shaped FJ source, the parser that reads it back into blocks, and the proved round-trip bijection between the two.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Translation — BFJ Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-bfj/translation.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-bfj">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>BFJ Help</b><span class="help-bar-sub">Block-based Featherweight
+                    Java</span></span>
+        </a>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://bfj.l-workshop.my.id" rel="noopener">Open BFJ</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li><a href="semantics.html"><em>05</em> Semantics</a></li>
+                <li>
+                    <a href="translation.html" aria-current="page"><em>06</em> Translation</a>
+                    <ul class="help-subnav">
+                        <li><a href="#generator">Blocks to text</a></li>
+                        <li><a href="#parser">Text to blocks</a></li>
+                        <li><a href="#roundtrip">The round-trip bijection</a></li>
+                    </ul>
+                </li>
+                <li><a href="reference.html"><em>07</em> Reference</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>BFJ</b>, running at
+                <a href="https://bfj.l-workshop.my.id" rel="noopener">bfj.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">06 / Translation</span>
+                <h1>From blocks to Java, and back</h1>
+                <p class="help-lede">Every other chapter treats the block tree as the program. This one is about the
+                    other view: BFJ also generates real Java-shaped source text from those same blocks, parses that
+                    text back into the same blocks, and proves &mdash; not just claims &mdash; that the two
+                    directions cancel out.</p>
+
+                <h2 id="generator">Blocks to text &mdash; &beta;</h2>
+                <p><code>fjPrinter.ts</code> and <code>fjGenerator.ts</code> generate genuine, syntactically-valid
+                    Java source: classes, fields, methods with <code>return</code>, and &mdash; the interesting part
+                    &mdash; the synthesized canonical constructor written out in full, with its <code>super(&hellip;)</code>
+                    call and its <code>this.f = f;</code> assignments for every field.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bfj-code.jpg" loading="lazy" style="max-width: 60%;" width="400"
+                        alt="The BFJ Editable Code tab showing generated Java source for the Pair class and its swap method, kept in sync with the block workspace.">
+                    <figcaption><b>Fig. 1</b> The Editable Code tab for <code>Pair</code>. The constructor's
+                        <code>super()</code> call and field assignments are generated, not typed.</figcaption>
+                </figure>
+
+                <p>Because well-formed FJ syntax is, by construction, a literal subset of Java syntax, the generated
+                    text is exactly what <code>javac</code> would accept &mdash; modulo the class needing whatever
+                    else it references to also be present to compile standalone. Nothing about the printed source is
+                    a simplified or annotated stand-in for the real thing.</p>
+
+                <h2 id="parser">Text to blocks &mdash; &tau;</h2>
+                <p><code>fjTextParser.ts</code> runs the other direction: FJ text in, blocks out. It is what powers
+                    the <em>Editable Code</em> tab's live two-way sync &mdash; type into the panel, or drag a block
+                    on the canvas, and the other view updates immediately, in either direction.</p>
+
+                <p>This is also how the workbench opens a plain file: opening a <code>.fj</code> or <code>.txt</code>
+                    file imports it straight through this parser into the editable code panel, and from there into
+                    blocks, exactly as if you had typed it in by hand.</p>
+
+                <h2 id="roundtrip">The round-trip bijection</h2>
+                <p>The project states and tests this as a genuine formal property, not a rough guarantee: for the
+                    printer &beta; and the parser &tau;,</p>
+
+                <pre><code>&tau;(&beta;(b)) &equiv; b       -- text-of-blocks, parsed back, is the same block tree
+&beta;(&tau;(t)) &asymp; t       -- blocks-of-text, printed back, is the same program text</code></pre>
+
+                <p>In plain terms: what you build in blocks and what you would type as text are, provably, the same
+                    program, always. This is checked by a dedicated round-trip test suite
+                    (<code>tests/roundtrip.ts</code>), separate from the semantics lockstep suite in
+                    <a href="semantics.html#agreement">chapter 05</a>.</p>
+
+                <div class="help-callout is-new">
+                    <strong>Why this needed the constructor to be fixed</strong>
+                    <p>A round-trip bijection is only as strong as its weakest block. If <code>fj_ctor</code> were
+                        editable, two different constructor block trees could print to the same text, or one piece
+                        of text could parse back to a constructor shape you never actually built &mdash; either way,
+                        &tau;(&beta;(b)) &equiv; b would have a counterexample. Deriving the constructor automatically,
+                        covered in <a href="blocks.html#ctor">Blocks</a>, is precisely what removes that
+                        possibility.</p>
+                </div>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="semantics.html">
+                        <span>Previous &mdash; 05</span>
+                        <b>&larr; Semantics</b>
+                    </a>
+                    <a class="is-next" href="reference.html">
+                        <span>Next &mdash; 07</span>
+                        <b>Reference &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">BFJ is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against the build running at bfj.l-workshop.my.id.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

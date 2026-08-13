@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="ViSML is a Blockly-based visual IDE for the whole of Standard ML: blocks that mirror the real grammar rather than a simplified subset, two live-switchable renderers, and a bidirectional block-to-SML-text compiler.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Overview — ViSML Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-visml/index.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-visml">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>ViSML Help</b><span class="help-bar-sub">Visual Standard ML</span></span>
+        </a>
+        <span class="help-version">v5.0.0</span>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://visml.l-workshop.my.id" rel="noopener">Open ViSML</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li>
+                    <a href="index.html" aria-current="page"><em>01</em> Overview</a>
+                    <ul class="help-subnav">
+                        <li><a href="#what">What ViSML is</a></li>
+                        <li><a href="#workbench">The workbench</a></li>
+                        <li><a href="#perspectives">Perspectives</a></li>
+                        <li><a href="#palette">Command palette</a></li>
+                        <li><a href="#files">Files and autosave</a></li>
+                        <li><a href="#examples">Built-in examples</a></li>
+                    </ul>
+                </li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li><a href="renderers.html"><em>05</em> Renderers</a></li>
+                <li><a href="codegen.html"><em>06</em> Code Generation</a></li>
+                <li><a href="reference.html"><em>07</em> Reference</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>ViSML 5.0.0</b>, running at
+                <a href="https://visml.l-workshop.my.id" rel="noopener">visml.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">01 / Overview</span>
+                <h1>A block editor for the whole of Standard ML</h1>
+                <p class="help-lede">ViSML does not simplify Standard ML down to something block-shaped. It takes the
+                    language's actual grammar &mdash; all 42 non-terminals of it, core and Modules alike &mdash; and gives
+                    every production its own block. You build a program by assembling grammar, and the generated SML
+                    text falls out the other side.</p>
+
+                <h2 id="what">What ViSML is</h2>
+                <p>ViSML is a Blockly-based visual IDE for Standard ML. It generates real, textual SML source from the
+                    blocks you connect, and it parses SML text back into blocks &mdash; the same round trip, either
+                    direction. Its distinguishing choice is architectural: rather than merge or flatten SML's grammar
+                    into a friendlier subset the way most block editors do, ViSML's toolbox categories and block shapes
+                    are a direct mirror of the productions themselves. Building with blocks is meant to teach the
+                    grammar, not hide it.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/visml-workbench.jpg" loading="lazy"
+                        alt="The ViSML workbench: the toolbox sidebar on the left, a block program in the workspace, and the generated SML code panel on the right.">
+                    <figcaption><b>Fig. 1</b> The workbench. Toolbox on the left, block program in the workspace, and
+                        the live-generated SML source on the right.</figcaption>
+                </figure>
+
+                <p>Three things follow from that choice:</p>
+                <ul>
+                    <li><strong>The full language, not a beginner slice.</strong> Ten toolbox categories, 134 blocks in
+                        total, cover core SML &mdash; <code>let</code>, <code>val</code>/<code>rec</code>,
+                        multi-clause <code>fun</code>, datatypes, exceptions, tuples, lists, records,
+                        <code>case</code>/<code>fn</code>, <code>while</code> &mdash; and the entire Modules language:
+                        structures, signatures, functors, sharing, opaque and transparent ascription.</li>
+                    <li><strong>Two renderers you can swap at runtime.</strong> <a href="renderers.html">Macaca
+                            Nigra and Goropa</a> draw the same grammar two different ways &mdash; one with
+                        grammar-shaped connectors, one styled to read like indented text code.</li>
+                    <li><strong>A real generator and a real parser.</strong> Blocks compile to SML source text, and SML
+                        source text parses back to blocks. Both directions are <a href="codegen.html">round-trip
+                            tested</a> against the language's full production set.</li>
+                </ul>
+
+                <div class="help-callout">
+                    <strong>Where this sits</strong>
+                    <p>ViSML is one of the languages built at <a href="../index.html">L-Workshop</a>, and it sits
+                        apart from its siblings in one deliberate way: unlike
+                        <a href="../help-b-lambda/index.html">B-Lambda</a> and
+                        <a href="../help-b-mj/index.html">B-MJ</a>, it has no execution semantics at all &mdash; no
+                        interpreter, no stepper, no abstract machine. What it has instead is a grammar-transformation
+                        pipeline, <strong>T2BB</strong>, that classifies every SML production and gives each class a
+                        matching visual treatment. That research grounding is why the blocks look and behave the way
+                        they do; it is covered in full in <a href="renderers.html#research">Renderers</a>.</p>
+                </div>
+
+                <h2 id="workbench">The workbench</h2>
+                <p>ViSML's shell reads like a small code editor rather than a canvas with a palette bolted on. Six
+                    regions, most of them toggleable and all of them persisted to local storage:</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Region</th>
+                                <th>What lives there</th>
+                                <th>Toggle</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Title bar</td>
+                                <td><em>File</em>, <em>Edit</em>, <em>View</em>, <em>Build</em>, <em>Tools</em>,
+                                    <em>Examples</em>, <em>Help</em></td>
+                                <td>&mdash;</td>
+                            </tr>
+                            <tr>
+                                <td>Activity bar</td>
+                                <td>Blocks &middot; Project files &middot; Code outline &middot; Problems &middot;
+                                    Output &middot; Settings</td>
+                                <td>&mdash;</td>
+                            </tr>
+                            <tr>
+                                <td>Primary sidebar</td>
+                                <td>The searchable, ten-category toolbox</td>
+                                <td><kbd>Ctrl</kbd> + <kbd>B</kbd></td>
+                            </tr>
+                            <tr>
+                                <td>Workspace</td>
+                                <td>The block canvas itself, with zoom and the active renderer</td>
+                                <td>&mdash;</td>
+                            </tr>
+                            <tr>
+                                <td>Code / Outline panel</td>
+                                <td>Generated SML text with <em>Apply to Blocks</em>, and a clickable outline tree</td>
+                                <td>&mdash;</td>
+                            </tr>
+                            <tr>
+                                <td>Bottom dock</td>
+                                <td><em>Problems</em>, <em>Output</em> &mdash; editor events, not program output</td>
+                                <td><kbd>Ctrl</kbd> + <kbd>J</kbd></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>Every one of those regions is resizable, and their sizes, the sidebar's open/closed state, the
+                    active renderer, the theme, and the autosave interval all survive a reload. The toolbox itself
+                    carries a search box &mdash; <kbd>Ctrl</kbd> + <kbd>F</kbd> &mdash; that filters blocks by name
+                    across every category and opens whichever ones match.</p>
+
+                <h2 id="perspectives">Perspectives</h2>
+                <p>ViSML keeps this simple: two perspectives, not a matrix of layout presets. <em>Edit</em> is the
+                    working arrangement &mdash; sidebar, workspace and Code panel all visible. <em>Presentation</em>
+                    maximises the workspace for teaching or screen-sharing, hiding everything else until you leave
+                    it.</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Perspective</th>
+                                <th>Arranged for</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Edit</td>
+                                <td>Building a program: toolbox, workspace and Code panel together</td>
+                            </tr>
+                            <tr>
+                                <td>Presentation <kbd>F11</kbd></td>
+                                <td>Teaching: a maximised canvas. Leaving it restores the previous layout.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 id="palette">Command palette</h2>
+                <p>Press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>, or <kbd>F1</kbd>, for a single filterable
+                    list of every command, grouped by the menu it comes from &mdash; <em>File</em>, <em>Edit</em>,
+                    <em>View</em> and onward &mdash; with its keyboard shortcut shown alongside it.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/visml-palette.jpg" loading="lazy"
+                        alt="The ViSML command palette open, listing commands grouped by File, Edit and View with their keyboard shortcuts.">
+                    <figcaption><b>Fig. 2</b> The palette. One of its entries, <em>Run</em>, is permanently disabled
+                        &mdash; see <a href="codegen.html#no-runtime">Code Generation</a> for why that is by
+                        design.</figcaption>
+                </figure>
+
+                <p>The full command list, grouped exactly as the palette groups it, is in
+                    <a href="reference.html#commands">the reference chapter</a>.</p>
+
+                <h2 id="files">Files and autosave</h2>
+                <p>Workspaces save as <code>.vsml</code> files &mdash; plain JSON, Blockly's own modern workspace
+                    serialization. Nothing is uploaded anywhere; save and open are ordinary browser file operations.</p>
+
+                <ul>
+                    <li><strong>New / Open / Save Workspace</strong>, from <em>File</em> &mdash; <kbd>Ctrl</kbd> +
+                        <kbd>O</kbd> to open, <kbd>Ctrl</kbd> + <kbd>S</kbd> to save.</li>
+                    <li><strong>Load Autosave</strong> restores the local backup after a crash or a closed tab.</li>
+                    <li><strong>Autosave interval</strong> is a Settings slider, 1&ndash;20 minutes, defaulting to 2.
+                        The status bar shows <em>Autosaved HH:MM</em> once it has run.</li>
+                </ul>
+
+                <h2 id="examples">Built-in examples</h2>
+                <p>Seven worked programs live under the <em>Examples</em> menu, each isolating one idea &mdash; and the
+                    last is the only one in the family that exercises the Modules language rather than the core.</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Example</th>
+                                <th>Demonstrates</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Factorial</td>
+                                <td>Recursive <code>fun</code>, multi-clause pattern match on <code>0</code> /
+                                    <code>n</code>, arithmetic, plus a separate <code>val</code> application</td>
+                            </tr>
+                            <tr>
+                                <td>Case Match</td>
+                                <td><code>case&hellip;of</code> with list patterns <code>[]</code> /
+                                    <code>x::_</code>, wildcard fallback, string results</td>
+                            </tr>
+                            <tr>
+                                <td>Currying Function</td>
+                                <td>A curried two-argument function, <code>fun f a b = a + b</code></td>
+                            </tr>
+                            <tr>
+                                <td>Uncurrying Function</td>
+                                <td>The tuple-argument version, <code>fun f (b, a) = &hellip;</code>, applied to a
+                                    tuple &mdash; a direct contrast with Currying Function</td>
+                            </tr>
+                            <tr>
+                                <td>Pattern Matching</td>
+                                <td>Multi-clause literal matching, <code>1</code> / <code>2</code> / wildcard</td>
+                            </tr>
+                            <tr>
+                                <td>Binary Tree</td>
+                                <td>A polymorphic recursive datatype, <code>'a bt = LEAF of 'a | NODE of 'a bt * 'a *
+                                    'a bt</code></td>
+                            </tr>
+                            <tr>
+                                <td>Signature and Structure</td>
+                                <td>A full Modules demo &mdash; <code>signature SUM</code>, an opaquely ascribed
+                                    <code>structure IntSum :&gt; SUM</code>, value and type specs</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="help-callout is-changed">
+                    <strong>Loading over your work</strong>
+                    <p>If the workspace already has blocks, loading an example asks first, offering
+                        <strong>Replace</strong> or <strong>Merge</strong> &mdash; merge drops the example alongside
+                        what you have instead of discarding it. <em>Cancel</em> leaves everything untouched. The same
+                        convention as <a href="../help-b-lambda/index.html#examples">B-Lambda</a> and
+                        <a href="../help-b-mj/index.html#examples">B-MJ</a>.</p>
+                </div>
+
+                <p>If you only load one example, make it <strong>Signature and Structure</strong>: it is the fastest
+                    way to see that ViSML's grammar coverage is not a slogan &mdash; opaque ascription, type
+                    specifications and a <code>fn</code> match all sit inside one small program.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="../index.html">
+                        <span>Up &mdash; site</span>
+                        <b>&larr; L-Workshop</b>
+                    </a>
+                    <a class="is-next" href="getting-started.html">
+                        <span>Next &mdash; 02</span>
+                        <b>Getting started &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">ViSML is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against ViSML 5.0.0.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

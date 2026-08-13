@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="Types in MnL: how term types are inferred from attached blocks, and how the coloured suggestion box tells you what will fit an empty input before you drag anything.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Types — MnL Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-mnl/types.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>MnL Help</b><span class="help-bar-sub">Macaca nigra Language</span></span>
+        </a>
+        <span class="help-version">v5.0 &middot; build 040726</span>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://mnl.l-workshop.my.id" rel="noopener">Open MnL</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="functions.html"><em>04</em> Functions</a></li>
+                <li><a href="data.html"><em>05</em> Data structures</a></li>
+                <li>
+                    <a href="types.html" aria-current="page"><em>06</em> Types</a>
+                    <ul class="help-subnav">
+                        <li><a href="#type-inference">Type inference</a></li>
+                        <li><a href="#type-suggestion">Type suggestion</a></li>
+                        <li><a href="#reading-colours">Reading the colours</a></li>
+                        <li><a href="#constraints">Where a type comes from</a></li>
+                    </ul>
+                </li>
+                <li><a href="visualization.html"><em>07</em> Visualization</a></li>
+                <li><a href="compiler.html"><em>08</em> Compiler</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>MnL 5.0</b>, running at
+                <a href="https://mnl.l-workshop.my.id" rel="noopener">mnl.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">06 / Types</span>
+                <h1>Types, inferred and suggested</h1>
+                <p class="help-lede">You never declare a type in MnL. Types are inferred from the blocks you attach, and
+                    the language shows you its working &mdash; in the colour of each block, and in the coloured suggestion
+                    box sitting on every input you have not filled yet.</p>
+
+                <h2 id="type-inference">Type inference</h2>
+                <p>The term type of a block depends on what is attached to it. While a block is incomplete its term type
+                    defaults to <code>any</code>.</p>
+
+                <div class="help-fig-row">
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/inferr_var_empty.png" loading="lazy" style="max-width: 75%;" width="400"
+                            alt="An empty variable block whose term type is shown as any.">
+                        <figcaption><b>Fig. 1</b> An empty variable block: term type <code>any</code>.</figcaption>
+                    </figure>
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/infer_exp_empty.png" loading="lazy" style="max-width: 60%;" width="400"
+                            alt="An empty operator block whose term type is shown as any.">
+                        <figcaption><b>Fig. 2</b> An empty operator block: term type <code>any</code>.</figcaption>
+                    </figure>
+                </div>
+
+                <p>Once the block is complete, the type is inferred. In Fig. 3 the variable&rsquo;s type comes from the
+                    <em>ASCII &rarr; Char</em> block attached to it; in Fig. 4 the operator&rsquo;s type comes from the
+                    second inhabitant of the tuple it is projecting out of.</p>
+
+                <div class="help-fig-row">
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/infer_var_binding.png" loading="lazy"
+                            alt="A variable block whose type is inferred as character from the attached ASCII to Character block.">
+                        <figcaption><b>Fig. 3</b> Inferred from the attached operator.</figcaption>
+                    </figure>
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/infer_exp_binding.png" loading="lazy"
+                            alt="An operator block whose type is inferred as number from the second item of a tuple constructor.">
+                        <figcaption><b>Fig. 4</b> Inferred as <code>number</code> from a tuple item.</figcaption>
+                    </figure>
+                </div>
+
+                <div class="help-callout">
+                    <strong>Where to look</strong>
+                    <p>Two places tell you the inferred type: the <a href="blocks.html#block-info">info popup</a> on the
+                        block, and the block&rsquo;s own colour. The status bar summarises the whole program &mdash;
+                        <strong>Types: OK</strong> means every block type-checks.</p>
+                </div>
+
+                <h2 id="type-suggestion">Type suggestion</h2>
+                <p>This is the feature that makes assembling a program feel guided rather than guessed. MnL colours the
+                    rounded <strong>suggestion box</strong> next to each empty input notch with the type it expects
+                    there.</p>
+                <p>To begin with, the suggestion box carries the colour of <code>any</code> &mdash; dark silver. As soon
+                    as the type can be inferred, the colour changes to match.</p>
+
+                <figure class="help-fig is-block">
+                    <img src="assets/img/type_suggestion_1.png" loading="lazy" style="max-width: 40%;" width="400"
+                        alt="An incomplete block whose empty input suggestion boxes are dark silver, the colour of type any.">
+                    <figcaption><b>Fig. 5</b> On a wholly incomplete block, every suggestion is <code>any</code>.</figcaption>
+                </figure>
+
+                <p>Attach something and MnL builds a type from its constraint rules, then recolours the remaining
+                    suggestion boxes. A block in this state &mdash; some inputs filled, some still empty &mdash; is a
+                    <strong>partially completed</strong> block.</p>
+
+                <figure class="help-fig is-block">
+                    <img src="assets/img/type_suggestion_2.png" loading="lazy" style="max-width: 50%;" width="400"
+                        alt="A partially completed block where the remaining empty inputs now show a specific suggested type colour.">
+                    <figcaption><b>Fig. 6</b> A partially completed block: the suggestions have narrowed.</figcaption>
+                </figure>
+
+                <h2 id="reading-colours">Reading the colours</h2>
+                <p>Once every input notch is connected, the block is <strong>completed</strong> &mdash; and you can check
+                    it against the typing rule by eye. In Fig. 7 the block attached to the <em>Otherwise</em> input does
+                    not comply: the rule requires a <strong>green</strong> block, and a <strong>yellow</strong> one has
+                    been supplied.</p>
+
+                <figure class="help-fig is-block">
+                    <img src="assets/img/type_suggestion_3.png" loading="lazy" style="max-width: 50%;" width="400"
+                        alt="A completed selection block where the Otherwise branch holds a yellow number block although the rule requires a green string block.">
+                    <figcaption><b>Fig. 7</b> A type mismatch you can see: green expected, yellow supplied.</figcaption>
+                </figure>
+
+                <div class="help-callout is-changed">
+                    <strong>Two colours worth memorising</strong>
+                    <ul>
+                        <li><strong>Green</strong> is the colour of type <code>string</code>.</li>
+                        <li><strong>Yellow</strong> is the colour of type <code>number</code>.</li>
+                    </ul>
+                    <p>A branch of an <em>If / Else</em> must agree with the other branch, so a green and a yellow block
+                        in the two branches is always an error.</p>
+                </div>
+
+                <h2 id="constraints">Where a type comes from</h2>
+                <p>The type constraint builder looks in a fixed order: <strong>the attached input blocks first, then the
+                        parent block</strong>. When nothing attached to a block determines its type, but the block has a
+                    parent, the type is inferred from that parent instead.</p>
+
+                <div class="help-fig-row">
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/type_suggestion_4.png" loading="lazy"
+                            alt="A block with no informative children whose type is inferred from its parent block.">
+                        <figcaption><b>Fig. 8</b> Inferred from the parent.</figcaption>
+                    </figure>
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/type_suggestion_5.png" loading="lazy"
+                            alt="A block where the attached child determines the type before the parent is consulted.">
+                        <figcaption><b>Fig. 9</b> The attached block first, then the parent.</figcaption>
+                    </figure>
+                </div>
+
+                <div class="help-fig-row">
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/type_suggestion_6.png" loading="lazy"
+                            alt="A further example of a suggestion box colour narrowing as blocks are attached.">
+                        <figcaption><b>Fig. 10</b> The suggestion narrowing as the program grows.</figcaption>
+                    </figure>
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/type_suggestion_7.png" loading="lazy"
+                            alt="A completed block whose inputs all match their suggested types.">
+                        <figcaption><b>Fig. 11</b> Everything agrees.</figcaption>
+                    </figure>
+                </div>
+
+                <p>If you want to see the reasoning written out rather than coloured in, open the
+                    <strong>Typing</strong> tab of the code panel &mdash; MnL prints the full derivation, rule by rule.
+                    See <a href="compiler.html#typing">the typing derivation</a>.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="data.html">
+                        <span>Previous &mdash; 05</span>
+                        <b>&larr; Data structures</b>
+                    </a>
+                    <a class="is-next" href="visualization.html">
+                        <span>Next &mdash; 07</span>
+                        <b>Visualization &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">MnL is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against MnL 5.0 (build 040726).</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

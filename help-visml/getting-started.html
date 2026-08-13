@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="Build your first ViSML program: drag blocks for a val binding or the Factorial example, watch the Code panel update live, and find out early why ViSML does not run your program.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Getting started — ViSML Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-visml/getting-started.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-visml">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>ViSML Help</b><span class="help-bar-sub">Visual Standard ML</span></span>
+        </a>
+        <span class="help-version">v5.0.0</span>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://visml.l-workshop.my.id" rel="noopener">Open ViSML</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li>
+                    <a href="getting-started.html" aria-current="page"><em>02</em> Getting started</a>
+                    <ul class="help-subnav">
+                        <li><a href="#opening">Opening ViSML</a></li>
+                        <li><a href="#first">Your first binding</a></li>
+                        <li><a href="#factorial">Building Factorial</a></li>
+                        <li><a href="#search">Finding a block fast</a></li>
+                        <li><a href="#norun">ViSML does not run programs</a></li>
+                        <li><a href="#status">Reading the status bar</a></li>
+                    </ul>
+                </li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li><a href="renderers.html"><em>05</em> Renderers</a></li>
+                <li><a href="codegen.html"><em>06</em> Code Generation</a></li>
+                <li><a href="reference.html"><em>07</em> Reference</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>ViSML 5.0.0</b>, running at
+                <a href="https://visml.l-workshop.my.id" rel="noopener">visml.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">02 / Getting started</span>
+                <h1>Your first SML program</h1>
+                <p class="help-lede">The fastest way into ViSML is to build something small, watch the Code panel
+                    turn it into text as you go, and get the one caveat that matters &mdash; ViSML writes SML, it does
+                    not run it &mdash; out of the way early.</p>
+
+                <h2 id="opening">Opening ViSML</h2>
+                <p>Open <a href="https://visml.l-workshop.my.id" rel="noopener">visml.l-workshop.my.id</a> and you
+                    land on an empty workspace, the toolbox sidebar on the left, the Code panel on the right. There is
+                    nothing to install and nothing to sign in to &mdash; it is a static, client-side application, and
+                    everything you build stays in your browser until you export it.</p>
+
+                <h2 id="first">Your first binding</h2>
+                <p>Build the simplest possible program, a <code>val</code> binding:</p>
+
+                <ol class="help-steps">
+                    <li>From the <strong>Declaration</strong> category, open the <em>Value/Variable</em> subcategory
+                        and drag a <code>dec_val</code> block onto the workspace.</li>
+                    <li>Give it a name in its identifier field &mdash; <code>x</code> is fine.</li>
+                    <li>From <strong>Constant</strong>, drag an integer literal into the value socket and set it to
+                        <code>42</code>.</li>
+                </ol>
+
+                <p>The Code panel updates as you connect the blocks, and settles on <code>val x = 42</code>. That
+                    live sync is the thing to get used to: there is no separate &ldquo;compile&rdquo; step for the
+                    text view, because the generator runs on every edit.</p>
+
+                <h2 id="factorial">Building Factorial</h2>
+                <p>For something with more shape, load the <strong>Factorial</strong> example from the
+                    <em>Examples</em> menu rather than building it block by block on your first pass &mdash; it is the
+                    clearest illustration of what a recursive <code>fun</code> with multi-clause pattern matching
+                    looks like as blocks, and it is small enough to read in one screen.</p>
+
+                <p>With it loaded, generated code reads close to:</p>
+
+                <pre><code>fun fact 0 = 1
+  | fact n = n * fact (n - 1)
+val result = fact 5</code></pre>
+
+                <p>Click through the blocks that make up the two <code>fact</code> clauses and watch the corresponding
+                    lines highlight in the Code panel. Then try the reverse direction: edit the generated text
+                    directly and use <strong>Apply to Blocks</strong> to rebuild the workspace from it &mdash; this is
+                    covered in full in <a href="codegen.html#parser">Code Generation</a>.</p>
+
+                <h2 id="search">Finding a block fast</h2>
+                <p>Once you know the name of the block you want, dragging through ten categories is slower than
+                    searching for it. Press <kbd>Ctrl</kbd> + <kbd>F</kbd> to focus the toolbox's search field, type
+                    part of a block's name, and the matching categories open with the results highlighted. This is the
+                    fastest path once you have a rough sense of the grammar &mdash; see
+                    <a href="blocks.html#toolbox">Blocks</a> for the full category list.</p>
+
+                <h2 id="norun">ViSML does not run programs</h2>
+                <div class="help-callout is-changed">
+                    <strong>ViSML does not run your program</strong>
+                    <p>There is no interpreter, no stepper, no console. ViSML computes exactly one thing: SML source
+                        <em>text</em>, generated from your blocks. The command palette (<kbd>Ctrl</kbd> +
+                        <kbd>Shift</kbd> + <kbd>P</kbd>) makes this explicit &mdash; type &ldquo;run&rdquo; and the
+                        one result you get is a permanently disabled entry, <strong>RUN &mdash; Execution runtime is
+                            not configured</strong>. To actually execute a program, copy the generated code out of the
+                        Code panel and run it in a real SML implementation: <strong>SML/NJ</strong>,
+                        <strong>MLton</strong>, or <strong>Poly/ML</strong> all accept it unmodified. This is a
+                        deliberate scope boundary, not a missing feature &mdash; see
+                        <a href="codegen.html#no-runtime">Code Generation</a> for the fuller picture, and
+                        <a href="index.html#what">Overview</a> for how that sets ViSML apart from its siblings.</p>
+                </div>
+
+                <h2 id="status">Reading the status bar</h2>
+                <p>Along the bottom edge: the current file name (<code>Untitled workspace</code> or the
+                    <code>.vsml</code> you loaded), the autosave state (<em>Autosaved HH:MM</em> once it has run), and
+                    the current perspective. Right-click the workspace background for <strong>Screenshot</strong>
+                    (exports the block diagram as a PNG &mdash; a picture of the blocks, not a code export) and
+                    <strong>About</strong>.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="index.html">
+                        <span>Previous &mdash; 01</span>
+                        <b>&larr; Overview</b>
+                    </a>
+                    <a class="is-next" href="blocks.html">
+                        <span>Next &mdash; 03</span>
+                        <b>Blocks &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">ViSML is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against ViSML 5.0.0.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

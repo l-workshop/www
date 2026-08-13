@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="BFJ reference: keyboard shortcuts, the full command palette, menu map, file formats and a glossary of the FJ-specific terms used across this help.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Reference — BFJ Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-bfj/reference.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-bfj">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>BFJ Help</b><span class="help-bar-sub">Block-based Featherweight
+                    Java</span></span>
+        </a>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://bfj.l-workshop.my.id" rel="noopener">Open BFJ</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li><a href="semantics.html"><em>05</em> Semantics</a></li>
+                <li><a href="translation.html"><em>06</em> Translation</a></li>
+                <li>
+                    <a href="reference.html" aria-current="page"><em>07</em> Reference</a>
+                    <ul class="help-subnav">
+                        <li><a href="#keys">Keyboard shortcuts</a></li>
+                        <li><a href="#commands">Command palette</a></li>
+                        <li><a href="#menus">Menu map</a></li>
+                        <li><a href="#files">File formats</a></li>
+                        <li><a href="#glossary">Glossary</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>BFJ</b>, running at
+                <a href="https://bfj.l-workshop.my.id" rel="noopener">bfj.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">07 / Reference</span>
+                <h1>Reference</h1>
+                <p class="help-lede">Shortcuts, commands, menus, file formats and vocabulary &mdash; the things you
+                    look up rather than read.</p>
+
+                <h2 id="keys">Keyboard shortcuts</h2>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Keys</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><kbd>Ctrl</kbd> + <kbd>N</kbd></td>
+                                <td>New workspace</td>
+                            </tr>
+                            <tr>
+                                <td><kbd>Ctrl</kbd> + <kbd>O</kbd></td>
+                                <td>Open a <code>.bfj</code> file</td>
+                            </tr>
+                            <tr>
+                                <td><kbd>Ctrl</kbd> + <kbd>S</kbd></td>
+                                <td>Save the workspace</td>
+                            </tr>
+                            <tr>
+                                <td><kbd>Ctrl</kbd> + <kbd>J</kbd></td>
+                                <td>Toggle the bottom dock</td>
+                            </tr>
+                            <tr>
+                                <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd></td>
+                                <td>Search blocks</td>
+                            </tr>
+                            <tr>
+                                <td><kbd>Ctrl</kbd> + <kbd>F5</kbd></td>
+                                <td>Run the program</td>
+                            </tr>
+                            <tr>
+                                <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> / <kbd>F1</kbd></td>
+                                <td>Command palette</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>Arrow keys navigate between tabs on the FJ Inspector and the bottom dock, and along a resizer
+                    handle once it has focus.</p>
+
+                <h2 id="commands">Command palette</h2>
+                <p><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> or <kbd>F1</kbd>, fuzzy-searchable and grouped
+                    by category:</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Group</th>
+                                <th>Commands</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>File</td>
+                                <td>New &middot; Open&hellip; &middot; Save &middot; Export FJ source&hellip;
+                                    &middot; Restore Autosave</td>
+                            </tr>
+                            <tr>
+                                <td>Run</td>
+                                <td>Run program (<kbd>Ctrl</kbd> + <kbd>F5</kbd>)</td>
+                            </tr>
+                            <tr>
+                                <td>Analysis</td>
+                                <td>Show Typing Derivation &middot; Show CK Machine &middot; Show Reduction &middot;
+                                    Show Problems</td>
+                            </tr>
+                            <tr>
+                                <td>View</td>
+                                <td>Toggle Sidebar &middot; Toggle FJ Inspector &middot; Toggle Bottom Dock &middot;
+                                    Toggle Color Theme</td>
+                            </tr>
+                            <tr>
+                                <td>Workspace</td>
+                                <td>Zoom In &middot; Zoom Out &middot; Zoom to Fit</td>
+                            </tr>
+                            <tr>
+                                <td>Perspective</td>
+                                <td>Edit &middot; Debug &middot; Type Analysis &middot; Presentation</td>
+                            </tr>
+                            <tr>
+                                <td>Preferences</td>
+                                <td>Settings &middot; Autosave Interval&hellip;</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 id="menus">Menu map</h2>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Menu</th>
+                                <th>Contents</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>File</td>
+                                <td>New &middot; Open&hellip; &middot; Save &middot; Export&hellip; &middot; Restore
+                                    Autosave</td>
+                            </tr>
+                            <tr>
+                                <td>Examples</td>
+                                <td>The nine programs listed in <a href="index.html#examples">Overview</a>, with a
+                                    Replace/Merge prompt when the workspace already has blocks</td>
+                            </tr>
+                            <tr>
+                                <td>View</td>
+                                <td>Sidebar &middot; FJ Inspector &middot; Bottom dock &middot; Perspective picker
+                                    &middot; Dark theme</td>
+                            </tr>
+                            <tr>
+                                <td>More</td>
+                                <td>Command Palette&hellip; &middot; About BFJ</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>The activity rail on the far left holds <em>Blocks</em>, <em>Search Blocks</em>, <em>Run and
+                        Analysis</em> and <em>Settings</em>. The workspace title bar holds undo/redo, zoom, the
+                    bottom-dock toggle and <strong>&#9654; Run</strong>.</p>
+
+                <h2 id="files">File formats</h2>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Format</th>
+                                <th>Holds</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>.bfj</code></td>
+                                <td>A BFJ workspace, as JSON. Saved and opened locally &mdash; nothing is
+                                    uploaded.</td>
+                            </tr>
+                            <tr>
+                                <td>Local storage</td>
+                                <td>The rolling autosave backup, plus your layout, theme, autosave interval and
+                                    active tabs. A malformed payload falls back to the default layout rather than
+                                    failing to start.</td>
+                            </tr>
+                            <tr>
+                                <td>FJ / Java text</td>
+                                <td>Not a saved file format on its own, but the <em>Editable Code</em> tab
+                                    round-trips a program as text &mdash; see
+                                    <a href="translation.html">Translation</a> &mdash; and <code>.fj</code>/<code>.txt</code>
+                                    files can be exported or opened directly through that same parser.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 id="glossary">Glossary</h2>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Term</th>
+                                <th>Means</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Bijection</td>
+                                <td>The proved one-to-one correspondence between block trees and ASTs, and between
+                                    block trees and text under &beta;/&tau;. See
+                                    <a href="translation.html#roundtrip">Translation</a>.</td>
+                            </tr>
+                            <tr>
+                                <td>BFJ-Thrasos</td>
+                                <td>BFJ's renderer. Blockly's Thrasos plus connector shapes for FJ's non-terminals.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>CK machine</td>
+                                <td>Control + Kontinuation. No store &mdash; FJ has no mutable state, so there is
+                                    nothing to keep one for.</td>
+                            </tr>
+                            <tr>
+                                <td>Featherweight Java (FJ)</td>
+                                <td>The minimal class-based OO core calculus (Igarashi, Pierce, Wadler) that BFJ
+                                    encodes as blocks.</td>
+                            </tr>
+                            <tr>
+                                <td>Frame</td>
+                                <td>One hole-shaped piece of pending context in the CK machine's kontinuation, e.g.
+                                    <code>&#9723;.f</code>.</td>
+                            </tr>
+                            <tr>
+                                <td>Hole</td>
+                                <td>The type given to an empty socket. Consistent with everything, so unfinished
+                                    work never cascades into a diagnostic storm.</td>
+                            </tr>
+                            <tr>
+                                <td>Kontinuation</td>
+                                <td>The pending work &mdash; what the machine still owes the value it is computing.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Nominal subtyping</td>
+                                <td>Subtyping by declared <code>extends</code>, not by structure.</td>
+                            </tr>
+                            <tr>
+                                <td>Override rule</td>
+                                <td>FJ requires an <strong>exact</strong> signature match on an override &mdash; no
+                                    covariant returns, no overloading.</td>
+                            </tr>
+                            <tr>
+                                <td><code>R-Field</code> / <code>R-Invk</code> / <code>R-Cast</code></td>
+                                <td>The three computation rules of the substitution semantics &mdash; field access,
+                                    method invocation, cast.</td>
+                            </tr>
+                            <tr>
+                                <td>Stupid cast</td>
+                                <td>A downcast to an unrelated type. Type-checks under <code>T-SCast</code> with a
+                                    warning, but always fails at runtime.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="help-callout">
+                    <strong>Elsewhere in the workshop</strong>
+                    <p><a href="../help-b-mj/index.html">B-MJ help</a> &mdash; MiniJava, where the machine gains an
+                        extra letter: <a href="../help-b-mj/semantics.html#cesk">CESK</a>'s <strong>S</strong> is a
+                        store, needed because MiniJava has mutable objects. BFJ's CK machine has no such letter,
+                        because FJ has nothing to mutate.</p>
+                </div>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="translation.html">
+                        <span>Previous &mdash; 06</span>
+                        <b>&larr; Translation</b>
+                    </a>
+                    <a class="is-next" href="index.html">
+                        <span>Back to &mdash; 01</span>
+                        <b>Overview &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">BFJ is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against the build running at bfj.l-workshop.my.id.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="BFJ is a Blockly encoding of Featherweight Java: grammar-aware blocks, a synthesized constructor, a visible typing derivation, and two cross-checked semantics — substitution and a CK machine.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Overview — BFJ Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-bfj/index.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-bfj">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>BFJ Help</b><span class="help-bar-sub">Block-based Featherweight
+                    Java</span></span>
+        </a>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://bfj.l-workshop.my.id" rel="noopener">Open BFJ</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li>
+                    <a href="index.html" aria-current="page"><em>01</em> Overview</a>
+                    <ul class="help-subnav">
+                        <li><a href="#what">What BFJ is</a></li>
+                        <li><a href="#workbench">The workbench</a></li>
+                        <li><a href="#perspectives">Perspectives</a></li>
+                        <li><a href="#palette">Command palette</a></li>
+                        <li><a href="#files">Files and autosave</a></li>
+                        <li><a href="#examples">Built-in examples</a></li>
+                    </ul>
+                </li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li><a href="semantics.html"><em>05</em> Semantics</a></li>
+                <li><a href="translation.html"><em>06</em> Translation</a></li>
+                <li><a href="reference.html"><em>07</em> Reference</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>BFJ</b>, running at
+                <a href="https://bfj.l-workshop.my.id" rel="noopener">bfj.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">01 / Overview</span>
+                <h1>A proof tree you can drag and drop</h1>
+                <p class="help-lede">BFJ takes the smallest object-oriented core calculus there is and gives it a
+                    block editor, a natural-deduction proof tree, and two independently-implemented semantics that
+                    are checked against each other on every run &mdash; so a definition that usually lives on paper
+                    becomes something you can step through.</p>
+
+                <h2 id="what">What BFJ is</h2>
+                <p>BFJ is a Blockly encoding of <strong>Featherweight Java (FJ)</strong>, the minimal core calculus
+                    for class-based object typing introduced by Igarashi, Pierce and Wadler. Classes, fields, one
+                    canonical constructor, methods, <code>new</code>, field access, method invocation, casts &mdash;
+                    and deliberately nothing else. Every block in the toolbox corresponds to exactly one production
+                    in FJ's grammar, and the workbench keeps a full typing derivation and two operational semantics
+                    open alongside whatever you build.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bfj-workbench.jpg" loading="lazy"
+                        alt="The BFJ workbench: the toolbox sidebar on the left, the Pair swap example in the workspace, and the FJ Inspector's Editable Code tab on the right.">
+                    <figcaption><b>Fig. 1</b> The BFJ workbench with <em>Pair &middot; swap</em> loaded. The
+                        Inspector's <em>Editable Code</em> tab is already showing the generated Java for it.
+                    </figcaption>
+                </figure>
+
+                <p>Four things distinguish it from a plain block editor:</p>
+                <ul>
+                    <li><strong>A grammar-aware renderer with real geometry.</strong> BFJ-Thrasos gives each FJ
+                        non-terminal a distinct connector <em>shape</em>, not just a colour, so a wrong connection
+                        looks wrong before Blockly's own check mechanism rejects it.</li>
+                    <li><strong>A constructor you never build.</strong> <code>fj_ctor</code> is synthesized
+                        automatically from a class's fields, mirroring FJ's own rule that the constructor is fully
+                        determined by <code>fields(C)</code> &mdash; which is what keeps a proved bijection between
+                        block trees and ASTs intact.</li>
+                    <li><strong>A visible proof tree.</strong> The Typing tab renders a genuine natural-deduction
+                        derivation for anything you build, premise by clickable premise, over a checker that is
+                        tolerant of half-finished work.</li>
+                    <li><strong>Two semantics, cross-checked.</strong> A substitution-based small-step reduction is
+                        the definition of record; a CK abstract machine is a derived, separately-implemented artifact
+                        proven to agree with it step for step.</li>
+                </ul>
+
+                <div class="help-callout">
+                    <strong>Where this sits</strong>
+                    <p>BFJ is built alongside <a href="../help-b-mj/index.html">B-MJ</a> at
+                        <a href="../index.html">L-Workshop</a> &mdash; architecturally modeled on it, same workbench
+                        shell, same inspector-and-dock layout &mdash; but it shares no code with it. The two answer
+                        different questions. B-MJ is a small but usable general-purpose OO language you can write
+                        real programs in: <code>int</code>/<code>boolean</code>/<code>String</code>, arrays,
+                        <code>println</code>, assignment, a heap. BFJ is the stripped-down &ldquo;proof-theory&rdquo;
+                        core of Java &mdash; just enough syntax to study how object typing and dynamic dispatch work,
+                        with every step of typing and evaluation shown as an explicit derivation. If you are looking
+                        for <code>int</code>, <code>String</code>, arrays, <code>println</code> or assignment, that
+                        is <a href="../help-b-mj/index.html">B-MJ</a>, not here.</p>
+                </div>
+
+                <h2 id="workbench">The workbench</h2>
+                <p>A VS Code&ndash;style shell: an activity rail selects what the sidebar shows, the sidebar and dock
+                    are resizable, collapsible and individually maximisable, and the whole arrangement is a
+                    <a href="#perspectives">perspective</a> you can save or restore.</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Region</th>
+                                <th>What lives there</th>
+                                <th>Toggle</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Activity rail</td>
+                                <td><em>Blocks</em> &middot; <em>Search Blocks</em> &middot; <em>Run and
+                                        Analysis</em> &middot; <em>Settings</em></td>
+                                <td>&mdash;</td>
+                            </tr>
+                            <tr>
+                                <td>Sidebar</td>
+                                <td>The searchable, collapsible-category toolbox</td>
+                                <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd></td>
+                            </tr>
+                            <tr>
+                                <td>Block Workspace</td>
+                                <td>The blocks, with zoom and <em>&#9654; Run</em></td>
+                                <td>&mdash;</td>
+                            </tr>
+                            <tr>
+                                <td>FJ Inspector</td>
+                                <td><em>Editable Code</em>, <em>Outline</em>, <em>Typing</em></td>
+                                <td>&mdash;</td>
+                            </tr>
+                            <tr>
+                                <td>Bottom dock</td>
+                                <td><em>Problems</em>, <em>Output</em>, <em>CK Machine</em>, <em>Reduction</em></td>
+                                <td><kbd>Ctrl</kbd> + <kbd>J</kbd></td>
+                            </tr>
+                            <tr>
+                                <td>Status bar</td>
+                                <td>File name, block count, problem count, autosave</td>
+                                <td>&mdash;</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>The Inspector's <em>Editable Code</em> tab is a syntax-highlighted, two-way FJ/Java source view;
+                    <em>Outline</em> is a clickable structural tree of classes, members and expressions; <em>Typing</em>
+                    holds the proof tree, covered in <a href="types.html#derivation">chapter 04</a>. The bottom dock's
+                    <em>CK Machine</em> and <em>Reduction</em> tabs are the two semantics views from
+                    <a href="semantics.html">chapter 05</a>.</p>
+
+                <h2 id="perspectives">Perspectives</h2>
+                <p>Set from the status bar, from the command palette, or by rearranging panels by hand.</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Perspective</th>
+                                <th>Arranged for</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Edit</td>
+                                <td>Building a program: blocks, code, a focused workspace</td>
+                            </tr>
+                            <tr>
+                                <td>Debug</td>
+                                <td>The CK Machine and Reduction steppers</td>
+                            </tr>
+                            <tr>
+                                <td>Type Analysis</td>
+                                <td>The Typing derivation and Problems tab</td>
+                            </tr>
+                            <tr>
+                                <td>Presentation</td>
+                                <td>A maximised block workspace, for teaching</td>
+                            </tr>
+                            <tr>
+                                <td>Custom</td>
+                                <td>What you get as soon as you adjust a panel by hand</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="help-callout is-new">
+                    <strong>Dark theme and autosave interval</strong>
+                    <p>Both live in <em>Settings</em> on the activity rail. The autosave interval is adjustable from
+                        2 to 20 minutes; the status bar shows a running timestamp once the first autosave has
+                        landed, and a <strong>Restore Autosave</strong> action brings a backup back after a closed
+                        tab or a crash.</p>
+                </div>
+
+                <h2 id="palette">Command palette</h2>
+                <p><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> (or <kbd>F1</kbd>, or the search box in the top
+                    bar) opens a fuzzy-searchable list of every command, grouped by category.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bfj-palette.jpg" loading="lazy"
+                        alt="The BFJ command palette open, listing File, Run and Analysis commands with their keyboard shortcuts.">
+                    <figcaption><b>Fig. 2</b> The command palette. Every entry shows its shortcut where it has one.
+                    </figcaption>
+                </figure>
+
+                <p>The full list, grouped by <code>File</code>/<code>Run</code>/<code>Analysis</code>/<code>View</code>/
+                    <code>Workspace</code>/<code>Perspective</code>/<code>Preferences</code>, is in
+                    <a href="reference.html#commands">the reference chapter</a>.</p>
+
+                <h2 id="files">Files and autosave</h2>
+                <p>Workspaces save as <code>.bfj</code> JSON files. FJ source can be exported or opened separately, so
+                    a program can leave BFJ as ordinary Java-shaped text and come back as blocks.</p>
+
+                <ul>
+                    <li><strong>Save</strong> <kbd>Ctrl</kbd> + <kbd>S</kbd> writes a <code>.bfj</code> workspace.
+                    </li>
+                    <li><strong>Open</strong> <kbd>Ctrl</kbd> + <kbd>O</kbd> loads a <code>.bfj</code> workspace back,
+                        or imports a <code>.fj</code>/<code>.txt</code> file through the text&rarr;blocks
+                        parser.</li>
+                    <li><strong>Export</strong> writes the generated <code>.fj</code> source.</li>
+                    <li><strong>Autosave</strong> keeps a rolling local backup at the interval you set, under a
+                        localStorage key, with a status-bar timestamp.</li>
+                </ul>
+
+                <h2 id="examples">Built-in examples</h2>
+                <p>Nine programs. There is no built-in list or pair type in FJ &mdash; <code>Pair</code> below is a
+                    researcher-defined, two-field Object-typed record class, exactly the kind of encoding FJ programs
+                    need for anything beyond bare objects.</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Example</th>
+                                <th>Shows</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Pair &middot; setfst</td>
+                                <td>An object-pair record type; an R-Invk/R-Field chain producing a new object</td>
+                            </tr>
+                            <tr>
+                                <td>Field access</td>
+                                <td>A single R-Field step &mdash; the smallest complete program</td>
+                            </tr>
+                            <tr>
+                                <td>Method call</td>
+                                <td>A <code>Wrapper</code> class; R-Invk then R-Field</td>
+                            </tr>
+                            <tr>
+                                <td>Pair &middot; swap</td>
+                                <td>R-Invk then two R-Field steps</td>
+                            </tr>
+                            <tr>
+                                <td>Booleans &middot; dispatch</td>
+                                <td>Church-encoded <code>Bool</code>/<code>True</code>/<code>False</code> &mdash;
+                                    dynamic dispatch across a hierarchy</td>
+                            </tr>
+                            <tr>
+                                <td>Peano &middot; pred</td>
+                                <td><code>Nat</code>/<code>Zero</code>/<code>Succ</code> &mdash; Peano-encoded
+                                    naturals</td>
+                            </tr>
+                            <tr>
+                                <td>Upcast (Object)</td>
+                                <td>T-UCast &mdash; a trivially-safe upcast to <code>Object</code></td>
+                            </tr>
+                            <tr>
+                                <td>Downcast (A) B&lt;:A</td>
+                                <td>T-DCast &mdash; a downcast that succeeds because the dynamic class really is a
+                                    subtype</td>
+                            </tr>
+                            <tr>
+                                <td>Stupid cast</td>
+                                <td>T-SCast &mdash; type-checks with a warning, always fails at runtime</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>If you only run one, make it <strong>Pair &middot; swap</strong>: it is short enough to read in
+                    full, and it is the example traced end to end in
+                    <a href="semantics.html">the Semantics chapter</a>. If you want to see the type checker's warning
+                    path rather than its happy path, load <strong>Stupid cast</strong> instead &mdash; covered in
+                    <a href="types.html#derivation">Types</a> and <a href="semantics.html#stuck">Semantics</a>.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="../index.html">
+                        <span>Up &mdash; site</span>
+                        <b>&larr; L-Workshop</b>
+                    </a>
+                    <a class="is-next" href="getting-started.html">
+                        <span>Next &mdash; 02</span>
+                        <b>Getting started &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">BFJ is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against the build running at bfj.l-workshop.my.id.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

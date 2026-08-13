@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="YAKI, the MnL compiler interface: the code panel's MNL, SML, Scala and Typing tabs, editing MNL text to rebuild blocks, and printing a typing derivation.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Compiler — MnL Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-mnl/compiler.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>MnL Help</b><span class="help-bar-sub">Macaca nigra Language</span></span>
+        </a>
+        <span class="help-version">v5.0 &middot; build 040726</span>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://mnl.l-workshop.my.id" rel="noopener">Open MnL</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="functions.html"><em>04</em> Functions</a></li>
+                <li><a href="data.html"><em>05</em> Data structures</a></li>
+                <li><a href="types.html"><em>06</em> Types</a></li>
+                <li><a href="visualization.html"><em>07</em> Visualization</a></li>
+                <li>
+                    <a href="compiler.html" aria-current="page"><em>08</em> Compiler</a>
+                    <ul class="help-subnav">
+                        <li><a href="#yaki">YAKI</a></li>
+                        <li><a href="#code-panel">The code panel</a></li>
+                        <li><a href="#mnl-text">MNL text</a></li>
+                        <li><a href="#targets">SML and Scala</a></li>
+                        <li><a href="#typing">The typing derivation</a></li>
+                        <li><a href="#exporting">Exporting</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>MnL 5.0</b>, running at
+                <a href="https://mnl.l-workshop.my.id" rel="noopener">mnl.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">08 / Compiler</span>
+                <h1>YAKI and the code panel</h1>
+                <p class="help-lede">MnL&rsquo;s compiler is called <strong>YAKI</strong> &mdash; Yet Another
+                    [K/C]ompiler Interface. It turns a block program into text: into MnL&rsquo;s own textual form, into
+                    Standard ML, into Scala, and &mdash; going beyond compilation &mdash; into a typing derivation for the
+                    program it just read.</p>
+
+                <h2 id="yaki">YAKI</h2>
+                <p>Everything YAKI produces is live. It recompiles as you edit, so the code panel is always showing the
+                    program currently on the workspace rather than a snapshot you asked for.</p>
+
+                <div class="help-callout is-changed">
+                    <strong>Changed in version 5</strong>
+                    <p>Earlier versions opened YAKI in a separate transpiler window: you right-clicked the workspace,
+                        chose <em>Compiler</em>, and picked a target language from a combo box. In version 5 YAKI is the
+                        docked <strong>code panel</strong> on the right of the window, with one tab per target and no
+                        combo box.</p>
+                </div>
+
+                <h2 id="code-panel">The code panel</h2>
+                <p>Open it from the activity bar, from the workspace toolbar, or with
+                    <strong>View: Toggle Code Panel</strong> in the command palette. It has four tabs.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/v5-code-panel.jpg" width="1499" height="807" loading="lazy"
+                        alt="The MnL workspace with the code panel open on the right, showing the MNL tab with the factorial program as text.">
+                    <figcaption><b>MnL 5.0</b> The code panel, MNL tab, alongside the Factorial program.</figcaption>
+                </figure>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Tab</th>
+                                <th scope="col">Contents</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="help-glyph">M</span> MNL</td>
+                                <td>MnL&rsquo;s own textual syntax. <strong>Editable</strong> &mdash; see below.</td>
+                            </tr>
+                            <tr>
+                                <td><span class="help-glyph">&#955;</span> SML</td>
+                                <td>Standard ML, generated by YAKI.</td>
+                            </tr>
+                            <tr>
+                                <td><span class="help-glyph">S</span> Scala</td>
+                                <td>Scala, generated by YAKI.</td>
+                            </tr>
+                            <tr>
+                                <td><span class="help-glyph">&#8866;</span> Typing</td>
+                                <td>The typing derivation, rule by rule, for a chosen declaration.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 id="mnl-text">MNL text</h2>
+                <p>The <strong>MNL</strong> tab is not read-only, and this is the most interesting thing about the panel:
+                    the mapping between blocks and text runs <em>both ways</em>. Edit the text and a valid change rebuilds
+                    the blocks on the workspace. Press <kbd>Ctrl</kbd>+<kbd>Enter</kbd> to apply an edit immediately
+                    rather than waiting.</p>
+
+                <p>For the bundled <strong>Factorial</strong> example, the MNL text reads:</p>
+                <pre><code>MNL
+
+Function factorial Parameter ID a_number Expression
+  Condition When (Bound a_number &lt;= number 0)
+  Is true number 1
+  Otherwise (Bound a_number * (Application of Bound factorial Over (Bound a_number - number 1)))
+Variable f7 bind to Application of Bound factorial Over number 7</code></pre>
+
+                <p>Read against the workspace, the text is a direct transcription: <code>Function</code>,
+                    <code>Parameter</code>, <code>Expression</code>, <code>Condition</code> / <code>When</code> /
+                    <code>Is true</code> / <code>Otherwise</code>, <code>Bound</code>, <code>Application of</code> &hellip;
+                    <code>Over</code> and <code>Variable</code> &hellip; <code>bind to</code> are the labels on the blocks
+                    themselves.</p>
+
+                <div class="help-callout is-new">
+                    <strong>Version 5</strong>
+                    <p>Round-tripping through text is a fast way to make a bulk change &mdash; renaming a parameter
+                        everywhere, say &mdash; that would take a lot of clicking on the workspace. An edit that does not
+                        parse is simply not applied, so the blocks never end up in an inconsistent state.</p>
+                </div>
+
+                <h2 id="targets">SML and Scala</h2>
+                <p>YAKI emits both from the same program. Each file is stamped with a header naming the generator.</p>
+
+                <h4>SML</h4>
+                <pre><code>(* SML Code by YAKI *)
+
+fun factorial (a_number) =
+  if (a_number &lt;= 0) then
+    1
+  else
+    (a_number * factorial((a_number - 1)))
+
+val f7 = factorial(7)</code></pre>
+
+                <h4>Scala</h4>
+                <pre><code>/* Scala Code by YAKI */
+
+def factorial (a_number : Float) : Float =
+  if (a_number &lt;= 0) then
+    1
+  else
+    (a_number * factorial((a_number - 1)))
+
+val f7 = factorial(7)</code></pre>
+
+                <div class="help-callout">
+                    <strong>Where the two targets differ</strong>
+                    <p>SML relies on inference and needs no annotations; Scala requires them, so YAKI writes the types it
+                        inferred into the signature &mdash; here <code>a_number : Float</code> and the
+                        <code>: Float</code> result. Some MnL constructs have no direct Scala counterpart: records are the
+                        clearest case, since Scala has no primitive record type. YAKI says so in a comment rather than
+                        emitting something that will not compile.</p>
+                </div>
+
+                <p>A smaller worked example &mdash; the identity function &mdash; shows the same pipeline from blocks to
+                    source:</p>
+
+                <figure class="help-fig is-block">
+                    <img src="assets/img/transpiler_block_source.png" loading="lazy" style="max-width: 100%;" width="400"
+                        alt="The identity function as MnL blocks alongside the source text generated from it.">
+                    <figcaption><b>Fig. 1</b> The identity function, blocks and generated source.</figcaption>
+                </figure>
+
+                <h4>SML</h4>
+                <pre><code>(* identity_function.sml *)
+fun f_identity (a) = a</code></pre>
+                <h4>Scala</h4>
+                <pre><code>/* identity_function.scala */
+def f_identity [B] (a : B) : B = a</code></pre>
+
+                <h2 id="typing">The typing derivation</h2>
+                <p>The <strong>Typing</strong> tab is where MnL writes out its reasoning about types. Pick a declaration
+                    from the row at the top of the tab &mdash; <code>factorial</code> or <code>f7</code> in the Factorial
+                    example &mdash; and YAKI prints the derivation for it.</p>
+
+                <p>Each line is a judgement, preceded by the name of the rule that justifies it:</p>
+                <pre><code>Γ = factorial : function from (number) to (number)
+
+BT-Id
+Γ ⊢ a_number : Identifier ⊗ nothing
+
+BT-BoundParam
+Γ, a_number : Parameter ⊗ number ⊢ Bound a_number : Expression ⊗ number
+  a_number : Parameter ⊗ number ∈ Γ
+
+BT-Const
+Γ, a_number : Parameter ⊗ number ⊢ number 0 : Expression ⊗ number
+
+BT-BinOptr-Arith-Compare
+Γ, a_number : Parameter ⊗ number ⊢ (Bound a_number &lt;= number 0) : Expression ⊗ boolean</code></pre>
+
+                <p>The shape of a judgement is worth pausing on, because it is the written form of what
+                    <a href="blocks.html#the-shape-and-color">shape and colour</a> encode on the workspace:</p>
+                <ul>
+                    <li><code>Γ</code> is the typing context &mdash; the names in scope with their types.</li>
+                    <li>To the left of <code>&otimes;</code> is the <strong>syntactic category</strong>:
+                        <em>Identifier</em>, <em>Parameter</em>, <em>Expression</em>, <em>Declaration</em>. This is what a
+                        block&rsquo;s notch <em>shape</em> shows.</li>
+                    <li>To the right of <code>&otimes;</code> is the <strong>inferred type</strong>:
+                        <code>number</code>, <code>boolean</code>, <code>nothing</code>. This is what a block&rsquo;s
+                        <em>colour</em> shows.</li>
+                    <li>An indented line such as <code>a_number : Parameter &otimes; number &isin; Γ</code> is a side
+                        condition &mdash; the lookup that discharges the rule.</li>
+                </ul>
+                <p>Rule names are prefixed <code>BT-</code>: <code>BT-Id</code> for an identifier,
+                    <code>BT-Const</code> for a constant, <code>BT-BoundParam</code> for a reference to a parameter,
+                    <code>BT-BinOptr-Arith-Compare</code> for a binary comparison, and so on.</p>
+
+                <figure class="help-fig is-block">
+                    <img src="assets/img/typing_derivation.png" loading="lazy"
+                        alt="A typing derivation for the identity function, written as inference rules.">
+                    <figcaption><b>Fig. 2</b> A typing derivation for the identity function.</figcaption>
+                </figure>
+
+                <h2 id="exporting">Exporting</h2>
+                <p>The icons at the top right of the code panel:</p>
+                <ul>
+                    <li><strong>Export MNL text</strong> &mdash; download the current tab&rsquo;s text.</li>
+                    <li><strong>Copy generated code</strong> &mdash; copy it to the clipboard.</li>
+                    <li><strong>Print typing derivation</strong> &mdash; send the derivation to the printer, which is
+                        useful for handouts.</li>
+                    <li><strong>Maximize</strong> / <strong>Hide</strong> &mdash; give the panel the whole window, or put
+                        it away. Drag its left edge to resize.</li>
+                </ul>
+                <p>To keep the program itself rather than its translation, use
+                    <strong>File &rsaquo; Save As&hellip;</strong> and the <code>.mnl</code> workspace format described
+                    under <a href="index.html#files">files and autosave</a>.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="visualization.html">
+                        <span>Previous &mdash; 07</span>
+                        <b>&larr; Visualization</b>
+                    </a>
+                    <a class="is-next" href="index.html">
+                        <span>Back to</span>
+                        <b>Overview &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">MnL is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against MnL 5.0 (build 040726). The published paper on MnL&rsquo;s reactive blocks is
+                <a href="https://dl.acm.org/doi/10.1145/3759534.3762684" rel="noopener">PAINT 2025</a>.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

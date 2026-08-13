@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="The B-MJ toolbox: six categories and thirty-four blocks, and the BMJ-Thrasos grammar-aware renderer whose connector shapes encode MiniJava's non-terminals.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Blocks — B-MJ Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-b-mj/blocks.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-bmj">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>B-MJ Help</b><span class="help-bar-sub">Block-based MiniJava</span></span>
+        </a>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://b-mj.l-workshop.my.id" rel="noopener">Open B-MJ</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li>
+                    <a href="blocks.html" aria-current="page"><em>03</em> Blocks</a>
+                    <ul class="help-subnav">
+                        <li><a href="#toolbox">The toolbox</a></li>
+                        <li><a href="#renderer">The grammar-aware renderer</a></li>
+                        <li><a href="#connectors">Connector shapes</a></li>
+                        <li><a href="#stacks">Vertical families</a></li>
+                        <li><a href="#grammar">The grammar</a></li>
+                    </ul>
+                </li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li><a href="strings.html"><em>05</em> Strings</a></li>
+                <li><a href="semantics.html"><em>06</em> Semantics</a></li>
+                <li><a href="reference.html"><em>07</em> Reference</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>B-MJ</b>, running at
+                <a href="https://b-mj.l-workshop.my.id" rel="noopener">b-mj.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">03 / Blocks</span>
+                <h1>Thirty-four blocks, six categories</h1>
+                <p class="help-lede">The toolbox is organised by MiniJava's grammar rather than by convenience, so the
+                    categories are the non-terminals. Once you notice that, finding a block becomes a question about the
+                    language rather than a question about the UI.</p>
+
+                <h2 id="toolbox">The toolbox</h2>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bmj-toolbox.png" loading="lazy" style="max-width: 40%;" width="400"
+                        alt="The B-MJ blocks sidebar showing the Program, Declarations, Types, Statements and Expressions categories with their blocks listed.">
+                    <figcaption><b>Fig. 1</b> The blocks sidebar. Categories mirror MiniJava's non-terminals.
+                    </figcaption>
+                </figure>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Blocks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Program</td>
+                                <td>Class Declaration</td>
+                            </tr>
+                            <tr>
+                                <td>Declarations</td>
+                                <td>Variable Declaration &middot; Method Declaration &middot; Formal Parameter</td>
+                            </tr>
+                            <tr>
+                                <td>Types</td>
+                                <td><code>int[]</code> &middot; <code>boolean</code> &middot; <code>int</code> &middot;
+                                    <code>String</code> &middot; Identifier Type</td>
+                            </tr>
+                            <tr>
+                                <td>Statements</td>
+                                <td>Block Statement &middot; <code>if / else</code> &middot; <code>while</code> &middot;
+                                    <code>System.out.println</code> &middot; Assignment &middot; Array Assignment</td>
+                            </tr>
+                            <tr>
+                                <td>Expressions</td>
+                                <td>Arithmetic <code>(+ &minus; &times; &divide;)</code> &middot; Compare
+                                    <code>(&lt; &le; &gt; &ge;)</code> &middot; Logic <code>(&amp;&amp; ||)</code>
+                                    &middot; Array Lookup &middot; Array Length &middot; <code>charAt</code> &middot;
+                                    <code>concat</code> &middot; String Length &middot; Method Call &middot; Argument
+                                    Item &middot; Not &middot; Parenthesized</td>
+                            </tr>
+                            <tr>
+                                <td>Values</td>
+                                <td>Integer &middot; String Literal &middot; Boolean &middot; Identifier &middot;
+                                    <code>this</code> &middot; <code>new int[]</code> &middot; <code>new Object</code>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>A few of these are worth calling out because their names do not quite give them away:</p>
+
+                <ul>
+                    <li><strong>Identifier Type</strong> is a <em>class</em> type &mdash; how you say
+                        <code>Cell x;</code> rather than <code>int x;</code>.</li>
+                    <li><strong>Identifier</strong> (in <em>Values</em>) is a variable <em>reference</em>, as opposed to
+                        the name field on a declaration.</li>
+                    <li><strong>Argument Item</strong> stacks under a Method Call, one per argument, rather than the
+                        call having a fixed number of sockets.</li>
+                    <li><strong>Parenthesized</strong> only affects how generated source is bracketed.</li>
+                    <li><strong>Block Statement</strong> is a braced group <code>{ &hellip; }</code>, which matters
+                        wherever the grammar wants a single statement and you have several.</li>
+                    <li><code>charAt</code>, <code>concat</code> and <strong>String Length</strong> are the
+                        <a href="strings.html">String extension</a>, not part of the original BNF.</li>
+                </ul>
+
+                <h2 id="renderer">The grammar-aware renderer</h2>
+                <p>B-MJ uses a custom Blockly renderer called <strong>BMJ-Thrasos</strong>. It subclasses Blockly's
+                    Thrasos renderer and restores grammar-aware connector behaviour: the <em>shape</em> of each socket
+                    and plug tells you which non-terminal it is.</p>
+
+                <p>Blockly's own connection <code>check</code> metadata still does the enforcing &mdash; you cannot plug
+                    a statement into an expression socket regardless of what things look like. What the custom shapes
+                    add is that you can see the category <strong>before</strong> you try. Instead of dragging a block
+                    over and discovering it will not connect, you can tell from across the workspace that a socket wants
+                    an <em>Expression</em> and the thing in your hand is a <em>Statement</em>.</p>
+
+                <div class="help-callout">
+                    <strong>Two different ideas with the same name</strong>
+                    <p>B-Lambda also has a custom renderer, <a href="../help-b-lambda/blocks.html#tude">Tude</a>, but it
+                        is doing something else: Tude changes block <em>geometry</em> so terms read as nested text.
+                        BMJ-Thrasos changes <em>connector shapes</em> so grammatical categories are visible. Different
+                        problems &mdash; a &lambda;-term has three constructs and no interesting grammar, while MiniJava
+                        has ten non-terminals and very little else going on visually.</p>
+                </div>
+
+                <h2 id="connectors">Connector shapes</h2>
+                <p>Ten horizontal connector shapes, one per MiniJava value / non-terminal position:</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Non-terminal</th>
+                                <th>Appears as the socket for</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>Goal</code></td>
+                                <td>The program root</td>
+                            </tr>
+                            <tr>
+                                <td><code>MainClass</code></td>
+                                <td>The single main class</td>
+                            </tr>
+                            <tr>
+                                <td><code>ClassDeclaration</code></td>
+                                <td>Each further class</td>
+                            </tr>
+                            <tr>
+                                <td><code>VarDeclaration</code></td>
+                                <td>Fields and locals</td>
+                            </tr>
+                            <tr>
+                                <td><code>MethodDeclaration</code></td>
+                                <td>Methods</td>
+                            </tr>
+                            <tr>
+                                <td><code>FormalParameter</code></td>
+                                <td>Parameters</td>
+                            </tr>
+                            <tr>
+                                <td><code>Type</code></td>
+                                <td>Every type position</td>
+                            </tr>
+                            <tr>
+                                <td><code>Statement</code></td>
+                                <td>Statement positions</td>
+                            </tr>
+                            <tr>
+                                <td><code>Expression</code></td>
+                                <td>Expression positions</td>
+                            </tr>
+                            <tr>
+                                <td><code>Identifier</code></td>
+                                <td>Name positions</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 id="stacks">Vertical families</h2>
+                <p>Five vertical connector families handle the places MiniJava has a <em>sequence</em> of something.
+                    These are the stacking connections &mdash; the notches on the top and bottom of a block:</p>
+
+                <ul>
+                    <li>Class declarations</li>
+                    <li>Variable declarations</li>
+                    <li>Method declarations</li>
+                    <li>Statements</li>
+                    <li>Parameter and argument lists</li>
+                </ul>
+
+                <p>Because each family is distinct, a statement cannot stack onto a parameter list even though both are
+                    &ldquo;a list of things&rdquo;. This is also why declarations and statements cannot be interleaved
+                    inside a method: they are different vertical families, connected to different sockets.</p>
+
+                <h2 id="grammar">The grammar</h2>
+                <p>B-MJ implements the CSE&nbsp;401 MiniJava BNF, plus two additions:</p>
+
+                <ul>
+                    <li>The <a href="strings.html">String type and its three operators</a>.</li>
+                    <li>The block editor's <strong>operator families</strong> &mdash; where the BNF has separate
+                        productions per operator, B-MJ has one block with a dropdown, which keeps the toolbox short
+                        without changing the language.</li>
+                </ul>
+
+                <p>The base grammar is published by the University of Washington as
+                    <a href="https://courses.cs.washington.edu/courses/cse401/22au/project/BNF-for-MiniJava.html"
+                        rel="noopener">BNF for MiniJava</a>. The project mirrors it, and also keeps an
+                    &ldquo;adjusted&rdquo; version documenting exactly the grammar it implements &mdash; base BNF plus
+                    the two additions above.</p>
+
+                <div class="help-callout is-new">
+                    <strong>Only the reachable program is checked</strong>
+                    <p>Type checking and execution start from <code>Goal</code> and follow the connections. Blocks left
+                        detached on the canvas are ignored &mdash; no diagnostics, no execution. Scratch space is
+                        genuinely scratch, so you can park a half-built method next to the program while you work on
+                        it.</p>
+                </div>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="getting-started.html">
+                        <span>Previous &mdash; 02</span>
+                        <b>&larr; Getting started</b>
+                    </a>
+                    <a class="is-next" href="types.html">
+                        <span>Next &mdash; 04</span>
+                        <b>Types &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">B-MJ is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against the build running at b-mj.l-workshop.my.id.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

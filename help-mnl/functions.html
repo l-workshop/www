@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="Functions in MnL: the lambda block, the function block, recursion, using a tuple or record to pass more than one parameter, and higher-order functions.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Functions — MnL Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-mnl/functions.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>MnL Help</b><span class="help-bar-sub">Macaca nigra Language</span></span>
+        </a>
+        <span class="help-version">v5.0 &middot; build 040726</span>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://mnl.l-workshop.my.id" rel="noopener">Open MnL</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li>
+                    <a href="functions.html" aria-current="page"><em>04</em> Functions</a>
+                    <ul class="help-subnav">
+                        <li><a href="#lambda">The lambda block</a></li>
+                        <li><a href="#function-block">The function block</a></li>
+                        <li><a href="#bound">Bound &mdash; using a name</a></li>
+                        <li><a href="#recursion">Recursion</a></li>
+                        <li><a href="#many-parameters">Two or more parameters</a></li>
+                        <li><a href="#hof">Higher-order functions</a></li>
+                    </ul>
+                </li>
+                <li><a href="data.html"><em>05</em> Data structures</a></li>
+                <li><a href="types.html"><em>06</em> Types</a></li>
+                <li><a href="visualization.html"><em>07</em> Visualization</a></li>
+                <li><a href="compiler.html"><em>08</em> Compiler</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>MnL 5.0</b>, running at
+                <a href="https://mnl.l-workshop.my.id" rel="noopener">mnl.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">04 / Functions</span>
+                <h1>Functions</h1>
+                <p class="help-lede">MnL treats a function as a first-class citizen: it can be bound to a name, passed
+                    as an argument, and returned from another function. There are two function blocks &mdash; the
+                    <strong>lambda</strong> block, which is an expression, and the <strong>function</strong> block, which
+                    is a declaration.</p>
+
+                <div class="help-callout">
+                    <strong>The two blocks</strong>
+                    <ul>
+                        <li><strong>Lambda</strong> is an <em>expression</em> block taking two inputs: a parameter and an
+                            expression.</li>
+                        <li><strong>Function</strong> is a <em>declaration</em> block taking three: an identifier for the
+                            name, a parameter, and an expression.</li>
+                    </ul>
+                </div>
+
+                <h2 id="lambda">The lambda block</h2>
+                <p>A lambda is an anonymous function &mdash; one with no name. An empty lambda block starts with both
+                    inputs unfilled and a warning triangle showing what is still missing.</p>
+
+                <div class="help-fig-row">
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/lambda_empty.png" loading="lazy" style="max-width: 60%;" width="400"
+                            alt="An incomplete lambda block with an empty parameter input and an empty expression input.">
+                        <figcaption><b>Fig. 1</b> An incomplete lambda block.</figcaption>
+                    </figure>
+                    <figure class="help-fig is-block">
+                        <img src="assets/img/lamdba_unit.png" loading="lazy" style="max-width: 85%;" width="400"
+                            alt="A lambda block whose parameter is unit and whose body is a string.">
+                        <figcaption><b>Fig. 2</b> A unit parameter, returning a string.</figcaption>
+                    </figure>
+                </div>
+
+                <figure class="help-fig is-block">
+                    <img src="assets/img/lamdba_hello.png" loading="lazy"
+                        alt="A lambda block taking a string parameter named hello and concatenating it after the prefix 'MNL: '.">
+                    <figcaption><b>Fig. 3</b> A string in, a string out.</figcaption>
+                </figure>
+
+                <p>Naming a lambda is a matter of connecting it to a <a href="getting-started.html#declaration">variable
+                        block</a>:</p>
+
+                <figure class="help-fig is-block">
+                    <img src="assets/img/lambda-binding.png" loading="lazy"
+                        alt="A variable named mnl_say bound to a lambda, and a second variable say_it applying mnl_say to 'Hello there'.">
+                    <figcaption><b>Fig. 4</b> A lambda bound to the name <code>mnl_say</code>.</figcaption>
+                </figure>
+
+                <h4>SML</h4>
+                <pre><code>val mnl_say = fn (hello) =&gt; ("MNL: " ^ hello)
+val say_it = mnl_say ("Hello there")</code></pre>
+                <h4>Scala</h4>
+                <pre><code>val mnl_say = (hello : String) =&gt; ("MNL: " + hello)
+val say_it = mnl_say ("Hello there")</code></pre>
+
+                <h2 id="function-block">The function block</h2>
+                <p>The function block folds that pairing &mdash; a variable bound to a lambda &mdash; into a single
+                    declaration.</p>
+
+                <figure class="help-fig is-block">
+                    <img src="assets/img/first_class_function_1.png" loading="lazy" style="max-width: 80%;"
+                        alt="A function block named greetings with a unit parameter returning the string 'Hello there', and a variable say_it applying it.">
+                    <figcaption><b>Fig. 5</b> The function block.</figcaption>
+                </figure>
+
+                <h4>SML</h4>
+                <pre><code>fun greetings () = "Hello there"
+val say_it = greetings ()</code></pre>
+                <h4>Scala</h4>
+                <pre><code>def greetings () : String = "Hello there"
+val say_it = greetings ()</code></pre>
+
+                <h2 id="bound">Bound &mdash; using a name</h2>
+                <p>Declaring a name is only half of it. To <em>use</em> a name &mdash; a parameter, a variable, another
+                    function &mdash; you reach for the <strong>Bound</strong> block from the Expression category and type
+                    the name into it. Every reference in the Factorial example, including the recursive call to
+                    <code>factorial</code> itself, is a Bound block.</p>
+                <p>An <strong>Application</strong> block applies a function to an argument: the function goes in the
+                    <em>Application of</em> input and the argument in the <em>Over</em> input.</p>
+
+                <h2 id="recursion">Recursion</h2>
+                <p>A function may refer to itself by name, which is all recursion requires.</p>
+
+                <figure class="help-fig is-block">
+                    <img src="assets/img/tail_function.png" loading="lazy"
+                        alt="A recursive function tail_function that returns 1 when n is at most 1 and otherwise multiplies n by tail_function of n minus 1.">
+                    <figcaption><b>Fig. 6</b> A recursive function.</figcaption>
+                </figure>
+
+                <h4>SML</h4>
+                <pre><code>fun tail_function (n) =
+  if (n &lt;= 1) then 1 else (n * tail_function ((n - 1)))</code></pre>
+                <h4>Scala</h4>
+                <pre><code>def tail_function (n : Float) : Float =
+  if (n &lt;= 1) then 1 else (n * tail_function ((n - 1)))</code></pre>
+
+                <div class="help-callout is-new">
+                    <strong>Watch it run</strong>
+                    <p>Recursion is where the <a href="visualization.html">visualization views</a> earn their keep. Load
+                        the bundled <strong>Factorial</strong> example, switch to the <em>Debug</em> perspective, and step
+                        the <a href="visualization.html#cek">CEK machine</a> to watch the continuation stack grow and
+                        unwind.</p>
+                </div>
+
+                <h2 id="many-parameters">Two or more parameters</h2>
+                <p>MnL&rsquo;s core is the lambda calculus, where a function takes exactly one parameter. To pass more
+                    than one value, group them &mdash; either into a <a href="data.html#tuple">tuple</a> or into a
+                    <a href="data.html#record">record</a> &mdash; and take that as the single parameter.</p>
+
+                <h3>A tuple as the parameter</h3>
+                <figure class="help-fig is-block">
+                    <img src="assets/img/function_simul_two_params_tuple.png" loading="lazy"
+                        alt="A function greetings taking a tuple parameter and concatenating its first and second items.">
+                    <figcaption><b>Fig. 7</b> A tuple as the function parameter.</figcaption>
+                </figure>
+
+                <h4>SML</h4>
+                <pre><code>(* SML does not support type inference for a tuple as a parameter.
+   Other ML languages may support the syntax below. *)</code></pre>
+                <h4>Scala</h4>
+                <pre><code>/* the first item index is 0 in Scala */
+def greetings (tpl : (String, String)) : String =
+  ((tpl(0)) + (tpl(1)))
+
+val greetings_1 = greetings (("Hello ", "World!"))
+val greetings_2 = greetings (("World!", "Hello "))</code></pre>
+
+                <h3>A record as the parameter</h3>
+                <p>A record does the same job but names the parts, which reads better once there are more than two.</p>
+
+                <figure class="help-fig is-block">
+                    <img src="assets/img/function_simul_two_params_record.png" loading="lazy"
+                        alt="A function taking a record parameter and combining two of its named fields.">
+                    <figcaption><b>Fig. 8</b> A record as the function parameter.</figcaption>
+                </figure>
+
+                <h4>SML</h4>
+                <pre><code>(* SML does not support type inference for a record as a parameter.
+   Other ML languages may support the syntax below. *)</code></pre>
+                <h4>Scala</h4>
+                <pre><code>/* Scala has no primitive Record type */</code></pre>
+
+                <p>The alternative is currying &mdash; a function returning a function, one parameter at a time. That is
+                    the subject of the next section.</p>
+
+                <h2 id="hof">Higher-order functions</h2>
+                <p>A higher-order function takes a function as a parameter, returns a function as its result, or both.</p>
+
+                <h3>A function as a parameter</h3>
+                <figure class="help-fig is-block">
+                    <img src="assets/img/list_fold.png" loading="lazy"
+                        alt="A fold_list function taking a list, an accumulator and an operator function, folding the operator across the list.">
+                    <figcaption><b>Fig. 9</b> <code>fold_list</code> takes the folding operator as a parameter.</figcaption>
+                </figure>
+
+                <h4>SML</h4>
+                <pre><code>fun fold_list (list_a) =
+  fn (accumulator) =&gt; fn (operator) =&gt;
+    let
+      fun supporter (list_b) =
+        if null (list_b) then accumulator
+        else operator (hd (list_b)) (supporter (tl (list_b)))
+    in
+      supporter (list_a)
+    end
+
+fun sum (a) = fn (b) =&gt; (a + b)
+
+val application_of_fold = fold_list ([17, 2, 2004]) (0) (sum)</code></pre>
+                <h4>Scala</h4>
+                <pre><code>/* Scala does not support a type variable on a lambda here */</code></pre>
+
+                <h3>Returning a function</h3>
+                <p>A function that returns a function lets you supply arguments one at a time &mdash; each application
+                    yields another function until the last one produces a value. This is <em>partial application</em>,
+                    and there is a bundled example of it under <strong>Examples &rsaquo; Basic</strong>.</p>
+
+                <figure class="help-fig is-block">
+                    <img src="assets/img/hof_return_a_function.png" loading="lazy"
+                        alt="A function f_continuation taking param_1 and returning nested lambdas over param_2 and param_3 that concatenate all three.">
+                    <figcaption><b>Fig. 10</b> Returning a function, applied one argument at a time.</figcaption>
+                </figure>
+
+                <h4>SML</h4>
+                <pre><code>fun f_continuation (param_1) =
+  fn (param_2) =&gt; fn (param_3) =&gt; (param_1 ^ (param_2 ^ param_3))
+
+val first_app  = f_continuation ("Hello ")
+val second_app = first_app ("World")
+val the_result = second_app ("!")</code></pre>
+                <h4>Scala</h4>
+                <pre><code>def f_continuation (param_1 : String) : (String) =&gt; (String) =&gt; String =
+  (param_2 : String) =&gt; (param_3 : String) =&gt; (param_1 + (param_2 + param_3))
+
+val first_app  = f_continuation ("Hello ")
+val second_app = first_app ("World")
+val the_result = second_app ("!")</code></pre>
+
+                <div class="help-callout">
+                    <strong>Seeing a function&rsquo;s value</strong>
+                    <p>Right-click any Function block and choose <strong>Function value</strong> to render what the
+                        function actually <em>is</em> &mdash; the lambda it denotes, drawn as blocks. That is often the
+                        clearest way to understand a partially applied function. See
+                        <a href="visualization.html#function-value">function value</a>.</p>
+                </div>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="blocks.html">
+                        <span>Previous &mdash; 03</span>
+                        <b>&larr; Blocks</b>
+                    </a>
+                    <a class="is-next" href="data.html">
+                        <span>Next &mdash; 05</span>
+                        <b>Data structures &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">MnL is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against MnL 5.0 (build 040726).</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

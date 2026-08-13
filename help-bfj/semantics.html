@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="BFJ's two semantics: the substitution-based small-step SOS, the store-free CK abstract machine, the lockstep cross-check between them, and stuck-but-safe casts as FJ's progress theorem in action.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Semantics — BFJ Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-bfj/semantics.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-bfj">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>BFJ Help</b><span class="help-bar-sub">Block-based Featherweight
+                    Java</span></span>
+        </a>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://bfj.l-workshop.my.id" rel="noopener">Open BFJ</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li>
+                    <a href="semantics.html" aria-current="page"><em>05</em> Semantics</a>
+                    <ul class="help-subnav">
+                        <li><a href="#substitution">Substitution reduction</a></li>
+                        <li><a href="#ck">The CK machine</a></li>
+                        <li><a href="#agreement">Why they agree</a></li>
+                        <li><a href="#stuck">Stuck-but-safe casts</a></li>
+                    </ul>
+                </li>
+                <li><a href="translation.html"><em>06</em> Translation</a></li>
+                <li><a href="reference.html"><em>07</em> Reference</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>BFJ</b>, running at
+                <a href="https://bfj.l-workshop.my.id" rel="noopener">bfj.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">05 / Semantics</span>
+                <h1>Two evaluators that have to agree</h1>
+                <p class="help-lede">A program in BFJ is evaluated by reducing one entry expression to a value
+                    &mdash; a fully-applied constructor call, <code>new C(v&#772;)</code>, with no heap and no
+                    mutation anywhere. What makes the chapter interesting is that BFJ computes that reduction
+                    <em>twice</em>, by two separately-implemented methods, and tests that they never disagree.</p>
+
+                <h2 id="substitution">Substitution reduction</h2>
+                <p><code>fjSubstitution.ts</code> is the <strong>definition of record</strong>: a small-step
+                    structural operational semantics over three computation rules &mdash; <code>R-Field</code>,
+                    <code>R-Invk</code>, <code>R-Cast</code> &mdash; plus the congruence rules (<code>RC-*</code>)
+                    that push reduction into sub-expressions. Evaluation order is strict, left to right: the
+                    receiver reduces before the method name resolves, and arguments reduce left to right before the
+                    call itself fires.</p>
+
+                <p>Capture-avoidance, the usual headache in a substitution semantics, is vacuous here: FJ has no
+                    binders beyond <code>this</code> and a method's parameters, and both are always substituted
+                    simultaneously and closed. There is nothing left to accidentally capture.</p>
+
+                <p>The Reduction tab in the bottom dock precomputes the whole trace on <strong>Load</strong>, then
+                    lets <strong>Step</strong>/<strong>Back</strong>/<strong>Play</strong> move a cursor through it.
+                    Loading <em>Pair &middot; swap</em> and building it produces this trace:</p>
+
+                <pre><code>0            new Pair(new A(), new B()).swap().fst
+1 &#8614; R-Invk   new Pair(new Pair(new A(), new B()).snd, new Pair(new A(), new B()).fst).fst
+2 &#8614; R-Field  new Pair(new B(), new Pair(new A(), new B()).fst).fst
+3 &#8614; R-Field  new Pair(new B(), new A()).fst
+4 &#8614; R-Field  new B()</code></pre>
+
+                <p><code>swap()</code> fires first under <code>R-Invk</code>, substituting the receiver into a fresh
+                    <code>Pair</code> with its fields exchanged; the two remaining steps are <code>R-Field</code>
+                    reading <code>.fst</code> down through that fresh pair to the value underneath. Four lines,
+                    three rule firings, one value &mdash; and every line is a literal block tree, not a text
+                    rendering of one.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bfj-reduction.png" loading="lazy"
+                        alt="The BFJ Reduction tab showing the numbered substitution-based derivation for the Pair swap example, each step tagged with its rule name.">
+                    <figcaption><b>Fig. 2</b> The Reduction tab rendering the trace above. Each row names its rule;
+                        the cursor advances with <strong>Step</strong> or <strong>Play</strong>.</figcaption>
+                </figure>
+
+                <h2 id="ck">The CK machine</h2>
+                <p><code>fjMachine.ts</code> is a <strong>CK abstract machine</strong>: control-and-kontinuation
+                    pairs <code>&lang;e, &kappa;&rang;</code>, with an explicit Frame grammar &mdash;
+                    <code>&#9723;.f</code>, <code>&#9723;.m(&#275;)</code>, <code>v.m(v&#772;,&#9723;,&#275;)</code>,
+                    <code>new C(v&#772;,&#9723;,&#275;)</code>, <code>(C)&#9723;</code> &mdash; and every transition
+                    individually observable, including the administrative frame push/pop steps the substitution
+                    trace never names.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bfj-ck.png" loading="lazy"
+                        alt="The BFJ CK Machine tab mid-run, showing the Control, Control-recomposed and Kontinuation-stack columns for the Pair swap example.">
+                    <figcaption><b>Fig. 1</b> The CK Machine tab on <em>Pair &middot; swap</em>. Kontinuation frames
+                        render top-first, as literal &#9723;-hole expressions.</figcaption>
+                </figure>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Column</th>
+                                <th>Holds</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Control</strong></td>
+                                <td>The expression currently in focus, <code>e</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Control-recomposed</strong></td>
+                                <td><code>plug(e, &kappa;)</code> &mdash; the focus dropped back into its
+                                    kontinuation, so you can see the whole term the machine is really working on
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Kontinuation</strong></td>
+                                <td>The pending frames, innermost first, each a literal &#9723;-hole expression</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>On <em>Pair &middot; swap</em>, Step reports each transition's name and whether it was
+                    <strong>salient</strong> &mdash; an <code>R-*</code> rule actually firing &mdash; or purely
+                    administrative: stepping through <code>invk-fire-0</code> then <code>field-fire</code> reaches
+                    the same <code>new B()</code> the substitution trace does, just with more transitions counted
+                    along the way.</p>
+
+                <div class="help-callout">
+                    <strong>No store &mdash; on purpose</strong>
+                    <p>Unlike <a href="../help-b-mj/semantics.html#cesk">B-MJ's CESK machine</a>, BFJ's CK machine
+                        has no <strong>S</strong>tore. MiniJava has mutable objects on a heap, so its machine needs
+                        somewhere to put them; FJ has no assignment and no mutation at all, so there is nothing to
+                        store, and the letter is simply absent rather than present-but-empty.</p>
+                </div>
+
+                <h2 id="agreement">Why they agree</h2>
+                <p>The substitution semantics is the definition; the CK machine is a <strong>derived</strong>
+                    artifact, not an independent re-implementation guessed at separately &mdash; but derived does
+                    not mean untested. A dedicated lockstep test suite cross-checks that every salient transition
+                    the machine fires corresponds to exactly the rule the substitution trace names, for every
+                    shipped example. Both views share identical <strong>Load / Step / Back / Play</strong> controls
+                    for exactly this reason: stepping one alongside the other is how you would notice a
+                    disagreement if the suite ever missed one.</p>
+
+                <h2 id="stuck">Stuck-but-safe casts</h2>
+                <p>A failing cast is not a bug in either semantics &mdash; it is a first-class, non-crashing
+                    outcome. Load and run the <strong>Stupid cast</strong> example and the Output tab reports:</p>
+
+                <pre><code>ClassCastException: B &#8928; A</code></pre>
+
+                <p>That is exactly FJ's own progress theorem doing its job: a well-typed FJ program either reduces
+                    to a value or is a stuck cast &mdash; never stuck for any other reason. Both steppers and Run
+                    treat a failing <code>T-SCast</code>/<code>T-DCast</code> the same way: they stop cleanly and
+                    report which class failed to match which, rather than treating the mismatch as an internal
+                    error. This is also why <a href="types.html#problems">the Problems tab</a> reports a stupid cast
+                    as a warning rather than a type error &mdash; the type system already knows this outcome is
+                    possible and permitted, it is just telling you where.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="types.html">
+                        <span>Previous &mdash; 04</span>
+                        <b>&larr; Types</b>
+                    </a>
+                    <a class="is-next" href="translation.html">
+                        <span>Next &mdash; 06</span>
+                        <b>Translation &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">BFJ is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against the build running at bfj.l-workshop.my.id.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

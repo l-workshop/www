@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="Call-by-Structure and Call-by-Value in Block Lambda, the CEK abstract machine, the three-way Lockstep view, and why the machine and the substitution trace report different step counts.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Semantics — B-Lambda Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-b-lambda/semantics.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-bl">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>B-Lambda Help</b><span class="help-bar-sub">Block-Based
+                    &lambda;-Calculus</span></span>
+        </a>
+        <span class="help-version">v1.0.0</span>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://b-lambda.l-workshop.my.id" rel="noopener">Open B-Lambda</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li>
+                    <a href="semantics.html" aria-current="page"><em>05</em> Semantics</a>
+                    <ul class="help-subnav">
+                        <li><a href="#dock">The Semantics dock</a></li>
+                        <li><a href="#cbs">Call-by-Structure</a></li>
+                        <li><a href="#cbv">Call-by-Value</a></li>
+                        <li><a href="#binder">No reduction under a binder</a></li>
+                        <li><a href="#cek">The CEK machine</a></li>
+                        <li><a href="#lockstep">Lockstep</a></li>
+                        <li><a href="#counters">Why step counts differ</a></li>
+                    </ul>
+                </li>
+                <li><a href="pipeline.html"><em>06</em> Compiler pipeline</a></li>
+                <li><a href="reference.html"><em>07</em> Reference</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>Block Lambda 1.0.0</b>, running at
+                <a href="https://b-lambda.l-workshop.my.id" rel="noopener">b-lambda.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">05 / Semantics</span>
+                <h1>Reduction you can drive by hand</h1>
+                <p class="help-lede">B-Lambda evaluates every program twice, by two independent methods, and then checks
+                    that they agree. This chapter is about the four views that let you watch that happen &mdash; and
+                    about the one number that legitimately differs between them.</p>
+
+                <h2 id="dock">The Semantics dock</h2>
+                <p>Open the bottom panel with <kbd>Ctrl</kbd> + <kbd>J</kbd> and choose <em>Semantics</em>. Four
+                    tabs:</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Tab</th>
+                                <th>Shows</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Call-by-Structure</td>
+                                <td>Substitution reduction under the default strategy, drawn as blocks</td>
+                            </tr>
+                            <tr>
+                                <td>Call-by-Value</td>
+                                <td>The same, with arguments reduced before they are substituted</td>
+                            </tr>
+                            <tr>
+                                <td>CEK machine</td>
+                                <td>An environment machine: control, environment, kontinuation</td>
+                            </tr>
+                            <tr>
+                                <td>Lockstep</td>
+                                <td>Substitution, the CEK machine and the register VM, side by side</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="help-callout">
+                    <strong>The trace views need a redex</strong>
+                    <p>A reduction trace is always <em>of something</em>. The Call-by-Structure and Call-by-Value tabs
+                        stay empty until you pick one, and prompt you: <em>&ldquo;Right-click an application block and
+                            choose Call-by-Structure or Call-by-Value.&rdquo;</em> The context menu on any application
+                        block carries <strong>Evaluate &ndash; Call-by-Structure</strong>,
+                        <strong>Evaluate &ndash; Call-by-Value</strong> and <strong>Show Type and Value</strong>. The CEK
+                        and Lockstep tabs instead have their own <strong>Load</strong> button and run the whole
+                        program.</p>
+                </div>
+
+                <h2 id="cbs">Call-by-Structure</h2>
+                <p><strong>Call-by-Structure (CbS) is B-Lambda's default evaluation strategy</strong>, as it is in
+                    <a href="../help-mnl/index.html">MnL</a>. Under CbS, &beta;-reduction substitutes the argument's
+                    evaluated, but <em>keep the original block structure</em> into every occurrence of the parameter, as independent
+                    copies. Each use site then reduces its own copy.</p>
+
+                <p>The consequence is the whole point of the strategy: <strong>duplicated work becomes duplicated
+                        structure</strong>, and you can see it.</p>
+
+                <pre><code>(&lambda;x. x + x) (3 * 7)
+
+CbS:  reduce and keep the structure     &rarr;  (&lambda;x. x + x) (3 * 7 &rarr; 21)
+      substitute the structure          &rarr;  (3 * 7 &rarr; 21) + (3 * 7 &rarr; 21) &rarr;  42
+      the multiplication happens ONCE
+
+CbV:  reduce the argument first   &rarr;  (&lambda;x. x + x) 21
+      then substitute the value   &rarr;  21 + 21  &rarr;  42
+      the multiplication happens ONCE</code></pre>
+
+                <p>Both reach <code>42</code>. The difference is not the answer, it is the amount of work &mdash; and
+                    under CbS that difference is physically visible as two copies of the same sub-tree sitting in the
+                    trace. The <strong>Copy vs Lookup</strong> example exists to show precisely this contrast.</p>
+
+                <p>The trace itself renders as a live Blockly workspace, not as text, with the substituted regions
+                    labelled &mdash; <em>Substituted block for parameter</em>, <em>Function body of CbS</em> &mdash; so
+                    you can tell which part of the new term came from where.</p>
+
+                <div class="help-callout is-changed">
+                    <strong>A CbS trace can get large</strong>
+                    <p>Because copies are real, the trace of a deeply recursive program is genuinely big &mdash; the
+                        <em>Factorial 5</em> trace unrolls the whole recursion as blocks. That is the honest picture of
+                        what CbS does, but it is awkward to read in a short panel. Maximise the dock, and use
+                        <em>Run: Arrange Reduction Steps</em> from the
+                        <a href="reference.html#commands">command palette</a> to lay the steps out. For learning the
+                        strategy itself, start with a small term like <em>Copy vs Lookup</em> rather than
+                        factorial.</p>
+                </div>
+
+                <h2 id="cbv">Call-by-Value</h2>
+                <p>Call-by-Value reduces the argument to a value first, then substitutes that value. The work is done
+                    once. It is the strategy most real functional languages use, and it is available here for exactly
+                    one reason: so you can put it next to CbS and see what the choice costs.</p>
+
+                <p>Everything else about the tab is identical &mdash; same block rendering, same controls, same
+                    right-click entry point.</p>
+
+                <h2 id="binder">No reduction under a binder</h2>
+                <p>Under <em>both</em> strategies, B-Lambda does not reduce inside the body of an abstraction. A
+                    &lambda; is a <strong>value</strong>. Its body is only reduced once an application has substituted
+                    something for the parameter.</p>
+
+                <pre><code>&lambda;x. (2 + 3)     -- stays as it is. Already a value.
+(&lambda;x. (2 + 3)) 7 -- now the body reduces: &rarr; 5</code></pre>
+
+                <p>The <strong>Normal Form</strong> example loads a term that is already in normal form, so you can
+                    confirm that the stepper genuinely refuses to go further rather than merely happening not to. This
+                    matches MnL's behaviour, and it is why the two languages' reduction traces can be compared at
+                    all.</p>
+
+                <h2 id="cek">The CEK machine</h2>
+                <p>The second, independent evaluator. <strong>C</strong>ontrol, <strong>E</strong>nvironment,
+                    <strong>K</strong>ontinuation &mdash; and no store, which is what distinguishes it from the CESK
+                    machine in <a href="../help-b-mj/semantics.html#cesk">B-MJ</a>, where objects live on a heap.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bl-cek.png" loading="lazy"
+                        alt="The CEK machine tab at step 5, rule beta, showing the Control column with the expression being evaluated, the Environment binding n to number 5 and factorial to a lambda, and an empty Kontinuation.">
+                    <figcaption><b>Fig. 1</b> The CEK machine mid-way through <em>Factorial 5</em>, at
+                        <code>step 5 &middot; beta</code>. The rule that just fired is named next to the step
+                        count.</figcaption>
+                </figure>
+
+                <p>Three columns, in machine order:</p>
+
+                <ul>
+                    <li><strong>Control</strong> &mdash; what the machine will evaluate next.</li>
+                    <li><strong>Environment</strong> &mdash; the current bindings. Under CbS an argument is bound as a
+                        <em>thunk</em> (a block plus its environment), and every variable lookup re-enters it.</li>
+                    <li><strong>Kontinuation</strong> &mdash; the pending work, innermost first. Empty means you are at
+                        the top level.</li>
+                </ul>
+
+                <p>Controls are <strong>Load</strong>, <strong>Back</strong>, <strong>Step</strong> and
+                    <strong>Play</strong>. If you edit the program while a machine is loaded, the panel says
+                    <em>Program changed &mdash; load it again to restart</em> rather than silently stepping a stale
+                    term.</p>
+
+                <div class="help-callout is-new">
+                    <strong>Back is exact time travel</strong>
+                    <p>The step function is <em>pure</em>: it returns a new state rather than mutating the current one.
+                        So <strong>Back</strong> does not re-run the program from the beginning and hope to land in the
+                        same place &mdash; it restores the exact earlier state. This is also what makes the machine
+                        safe to compare against the substitution trace.</p>
+                </div>
+
+                <p>Environment lookup is the lazy counterpart of CbS's physical copying: instead of duplicating a
+                    sub-tree, the machine keeps one thunk and re-enters it. That is why the machine fires the
+                    <em>same salient rules in the same order</em> as the substitution trace, which is the invariant the
+                    Lockstep view checks. Note that the CEK tab has no per-tab strategy switch &mdash; it runs the
+                    language default, CbS.</p>
+
+                <h2 id="lockstep">Lockstep</h2>
+                <p>The tab that ties everything together. Lockstep runs <strong>three</strong> evaluators on the same
+                    program and pairs them up:</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bl-lockstep.png" loading="lazy"
+                        alt="The Lockstep tab at step 7 of 56, rule unfold fixpoint factorial, with the block-tree state on the left, the CEK machine at step 13 in the middle, the Register VM on the right, and a status reading In sync, 3 salient events, CEK and VM both ticked.">
+                    <figcaption><b>Fig. 2</b> Lockstep on <em>Factorial 5</em>. Substitution is at step 7/56, the CEK
+                        machine at step 13, the register VM at <code>JmpIf</code> &mdash; and the badge on the right
+                        confirms <em>In sync &mdash; 3 salient events &middot; CEK &check; &middot; VM
+                            &check;</em>.</figcaption>
+                </figure>
+
+                <ul>
+                    <li><strong>Left</strong> &mdash; the substitution state, as a block tree.</li>
+                    <li><strong>Middle</strong> &mdash; the CEK machine state that has &ldquo;caught up&rdquo; to
+                        it.</li>
+                    <li><strong>Right</strong> &mdash; the <a href="pipeline.html#vm">register VM</a>, with its frames
+                        and registers.</li>
+                </ul>
+
+                <p>The status line reports a <code>syncCount</code> of matched salient rules and flags divergence.
+                    <em>In sync</em> with both ticks means the substitution semantics, the abstract machine and the
+                    compiled bytecode all agree on this program, at this step, under this strategy &mdash; the
+                    operational-correspondence claim, executed rather than asserted.</p>
+
+                <p>Unlike the CEK tab, Lockstep keeps a <strong>CbS / CbV</strong> switch, defaulting to CbS, so you can
+                    check the correspondence under either strategy.</p>
+
+                <h2 id="counters">Why step counts differ</h2>
+                <p>In Fig. 2 the substitution trace says step 7 and the CEK machine says step 13. Neither is wrong.
+                    They are counting different things.</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Counts</th>
+                                <th>One press advances</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>CEK machine</td>
+                                <td><strong>Every</strong> transition, including the administrative ones: environment
+                                    lookups, pushing and popping continuation frames, descending into a sub-term,
+                                    returning a value.</td>
+                                <td>one machine transition</td>
+                            </tr>
+                            <tr>
+                                <td>Substitution trace</td>
+                                <td>Only <strong>salient</strong> reductions &mdash; <code>beta</code>,
+                                    <code>if-true</code> / <code>if-false</code>, and primitive <code>prim &hellip;</code>
+                                    steps. The human-visible redexes.</td>
+                                <td>one visible redex</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>So one reduction frame corresponds to several machine micro-steps, and the machine's number is always
+                    the larger. Lockstep advances the machine in bulk between salient rules: the bookkeeping transitions
+                    still increment the machine's count but do not add a reduction frame. Both reach the same normal
+                    form, and <code>syncCount</code> confirms they agree on the salient trace.</p>
+
+                <div class="help-callout">
+                    <strong>The same rule of thumb across the workshop</strong>
+                    <p>A <em>substitution</em> counter compared against a <em>machine</em> counter is always coarser,
+                        because the machine also counts the steps the rewriter never names. Two counters at the
+                        <em>same</em> granularity stay equal &mdash; which is why B-MJ's
+                        <a href="../help-b-mj/semantics.html#avsb">A vs B</a> tab shows both its machines finishing in
+                        exactly 51 steps.</p>
+                </div>
+
+                <p>You can also reach both traces without the dock: <em>More &rarr; Call-by-Structure Trace</em>,
+                    <em>Call-by-Value Trace</em> and <em>Lockstep Debugger</em>, or the matching
+                    <code>Run:</code> commands in the palette.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="types.html">
+                        <span>Previous &mdash; 04</span>
+                        <b>&larr; Types</b>
+                    </a>
+                    <a class="is-next" href="pipeline.html">
+                        <span>Next &mdash; 06</span>
+                        <b>Compiler pipeline &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">Block Lambda is developed at <a href="../index.html">L-Workshop</a>. This help was
+                written against Block Lambda 1.0.0.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

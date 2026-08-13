@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="B-MJ is a block-based MiniJava workbench and a laboratory for Java's reference model: a grammar-aware renderer, a static type system, and five executable-semantics views including a CESK heap machine.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Overview — B-MJ Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-b-mj/index.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-bmj">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>B-MJ Help</b><span class="help-bar-sub">Block-based MiniJava</span></span>
+        </a>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://b-mj.l-workshop.my.id" rel="noopener">Open B-MJ</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li>
+                    <a href="index.html" aria-current="page"><em>01</em> Overview</a>
+                    <ul class="help-subnav">
+                        <li><a href="#what">What B-MJ is</a></li>
+                        <li><a href="#workbench">The workbench</a></li>
+                        <li><a href="#perspectives">Perspectives</a></li>
+                        <li><a href="#palette">Command palette</a></li>
+                        <li><a href="#files">Files and autosave</a></li>
+                        <li><a href="#examples">Built-in examples</a></li>
+                    </ul>
+                </li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li><a href="strings.html"><em>05</em> Strings</a></li>
+                <li><a href="semantics.html"><em>06</em> Semantics</a></li>
+                <li><a href="reference.html"><em>07</em> Reference</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>B-MJ</b>, running at
+                <a href="https://b-mj.l-workshop.my.id" rel="noopener">b-mj.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">01 / Overview</span>
+                <h1>A laboratory for Java&rsquo;s reference model</h1>
+                <p class="help-lede">B-MJ is a block-based IDE for the full MiniJava language. Its real subject is not
+                    syntax but <em>what a variable holds</em> &mdash; and it settles that question by running your
+                    program under two different answers at once and showing you where they disagree.</p>
+
+                <h2 id="what">What B-MJ is</h2>
+                <p>Most teaching material explains object references with a diagram and a promise. B-MJ executes the
+                    distinction instead. Build a MiniJava program as blocks, then step it on a heap machine and watch
+                    references, activation frames and garbage collection as they happen.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bmj-workbench.jpg" loading="lazy"
+                        alt="The B-MJ workbench: activity bar and blocks sidebar on the left, the starter Goal and MainClass skeleton in the workspace, and the MiniJava Inspector showing a typing derivation on the right.">
+                    <figcaption><b>Fig. 1</b> B-MJ on a fresh workspace. The starter skeleton is a
+                        <code>Goal</code> holding a main class, and the Inspector is already deriving a typing judgement
+                        for it.</figcaption>
+                </figure>
+
+                <p>Four things distinguish it from a MiniJava block editor:</p>
+                <ul>
+                    <li><strong>A grammar-aware renderer.</strong> Connector <em>shapes</em> encode MiniJava's
+                        non-terminals, so you can see which category a socket wants before you try to plug anything into
+                        it.</li>
+                    <li><strong>A three-layer type system with holes.</strong> An incomplete block is consistent with
+                        everything, so one unfinished expression does not cascade errors across the program.</li>
+                    <li><strong>Two value models, stepped in lockstep.</strong> Model A puts objects on a heap and makes
+                        aliasing real; Model B uses inline structural values. Same program, same control flow &mdash;
+                        different answer, when the program looks.</li>
+                    <li><strong>A bidirectional text editor.</strong> MiniJava source and blocks are two views of one
+                        program.</li>
+                </ul>
+
+                <div class="help-callout">
+                    <strong>Where this sits</strong>
+                    <p>B-MJ is one of the languages built at <a href="../index.html">L-Workshop</a>. It shares its
+                        bottom-panel layout and its Call-by-Structure / Call-by-Value tabs with
+                        <a href="../help-b-lambda/index.html">B-Lambda</a>, and its substitution-vs-machine
+                        correspondence idea with <a href="../help-mnl/index.html">MnL</a>. What is new here is the
+                        <strong>store</strong>: B-MJ's machine is a CESK machine, not a CEK machine, and that extra
+                        letter is the whole subject.</p>
+                </div>
+
+                <h2 id="workbench">The workbench</h2>
+                <p>The shell is a workbench over the language tools &mdash; it adds entry points and layout presets, not
+                    new language behaviour.</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Region</th>
+                                <th>What lives there</th>
+                                <th>Toggle</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Header menus</td>
+                                <td><em>File</em>, <em>Examples</em>, <em>View</em>, <em>More</em></td>
+                                <td>&mdash;</td>
+                            </tr>
+                            <tr>
+                                <td>Activity bar</td>
+                                <td>Blocks &middot; Search blocks</td>
+                                <td>&mdash;</td>
+                            </tr>
+                            <tr>
+                                <td>Blocks sidebar</td>
+                                <td>The categorised toolbox</td>
+                                <td><kbd>Ctrl</kbd> + <kbd>B</kbd></td>
+                            </tr>
+                            <tr>
+                                <td>Block Workspace</td>
+                                <td>The blocks, with zoom and <em>&#9654; Run</em></td>
+                                <td>&mdash;</td>
+                            </tr>
+                            <tr>
+                                <td>MiniJava Inspector</td>
+                                <td><em>Code</em>, <em>Types</em>, <em>Outline</em></td>
+                                <td>&mdash;</td>
+                            </tr>
+                            <tr>
+                                <td>Bottom tools</td>
+                                <td><em>Problems</em>, <em>Output</em>, <em>Semantics</em></td>
+                                <td><kbd>Ctrl</kbd> + <kbd>J</kbd></td>
+                            </tr>
+                            <tr>
+                                <td>Status bar</td>
+                                <td>File name, block count, problem count, autosave</td>
+                                <td>&mdash;</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>The Inspector's <em>Code</em> tab is an editable MiniJava source view synchronised with the
+                    workspace; <em>Types</em> holds the typing derivation; <em>Outline</em> shows program structure. The
+                    five semantics views all live under <em>Bottom tools &rarr; Semantics</em> and are the subject of
+                    <a href="semantics.html">chapter 06</a>.</p>
+
+                <h2 id="perspectives">Perspectives</h2>
+                <p>Set from <em>View &rarr; Perspective</em>, from the command palette, or from the status bar.</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Perspective</th>
+                                <th>Arranged for</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Edit</td>
+                                <td>Building a program: blocks, code, a focused workspace</td>
+                            </tr>
+                            <tr>
+                                <td>Debug</td>
+                                <td>The machine and execution tools</td>
+                            </tr>
+                            <tr>
+                                <td>Type Analysis</td>
+                                <td>Diagnostics and constraints</td>
+                            </tr>
+                            <tr>
+                                <td>Presentation</td>
+                                <td>A maximised block workspace, for teaching</td>
+                            </tr>
+                            <tr>
+                                <td>Custom</td>
+                                <td>What you get as soon as you adjust a panel by hand</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>Layout state is namespaced in browser storage, so sidebar and code visibility, panel widths, the
+                    active activity and the perspective all survive a reload.</p>
+
+                <div class="help-callout is-new">
+                    <strong>Dark theme and autosave interval</strong>
+                    <p>Both live in the <em>View</em> menu. The autosave interval is a slider rather than a fixed value
+                        &mdash; the default is 2 minutes. The status bar shows <em>Autosave ready</em> and then
+                        <em>Autosaved</em> with a timestamp.</p>
+                </div>
+
+                <h2 id="palette">Command palette</h2>
+                <p><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> opens a searchable list of every command, matched
+                    by keyword. It covers File (new, open, save, export, autosave), Run, Analysis (the CESK machine, the
+                    Model A vs B comparison, the rewrite semantics) and View commands. The full list is in
+                    <a href="reference.html#commands">the reference chapter</a>.</p>
+
+                <h2 id="files">Files and autosave</h2>
+                <p>Workspaces save as <code>.bml</code> files. MiniJava source can be opened or exported separately, so
+                    a program can leave B-MJ as ordinary <code>.java</code>-style text and come back as blocks.</p>
+
+                <ul>
+                    <li><strong>Save</strong> <kbd>Ctrl</kbd> + <kbd>S</kbd> writes a <code>.bml</code> workspace.</li>
+                    <li><strong>Open</strong> <kbd>Ctrl</kbd> + <kbd>O</kbd> loads one back.</li>
+                    <li><strong>Export</strong> writes the generated MiniJava source.</li>
+                    <li><strong>Autosave</strong> keeps a rolling local backup at the interval you set.</li>
+                </ul>
+
+                <h2 id="examples">Built-in examples</h2>
+                <p>Twelve programs, roughly ordered by difficulty. The first ten are ordinary MiniJava; the last two
+                    exist specifically to drive a semantics view.</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Example</th>
+                                <th>Shows</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Simple Sum</td>
+                                <td>The smallest complete program</td>
+                            </tr>
+                            <tr>
+                                <td>Max Finder</td>
+                                <td>Conditionals and comparison</td>
+                            </tr>
+                            <tr>
+                                <td>Factorial</td>
+                                <td>Recursion through a method call</td>
+                            </tr>
+                            <tr>
+                                <td>Binary Search</td>
+                                <td>Arrays and <code>while</code></td>
+                            </tr>
+                            <tr>
+                                <td>Shapes (Inheritance)</td>
+                                <td><code>extends</code>, overriding, nominal subtyping</td>
+                            </tr>
+                            <tr>
+                                <td>Palindrome</td>
+                                <td>Strings and <code>charAt</code></td>
+                            </tr>
+                            <tr>
+                                <td>Bubble Sort</td>
+                                <td>Nested loops over an array</td>
+                            </tr>
+                            <tr>
+                                <td>Sieve of Eratosthenes</td>
+                                <td>A larger array algorithm</td>
+                            </tr>
+                            <tr>
+                                <td>Stack (Push/Pop)</td>
+                                <td>An object holding mutable state</td>
+                            </tr>
+                            <tr>
+                                <td>Dynamic Array (Resizing)</td>
+                                <td>Allocation and copying &mdash; good with the CESK store open</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Aliasing Contrast (A vs B)</strong></td>
+                                <td>The two value models disagree: <code>4141</code> against <code>41</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Independent Copies (Rewrite)</strong></td>
+                                <td>Substitution semantics on the pure fragment</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="help-callout is-changed">
+                    <strong>Loading over your work</strong>
+                    <p>If the workspace already has blocks, loading an example asks first and offers
+                        <strong>Replace</strong> or <strong>Merge</strong>. Merge drops the example alongside what you
+                        have rather than discarding it. This is the same convention as
+                        <a href="../help-b-lambda/index.html#examples">B-Lambda</a>.</p>
+                </div>
+
+                <p>If you only run one example, make it <strong>Aliasing Contrast</strong>. It is nineteen lines of
+                    MiniJava that produce two different answers depending on a single question &mdash; whether
+                    <code>y = x</code> copies the object or shares it &mdash; and
+                    <a href="semantics.html#avsb">the A vs B tab</a> shows both answers being computed at the same
+                    time.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="../index.html">
+                        <span>Up &mdash; site</span>
+                        <b>&larr; L-Workshop</b>
+                    </a>
+                    <a class="is-next" href="getting-started.html">
+                        <span>Next &mdash; 02</span>
+                        <b>Getting started &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">B-MJ is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against the build running at b-mj.l-workshop.my.id.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

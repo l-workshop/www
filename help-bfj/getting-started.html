@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="Build your first Featherweight Java program in BFJ: a class with one field, the auto-derived constructor, the Editable Code panel, and watching the Reduction and CK Machine tabs populate after Run.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Getting started — BFJ Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-bfj/getting-started.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-bfj">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>BFJ Help</b><span class="help-bar-sub">Block-based Featherweight
+                    Java</span></span>
+        </a>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://bfj.l-workshop.my.id" rel="noopener">Open BFJ</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li>
+                    <a href="getting-started.html" aria-current="page"><em>02</em> Getting started</a>
+                    <ul class="help-subnav">
+                        <li><a href="#skeleton">A workspace with nothing assumed</a></li>
+                        <li><a href="#first">Your first class</a></li>
+                        <li><a href="#ctor">The constructor writes itself</a></li>
+                        <li><a href="#code">The Editable Code panel</a></li>
+                        <li><a href="#running">Running it</a></li>
+                        <li><a href="#search">Searching the toolbox</a></li>
+                    </ul>
+                </li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li><a href="semantics.html"><em>05</em> Semantics</a></li>
+                <li><a href="translation.html"><em>06</em> Translation</a></li>
+                <li><a href="reference.html"><em>07</em> Reference</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>BFJ</b>, running at
+                <a href="https://bfj.l-workshop.my.id" rel="noopener">bfj.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">02 / Getting started</span>
+                <h1>Your first Featherweight Java program</h1>
+                <p class="help-lede">FJ's smallest program is barely a program at all &mdash; one class, one field,
+                    one expression. Building it is still the fastest way to see the parts that make BFJ worth using:
+                    a constructor that appears without being asked for, and two semantics views that fill in the
+                    moment you press Run.</p>
+
+                <h2 id="skeleton">A workspace with nothing assumed</h2>
+                <p>A fresh BFJ workspace is empty, and that emptiness is deliberate. FJ has no <code>main</code>, no
+                    static entry point, no <code>Goal</code> wrapper the way B-MJ does &mdash; a program is simply a
+                    set of class declarations plus one loose top-level expression sitting beside them on the canvas,
+                    and that loose expression is the thing that actually gets reduced. Nothing stops you from
+                    dropping several candidate expressions down at once; only the one you Run, or Load into a
+                    stepper, is evaluated.</p>
+
+                <h2 id="first">Your first class</h2>
+                <p>Build the shipped <strong>Field access</strong> example by hand once, so the pieces are familiar
+                    later:</p>
+
+                <ol class="help-steps">
+                    <li>From <strong>Class</strong>, drag an <code>fj_class</code> block onto the workspace. Name it
+                        <code>A</code> and leave it <code>extends Object</code>.</li>
+                    <li>From <strong>Members</strong>, drag an <code>fj_field</code> block into the class's field
+                        socket and give it a type and a name &mdash; <code>Object f</code> is enough.</li>
+                    <li>Look at what is already sitting under the field. That is covered next.</li>
+                    <li>Drop an <code>fj_new</code> block from <strong>Expressions</strong> beside the class, set it
+                        to <code>A</code>, then chain an <code>fj_field_access</code> onto it for <code>.f</code>.
+                        This loose expression, <code>new A().f</code>, is your program.</li>
+                </ol>
+
+                <p>That is also exactly the shipped <strong>Field access</strong> example, so if a step feels fiddly
+                    the first time, load the example from the Examples menu instead and read the blocks it produced.
+                </p>
+
+                <h2 id="ctor">The constructor writes itself</h2>
+                <p>Notice there was no step above for building a constructor. <code>fj_ctor</code> is already
+                    attached under the field list, and it has no sockets to fill in &mdash; it is labelled
+                    <em>constructor (auto)</em> and stays that way.</p>
+
+                <div class="help-callout is-new">
+                    <strong>Why the constructor is fixed</strong>
+                    <p>FJ's own typing rules say the constructor for a class is fully determined by
+                        <code>fields(C)</code> &mdash; the class's fields plus its superclass's fields, in order.
+                        BFJ enforces that literally: <code>fj_ctor</code> is synthesized, not built, so there is no
+                        way to construct two different block trees that mean the same class. That is what keeps the
+                        block&harr;AST bijection <a href="translation.html#roundtrip">proved in chapter 06</a> from
+                        breaking on day one. See <a href="blocks.html#ctor">Blocks</a> for the full argument.</p>
+                </div>
+
+                <h2 id="code">The Editable Code panel</h2>
+                <p>Open the FJ Inspector's <em>Editable Code</em> tab. It already shows genuine, javac-shaped Java
+                    source for the class and expression you just built, including the synthesized constructor's
+                    <code>super(...)</code> call. Add a second field and watch the constructor's parameter list and
+                    body grow in the text before you have touched anything else &mdash; the panel is synchronised
+                    live in both directions, the same parser and printer covered in
+                    <a href="translation.html">Translation</a>.</p>
+
+                <h2 id="running">Running it</h2>
+                <p><strong>&#9654; Run</strong> in the workspace title bar reduces the expression to a value and
+                    puts it on the Inspector's <em>Output</em> tab. For <code>new A().f</code> that value is
+                    <code>null</code>-free by construction &mdash; FJ has no <code>null</code>, so a field that was
+                    never assigned anything but a value obtained the same way still prints as a fully-applied
+                    constructor call.</p>
+
+                <p>Open the bottom dock with <kbd>Ctrl</kbd> + <kbd>J</kbd> and press <strong>Load</strong> on the
+                    <em>Reduction</em> tab: it precomputes the whole substitution trace for your expression, one
+                    numbered line per step, each tagged with the rule that fired. Do the same on <em>CK Machine</em>
+                    and you get the same reduction again, this time as an explicit Control/Kontinuation pair you can
+                    Step and Back through one transition at a time. Both are the subject of
+                    <a href="semantics.html">chapter 05</a>.</p>
+
+                <h2 id="search">Searching the toolbox</h2>
+                <p>Press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd>, or use the search field at the top of the
+                    sidebar, to filter block labels and category names live &mdash; useful once you are past the
+                    thirteen blocks in <a href="blocks.html#toolbox">the toolbox</a> and just want
+                    <code>fj_invk</code> without scrolling past <em>Types</em> and <em>Arguments</em> to find
+                    it.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="index.html">
+                        <span>Previous &mdash; 01</span>
+                        <b>&larr; Overview</b>
+                    </a>
+                    <a class="is-next" href="blocks.html">
+                        <span>Next &mdash; 03</span>
+                        <b>Blocks &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">BFJ is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against the build running at bfj.l-workshop.my.id.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

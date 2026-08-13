@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="ViSML's two live-switchable Blockly renderers: Macaca Nigra's grammar-shaped connector notches and Goropa's text-code layout, how switching works, and the T2BB grammar-transformation research behind both.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Renderers — ViSML Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-visml/renderers.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-visml">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>ViSML Help</b><span class="help-bar-sub">Visual Standard ML</span></span>
+        </a>
+        <span class="help-version">v5.0.0</span>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://visml.l-workshop.my.id" rel="noopener">Open ViSML</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li>
+                    <a href="renderers.html" aria-current="page"><em>05</em> Renderers</a>
+                    <ul class="help-subnav">
+                        <li><a href="#macaca">Macaca Nigra</a></li>
+                        <li><a href="#goropa">Goropa</a></li>
+                        <li><a href="#switching">Switching renderers</a></li>
+                        <li><a href="#research">The research grounding</a></li>
+                    </ul>
+                </li>
+                <li><a href="codegen.html"><em>06</em> Code Generation</a></li>
+                <li><a href="reference.html"><em>07</em> Reference</a></li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>ViSML 5.0.0</b>, running at
+                <a href="https://visml.l-workshop.my.id" rel="noopener">visml.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">05 / Renderers</span>
+                <h1>One grammar, two ways of looking at it</h1>
+                <p class="help-lede">Most block editors ship one renderer and treat it as a fixed fact about the
+                    program. ViSML ships two, lets you switch between them at runtime, and treats the choice as
+                    exactly that &mdash; a choice, not a property of the code underneath it.</p>
+
+                <h2 id="macaca">Macaca Nigra</h2>
+                <p>The default renderer, and a subclass of Blockly's own Thrasos renderer. Its distinguishing feature
+                    is that connector and notch <strong>shapes</strong> &mdash; not just colours &mdash; are specific
+                    to grammatical category: expression and operator blocks get chevron-shaped notches, pattern blocks
+                    get rounded-pill shapes, declaration blocks get plain rectangular notches. In the app this is
+                    labelled &ldquo;ViSML grammar notches.&rdquo;</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/visml-macaca.png" loading="lazy"
+                        alt="A ViSML program rendered with the Macaca Nigra renderer: expression blocks show chevron-shaped notches, pattern blocks show rounded-pill notches, declaration blocks show plain rectangular notches.">
+                    <figcaption><b>Fig. 1</b> Macaca Nigra. The notch shape tells you a block's grammatical family
+                        before you have read a single field on it.</figcaption>
+                </figure>
+
+                <p>The practical payoff is the same one <a href="../help-b-mj/blocks.html#renderer">B-MJ's
+                        BMJ-Thrasos renderer</a> gives its own users: you can tell, from across the workspace, whether
+                    the thing in your hand will fit a socket &mdash; a pattern-shaped plug does not read like an
+                    expression-shaped one, even before you try to connect it. Blockly's own connection <code>check</code>
+                    metadata still does the actual enforcing; the shape is what lets you predict the outcome instead
+                    of discovering it by dragging.</p>
+
+                <h2 id="goropa">Goropa</h2>
+                <p>The second renderer, added in 2026, subclasses Blockly's base renderer rather than Thrasos.
+                    Goropa's goal is different from Macaca Nigra's: it is deliberately styled to look like
+                    <strong>text code</strong>. Fields are monospace, each block takes one value or dummy input per
+                    line &mdash; mirroring where the generator itself inserts a newline &mdash; and continuation lines
+                    are indented, standing in for the generator's own indentation. Rows are left-aligned rather than
+                    nested outward the way a jigsaw piece would be. In the app this is labelled &ldquo;Text-code
+                    appearance.&rdquo;</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/visml-goropa.png" loading="lazy"
+                        alt="The same ViSML program rendered with the Goropa renderer, laid out to resemble indented text code.">
+                    <figcaption><b>Fig. 2</b> The same program under Goropa &mdash; taller, narrower, and closer to
+                        reading like an indented SML listing built out of colour-coded, keyword-shaped
+                        blocks.</figcaption>
+                </figure>
+
+                <p>Goropa keeps Macaca Nigra's grammar-shaped notches on value connections even while it changes the
+                    overall layout &mdash; the two renderers disagree about geometry, not about which category a
+                    socket belongs to.</p>
+
+                <div class="help-callout">
+                    <strong>A third renderer exists, but is not switched on</strong>
+                    <p>An earlier, experimental &ldquo;tarsius&rdquo; renderer remains in the project's history but is
+                        not registered anywhere in the running application &mdash; it is dead code, worth knowing
+                        about only so you do not go looking for it in the Settings panel.</p>
+                </div>
+
+                <h2 id="switching">Switching renderers</h2>
+                <p>Change renderers from the <strong>Settings</strong> panel or the <strong>Tools</strong> menu. Both
+                    are one-click choices, but neither takes effect instantly: Blockly cannot hot-swap the renderer
+                    underneath a live workspace, so switching triggers a full page reload.</p>
+
+                <p>That reload is not disruptive to your work. Before reloading, ViSML stashes the chosen renderer and
+                    the current workspace JSON to local storage; on reload, it restores both, so the program you were
+                    looking at under Macaca Nigra reappears, unchanged, under Goropa. This was verified directly:
+                    switching mid-session preserves every block, and only how they are drawn changes.</p>
+
+                <h2 id="research">The research grounding</h2>
+                <p>ViSML is the reference implementation for a piece of research on preserving grammar structure in
+                    block-based editors, and the renderers above are its most visible outcome &mdash; but the
+                    underlying idea is worth explaining in its own right, because it is why the toolbox and the
+                    blocks look the way they do throughout this help.</p>
+
+                <p><strong>The preservation problem.</strong> Most tools that generate a block editor from a grammar
+                    simplify that grammar first &mdash; merging or flattening productions to keep the toolbox small.
+                    The cost is information loss: two productions that both derive the same nonterminal, say a
+                    <em>pattern</em> and an <em>expression</em> that happen to look alike, get folded into one block,
+                    and from then on there is no way to tell which grammatical role a given piece of the program was
+                    actually playing.</p>
+
+                <p><strong>T2BB.</strong> ViSML instead runs every SML production through a transformation framework
+                    called T2BB (Text-to-Block Builder), which classifies each one into a structural category and
+                    gives that category a matching visual treatment:</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Visual treatment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Terminal</td>
+                                <td>A plain literal or fixed keyword block &mdash; no special apparatus needed</td>
+                            </tr>
+                            <tr>
+                                <td>Alias</td>
+                                <td>A small coloured terminal label marking which grammatical role the block is
+                                    playing &mdash; see <a href="blocks.html#grammar">Blocks</a></td>
+                            </tr>
+                            <tr>
+                                <td>Mixed</td>
+                                <td>The same labelling, applied where a nonterminal can be reached through more than
+                                    one kind of production</td>
+                            </tr>
+                            <tr>
+                                <td>Repetitive</td>
+                                <td>The plus/minus mutator UI, covered in <a href="blocks.html#mutators">Blocks</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>Applied across the whole language, this is what the project calls complete
+                    <strong>transformation coverage</strong>: all 42 of SML's non-terminals and all 132 of its
+                    production rules get a category and a treatment, with no leftover cases handled by a generic
+                    fallback block. The published results report full recovery of context-dependent grammatical
+                    distinctions and <strong>100% round-trip fidelity</strong> &mdash; every one of those 132
+                    productions survives a block&nbsp;&rarr;&nbsp;text&nbsp;&rarr;&nbsp;block cycle unchanged. The
+                    mechanics of that round trip are the subject of <a href="codegen.html#roundtrip">Code
+                        Generation</a>.</p>
+
+                <div class="help-callout is-new">
+                    <strong>Grammar Awareness is the point of all of this</strong>
+                    <p>The paper's term for how much of this grammatical information is explicitly visible in the
+                        notation &mdash; rather than silently discarded &mdash; is <strong>Grammar Awareness</strong>.
+                        The hover tooltips and the Type bubble from <a href="types.html#grammar-type">Types</a>, the
+                        terminal labels from <a href="blocks.html#grammar">Blocks</a>, and the two renderers on this
+                        page are four different surfaces for the same underlying commitment: nothing about a block's
+                        origin in the grammar should be invisible.</p>
+                </div>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="types.html">
+                        <span>Previous &mdash; 04</span>
+                        <b>&larr; Types</b>
+                    </a>
+                    <a class="is-next" href="codegen.html">
+                        <span>Next &mdash; 06</span>
+                        <b>Code Generation &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">ViSML is developed at <a href="../index.html">L-Workshop</a>. This help was written
+                against ViSML 5.0.0.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

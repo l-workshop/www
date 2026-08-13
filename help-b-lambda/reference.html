@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="Block Lambda reference: keyboard shortcuts, the full command palette, menu map, file formats and a glossary of the terms used across the help.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Reference — B-Lambda Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-b-lambda/reference.html">
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-bl">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>B-Lambda Help</b><span class="help-bar-sub">Block-Based
+                    &lambda;-Calculus</span></span>
+        </a>
+        <span class="help-version">v1.0.0</span>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://b-lambda.l-workshop.my.id" rel="noopener">Open B-Lambda</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li><a href="semantics.html"><em>05</em> Semantics</a></li>
+                <li><a href="pipeline.html"><em>06</em> Compiler pipeline</a></li>
+                <li>
+                    <a href="reference.html" aria-current="page"><em>07</em> Reference</a>
+                    <ul class="help-subnav">
+                        <li><a href="#keys">Keyboard shortcuts</a></li>
+                        <li><a href="#commands">Command palette</a></li>
+                        <li><a href="#menus">Menu map</a></li>
+                        <li><a href="#files">File formats</a></li>
+                        <li><a href="#glossary">Glossary</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <p class="help-rail-note">This help documents <b>Block Lambda 1.0.0</b>, running at
+                <a href="https://b-lambda.l-workshop.my.id" rel="noopener">b-lambda.l-workshop.my.id</a>.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">07 / Reference</span>
+                <h1>Reference</h1>
+                <p class="help-lede">Shortcuts, commands, menus, file formats and vocabulary &mdash; the things you look
+                    up rather than read.</p>
+
+                <h2 id="keys">Keyboard shortcuts</h2>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Keys</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><kbd>Ctrl</kbd> + <kbd>N</kbd></td>
+                                <td>New workspace</td>
+                            </tr>
+                            <tr>
+                                <td><kbd>Ctrl</kbd> + <kbd>O</kbd></td>
+                                <td>Open a <code>.blc</code> file</td>
+                            </tr>
+                            <tr>
+                                <td><kbd>Ctrl</kbd> + <kbd>S</kbd></td>
+                                <td>Save workspace as&hellip;</td>
+                            </tr>
+                            <tr>
+                                <td><kbd>Ctrl</kbd> + <kbd>Z</kbd></td>
+                                <td>Undo</td>
+                            </tr>
+                            <tr>
+                                <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Z</kbd></td>
+                                <td>Redo</td>
+                            </tr>
+                            <tr>
+                                <td><kbd>Ctrl</kbd> + <kbd>B</kbd></td>
+                                <td>Toggle the blocks sidebar</td>
+                            </tr>
+                            <tr>
+                                <td><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>C</kbd></td>
+                                <td>Toggle the code / Inspector panel</td>
+                            </tr>
+                            <tr>
+                                <td><kbd>Ctrl</kbd> + <kbd>J</kbd></td>
+                                <td>Toggle the bottom panel</td>
+                            </tr>
+                            <tr>
+                                <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>B</kbd></td>
+                                <td>Refresh generated output</td>
+                            </tr>
+                            <tr>
+                                <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd></td>
+                                <td>Command palette</td>
+                            </tr>
+                            <tr>
+                                <td><kbd>F11</kbd></td>
+                                <td>Presentation perspective</td>
+                            </tr>
+                            <tr>
+                                <td><kbd>/</kbd></td>
+                                <td>Focus the toolbox search field</td>
+                            </tr>
+                            <tr>
+                                <td><kbd>Esc</kbd></td>
+                                <td>Close the palette or an open menu</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 id="commands">Command palette</h2>
+                <p><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>. Commands are grouped by prefix; typing the prefix
+                    filters to that group.</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Prefix</th>
+                                <th>Commands</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>File:</code></td>
+                                <td>New Workspace &middot; Open Workspace&hellip; &middot; Save Workspace As&hellip;
+                                    &middot; Recover Local Autosave &middot; Show Menu</td>
+                            </tr>
+                            <tr>
+                                <td><code>Edit:</code></td>
+                                <td>Undo &middot; Redo</td>
+                            </tr>
+                            <tr>
+                                <td><code>Build:</code></td>
+                                <td>Refresh Generated Output</td>
+                            </tr>
+                            <tr>
+                                <td><code>View:</code></td>
+                                <td>Toggle Primary Sidebar &middot; Toggle Code and Inspector &middot; Toggle Bottom
+                                    Panel &middot; Show Blocks &middot; Show Problems &middot; Show Code &middot; Show
+                                    Inferred Types &middot; Show Typing Derivation &middot; Show Outline</td>
+                            </tr>
+                            <tr>
+                                <td><code>Run:</code></td>
+                                <td>Call-by-Structure Trace &middot; Call-by-Value Trace &middot; Lockstep Debugger
+                                    &middot; Re-run Active Semantic View &middot; Arrange Reduction Steps</td>
+                            </tr>
+                            <tr>
+                                <td><code>Perspective:</code></td>
+                                <td>Edit &middot; Debug &middot; Type Analysis &middot; Presentation</td>
+                            </tr>
+                            <tr>
+                                <td><code>Preferences:</code></td>
+                                <td>Settings &middot; Toggle Color Theme</td>
+                            </tr>
+                            <tr>
+                                <td><code>Workspace:</code></td>
+                                <td>Zoom In &middot; Zoom Out &middot; Zoom to Fit</td>
+                            </tr>
+                            <tr>
+                                <td><code>Code:</code></td>
+                                <td>Synchronize from Workspace</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 id="menus">Menu map</h2>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Menu</th>
+                                <th>Contents</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>File</td>
+                                <td>New Workspace &middot; Open&hellip; &middot; Save As&hellip; &middot; Recover
+                                    Autosave</td>
+                            </tr>
+                            <tr>
+                                <td>Examples</td>
+                                <td>The twelve programs listed in <a href="index.html#examples">Overview</a></td>
+                            </tr>
+                            <tr>
+                                <td>View</td>
+                                <td>The three panel toggles, plus the four perspectives</td>
+                            </tr>
+                            <tr>
+                                <td>Renderer</td>
+                                <td>Tude (square, the project renderer) &middot; Zelos (rounded) &middot; Thrasos
+                                    (classic)</td>
+                            </tr>
+                            <tr>
+                                <td>More</td>
+                                <td>Undo &middot; Redo &middot; Call-by-Structure Trace &middot; Call-by-Value Trace
+                                    &middot; Lockstep Debugger &middot; Refresh Generated Output &middot; Show Inferred
+                                    Types &middot; Show Problems &middot; Settings &middot; Command Palette&hellip;
+                                    &middot; About Block Lambda</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>The right-click menu on an application block adds <strong>Show Type and Value</strong>,
+                    <strong>Evaluate &ndash; Call-by-Structure</strong> and
+                    <strong>Evaluate &ndash; Call-by-Value</strong>. <em>Settings</em> holds theme, renderer, perspective
+                    and autosave controls.</p>
+
+                <h2 id="files">File formats</h2>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Format</th>
+                                <th>Holds</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>.blc</code></td>
+                                <td>A Block Lambda workspace. Saved and opened locally &mdash; nothing is uploaded.</td>
+                            </tr>
+                            <tr>
+                                <td>Local storage</td>
+                                <td>The rolling autosave backup, plus your layout, theme, renderer, autosave interval and
+                                    active tabs. Restored defensively: a malformed payload falls back to the default
+                                    layout rather than failing to start.</td>
+                            </tr>
+                            <tr>
+                                <td>Lambda text</td>
+                                <td>Not a file format, but the <em>Code</em> tab round-trips the term as text, so you can
+                                    paste a program in or copy one out.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 id="glossary">Glossary</h2>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Term</th>
+                                <th>Means</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ANF</td>
+                                <td>A-normal form &mdash; every intermediate result is bound to a name.</td>
+                            </tr>
+                            <tr>
+                                <td>&beta;-reduction</td>
+                                <td>Applying a function by substituting the argument for the parameter.</td>
+                            </tr>
+                            <tr>
+                                <td>Call-by-Structure</td>
+                                <td>B-Lambda's default strategy: substitute the argument's unevaluated
+                                    <em>structure</em>, as independent copies. Duplicated work shows as duplicated
+                                    structure.</td>
+                            </tr>
+                            <tr>
+                                <td>Call-by-Value</td>
+                                <td>Reduce the argument to a value, then substitute. The work happens once.</td>
+                            </tr>
+                            <tr>
+                                <td>CEK machine</td>
+                                <td>An abstract machine with Control, Environment and Kontinuation &mdash; and no
+                                    store.</td>
+                            </tr>
+                            <tr>
+                                <td>CPS</td>
+                                <td>Continuation-passing style &mdash; control flow made explicit as a passed-in
+                                    continuation.</td>
+                            </tr>
+                            <tr>
+                                <td>Closure conversion</td>
+                                <td>Turning a function that captures free variables into a code pointer plus an explicit
+                                    captured environment.</td>
+                            </tr>
+                            <tr>
+                                <td>Kontinuation</td>
+                                <td>The pending work: what the machine will do with the value it is currently computing.
+                                    Spelled with a K by convention, so the machine's initials work out.</td>
+                            </tr>
+                            <tr>
+                                <td>Lockstep</td>
+                                <td>The view that runs substitution, the CEK machine and the register VM together and
+                                    checks they agree.</td>
+                            </tr>
+                            <tr>
+                                <td>Normal form</td>
+                                <td>A term with no reducible sub-term left. A &lambda; is already a value, so its body is
+                                    not reduced.</td>
+                            </tr>
+                            <tr>
+                                <td>Salient rule</td>
+                                <td>A human-visible reduction &mdash; <code>beta</code>, <code>if-true</code>,
+                                    <code>if-false</code>, <code>prim &hellip;</code>. The unit the substitution trace
+                                    counts.</td>
+                            </tr>
+                            <tr>
+                                <td>SSA</td>
+                                <td>Static single assignment &mdash; each register is written exactly once, which is what
+                                    makes the &phi;-node projection meaningful.</td>
+                            </tr>
+                            <tr>
+                                <td>Thunk</td>
+                                <td>An unevaluated block plus the environment it should be evaluated in. How the CEK
+                                    machine represents a CbS argument without copying it.</td>
+                            </tr>
+                            <tr>
+                                <td>Tude</td>
+                                <td>B-Lambda's own Blockly renderer: Zelos connections, square corners.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="help-callout">
+                    <strong>Elsewhere in the workshop</strong>
+                    <p><a href="../help-mnl/index.html">MnL help</a> &mdash; the functional language that shares
+                        Call-by-Structure and the Lockstep view.
+                        <a href="../help-b-mj/index.html">B-MJ help</a> &mdash; MiniJava, where the machine gains a
+                        store and the interesting question becomes aliasing.</p>
+                </div>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="pipeline.html">
+                        <span>Previous &mdash; 06</span>
+                        <b>&larr; Compiler pipeline</b>
+                    </a>
+                    <a class="is-next" href="index.html">
+                        <span>Back to &mdash; 01</span>
+                        <b>Overview &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">Block Lambda is developed at <a href="../index.html">L-Workshop</a>. This help was
+                written against Block Lambda 1.0.0.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>
