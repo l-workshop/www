@@ -22,7 +22,8 @@
     <meta name="theme-color" content="#ffffff">
     <title>Getting started — B-Lambda Help | L-Workshop</title>
     <link rel="canonical" href="https://www.l-workshop.my.id/help-b-lambda/getting-started.html">
-    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="icon" href="assets/img/bl-favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="../favicon.ico" sizes="any">
     <link rel="stylesheet" href="../vendor/css/bundle.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/custom.css">
@@ -36,11 +37,14 @@
         <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
             aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
         <a class="help-bar-brand" href="index.html">
-            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <img class="help-brand-mark is-for-light" src="assets/img/bl-logo.svg" alt=""
+                width="512" height="512">
+            <img class="help-brand-mark is-for-dark" src="assets/img/bl-logo-dark.svg" alt=""
+                width="512" height="512">
             <span class="help-bar-text"><b>B-Lambda Help</b><span class="help-bar-sub">Block-Based
                     &lambda;-Calculus</span></span>
         </a>
-        <span class="help-version">v1.0.0</span>
+        <span class="help-version">v1.2.0</span>
         <span class="help-bar-spacer"></span>
         <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
             <i class="fa fa-moon" aria-hidden="true"></i>
@@ -75,7 +79,7 @@
                 <li><a href="pipeline.html"><em>06</em> Compiler pipeline</a></li>
                 <li><a href="reference.html"><em>07</em> Reference</a></li>
             </ul>
-            <p class="help-rail-note">This help documents <b>Block Lambda 1.0.0</b>, running at
+            <p class="help-rail-note">This help documents <b>Block Lambda 1.2.0</b>, running at
                 <a href="https://b-lambda.l-workshop.my.id" rel="noopener">b-lambda.l-workshop.my.id</a>.</p>
         </nav>
 
@@ -106,21 +110,23 @@
 
                 <div class="help-callout">
                     <strong>Bound vs free</strong>
-                    <p>A variable block whose name matches an enclosing binder renders as <strong>bound</strong> and
-                        picks up that binder's type. A name with no enclosing binder stays free, and inference gives it
-                        a fresh type variable. The label on the block tells you which it is, so you can spot an
-                        accidental typo in a parameter name by eye.</p>
+                    <p>A variable block whose name matches an enclosing binder picks up that binder's type. A name with
+                        no enclosing binder stays free, and inference gives it a fresh type variable instead. Note that
+                        the word <code>bound</code> printed on the block is part of its fixed wording, not a verdict
+                        &mdash; to catch a typo in a parameter name, look at the inferred type rather than the label.</p>
                 </div>
 
                 <h2 id="application">Applying a function</h2>
-                <p>Application is its own block, from the <strong>Application</strong> category. It has two sockets,
-                    <em>function</em> and <em>arg</em> &mdash; drawn on the block as <code>func &middot; arg</code>
-                    because in the &lambda;-calculus application is just juxtaposition, with no syntax of its own.</p>
+                <p>Application is its own block, from the <strong>Application</strong> category. The palette card shows
+                    it as <code>func &middot; arg</code>, because in the &lambda;-calculus application is just
+                    juxtaposition with no syntax of its own; on the canvas the block spells the same thing out in words,
+                    <code>application of <var>f</var> over <var>a</var></code>, with the two sockets inline.</p>
 
-                <p>Also in that category is <code>( term )</code>, labelled <em>grouping</em>. It changes nothing about
+                <p>Also in that category is <code>( term )</code> &mdash; labelled <em>grouping</em> on the palette
+                    card, and reading <code>parentheses</code> once it is on the canvas. It changes nothing about
                     evaluation; it exists so that generated text and printed derivations bracket the way you meant.
                     Application associates to the left, so <code>f g h</code> means <code>(f g) h</code>; wrap the
-                    argument in a grouping block when you want <code>f (g h)</code>.</p>
+                    argument in a parentheses block when you want <code>f (g h)</code>.</p>
 
                 <h2 id="bindings">let and letrec</h2>
                 <p>The <strong>Let Binding</strong> category has two blocks, and the difference between them matters:</p>
@@ -173,7 +179,7 @@ in (factorial 5)</code></pre>
 
                 <figure class="help-fig is-shot">
                     <img src="assets/img/bl-code.png" loading="lazy" style="max-width: 80%;" width="400"
-                        alt="The Inspector's Code tab showing the factorial term as syntax-highlighted text, with Sync and Copy buttons in the panel header.">
+                        alt="The Inspector's Code tab showing the factorial term as syntax-highlighted text on numbered lines, with Sync and Copy buttons in the panel header.">
                     <figcaption><b>Fig. 1</b> The <em>Code</em> tab. <strong>Sync</strong> pushes edited text back into
                         blocks; <strong>Copy</strong> lifts the term out as plain text.</figcaption>
                 </figure>
@@ -201,9 +207,10 @@ lambda x. x  -- also fine</code></pre>
 
                 <figure class="help-fig is-shot">
                     <img src="assets/img/bl-selected-block.png" loading="lazy" style="max-width: 80%;" width="400"
-                        alt="The Inspector's Selected block pane showing an Application block with term (factorial 5), inferred type int, and status Type inference succeeded.">
+                        alt="The Inspector's Selected block pane showing an Application block with term (factorial (n - 1)), inferred type int, and status Type inference succeeded.">
                     <figcaption><b>Fig. 2</b> Selecting a block fills the Inspector's <em>Selected block</em> pane with
-                        that sub-term, its type, and its status.</figcaption>
+                        that sub-term, its type, and its status. Here the recursive call
+                        <code>(factorial (n - 1))</code> is selected.</figcaption>
                 </figure>
 
                 <h2 id="status">Reading the status bar</h2>
@@ -215,10 +222,13 @@ lambda x. x  -- also fine</code></pre>
                     <li><strong>Blocks</strong> &mdash; how many blocks the workspace holds. A useful sanity check: the
                         <em>Factorial 5</em> example is 17.</li>
                     <li><strong>Problems</strong> &mdash; the type-error count, mirroring the
-                        <a href="types.html#problems">Problems tab</a>.</li>
-                    <li><strong>Autosave</strong> &mdash; <em>Autosave pending</em> or <em>Saved locally</em> with a
-                        time.</li>
+                        <a href="types.html#problems">Problems tab</a>. It is a button; clicking it opens that tab.</li>
+                    <li><strong>The status message</strong>, in the middle &mdash; what just happened, in words.
+                        It reads <em>Ready.</em> when there is nothing to report, and announces things like a renderer
+                        change or a completed run as they occur.</li>
                     <li><strong>Perspective</strong> &mdash; the current layout preset, or <em>Custom</em>.</li>
+                    <li><strong>Autosave</strong> &mdash; <em>Autosave pending</em> or <em>Saved locally</em>, with a
+                        time.</li>
                 </ul>
 
                 <nav class="help-pager" aria-label="Chapter navigation">
@@ -234,7 +244,7 @@ lambda x. x  -- also fine</code></pre>
             </article>
 
             <p class="help-foot">Block Lambda is developed at <a href="../index.html">L-Workshop</a>. This help was
-                written against Block Lambda 1.0.0.</p>
+                written against Block Lambda 1.2.0.</p>
         </main>
     </div>
 

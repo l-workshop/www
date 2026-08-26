@@ -22,7 +22,8 @@
     <meta name="theme-color" content="#ffffff">
     <title>Compiler pipeline — B-Lambda Help | L-Workshop</title>
     <link rel="canonical" href="https://www.l-workshop.my.id/help-b-lambda/pipeline.html">
-    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="icon" href="assets/img/bl-favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="../favicon.ico" sizes="any">
     <link rel="stylesheet" href="../vendor/css/bundle.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/custom.css">
@@ -36,11 +37,14 @@
         <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
             aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
         <a class="help-bar-brand" href="index.html">
-            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <img class="help-brand-mark is-for-light" src="assets/img/bl-logo.svg" alt=""
+                width="512" height="512">
+            <img class="help-brand-mark is-for-dark" src="assets/img/bl-logo-dark.svg" alt=""
+                width="512" height="512">
             <span class="help-bar-text"><b>B-Lambda Help</b><span class="help-bar-sub">Block-Based
                     &lambda;-Calculus</span></span>
         </a>
-        <span class="help-version">v1.0.0</span>
+        <span class="help-version">v1.2.0</span>
         <span class="help-bar-spacer"></span>
         <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
             <i class="fa fa-moon" aria-hidden="true"></i>
@@ -77,7 +81,7 @@
                 </li>
                 <li><a href="reference.html"><em>07</em> Reference</a></li>
             </ul>
-            <p class="help-rail-note">This help documents <b>Block Lambda 1.0.0</b>, running at
+            <p class="help-rail-note">This help documents <b>Block Lambda 1.2.0</b>, running at
                 <a href="https://b-lambda.l-workshop.my.id" rel="noopener">b-lambda.l-workshop.my.id</a>.</p>
         </nav>
 
@@ -217,10 +221,11 @@ in factorial 5 &#9655; halt0</code></pre>
 
                 <figure class="help-fig is-shot">
                     <img src="assets/img/bl-cfg.png" loading="lazy" style="max-width: 80%;" width="400"
-                        alt="The CFG stage for factorial: two functions and four basic blocks, with factorial0 shown as a closure taking env and param n, block b0 branching on a comparison to b1 or b2, and edges drawn between the blocks.">
-                    <figcaption><b>Fig. 1</b> <em>Factorial 5</em> as a control-flow graph &mdash; 2 functions, 4 basic
-                        blocks. <code>condbr %3 ? b1 : b2</code> is the <code>if</code>; <code>callclos</code> is the
-                        recursive call through a closure.</figcaption>
+                        alt="The CFG stage for factorial: three functions and five basic blocks, with n0 shown as a closure taking env and param n, block b0 branching on a comparison to b1 or b2, and edges drawn between the blocks.">
+                    <figcaption><b>Fig. 1</b> <em>Factorial 5</em> as a control-flow graph &mdash; 3 functions, 5 basic
+                        blocks. <code>condbr %4 ? b1 : b2</code> is the <code>if</code>; <code>callclos</code> is the
+                        recursive call through a closure, and <code>force</code> is where the <code>letrec</code> thunk
+                        is entered.</figcaption>
                 </figure>
 
                 <p>Reading the instructions: <code>%n</code> are virtual registers, <code>const</code> loads a literal,
@@ -239,10 +244,11 @@ in factorial 5 &#9655; halt0</code></pre>
 
                 <figure class="help-fig is-shot">
                     <img src="assets/img/bl-machine-code.png" loading="lazy" style="max-width: 80%;" width="400"
-                        alt="The Machine code stage after pressing Run, showing a green badge reading matches substitution, 120, in 77 steps, 28 salient, 0.10 milliseconds, above a hex and mnemonic listing.">
-                    <figcaption><b>Fig. 2</b> 22 words, 2 functions, 4 constants. <strong>Run</strong> executes the
-                        bytecode and reports the verdict: <em>&check; matches substitution &mdash; 120 (77 steps, 28
-                            salient, 0.10 ms)</em>.</figcaption>
+                        alt="The Machine code stage after pressing Run, showing a green badge reading matches substitution, 120, in 113 steps, 28 salient, 0.10 milliseconds, above a hex and mnemonic listing.">
+                    <figcaption><b>Fig. 2</b> 29 words, 3 functions, 3 constants. <strong>Run</strong> executes the
+                        bytecode and reports the verdict: <em>&check; matches substitution &mdash; 120 (113 steps, 28
+                            salient, 0.10 ms)</em>. Note the salient count &mdash; 28 &mdash; is the one the substitution
+                        trace also reports.</figcaption>
                 </figure>
 
                 <p>The listing pairs each hex word with its mnemonic, so <code>0x0e020000</code> reads as
@@ -251,7 +257,7 @@ in factorial 5 &#9655; halt0</code></pre>
                     <code>tailcallclos</code> &mdash; the VM implements tail calls in constant space, so a tail-recursive
                     program does not grow the frame stack.</p>
 
-                <p>Like the CEK machine, the VM's <code>stepVm</code> is pure, so it too supports exact time travel. It
+                <p>Like the CSEK machine, the VM's <code>stepVm</code> is pure, so it too supports exact time travel. It
                     is the third evaluator in the <a href="semantics.html#lockstep">Lockstep view</a>.</p>
 
                 <h2 id="wasm">WAT and WASM</h2>
@@ -260,10 +266,11 @@ in factorial 5 &#9655; halt0</code></pre>
 
                 <figure class="help-fig is-shot">
                     <img src="assets/img/bl-wasm.png" loading="lazy" style="max-width: 80%;" width="400"
-                        alt="The WASM stage showing 292 bytes of WebAssembly as a hex dump with an ASCII gutter, beginning with the bytes 00 61 73 6d 01 00 00 00.">
-                    <figcaption><b>Fig. 3</b> 292 bytes of WebAssembly &mdash; module, memory, table and code. The first
-                        eight bytes are the standard header: <code>00 61 73 6d</code> is
-                        <code>\0asm</code>, followed by version 1.</figcaption>
+                        alt="The WASM stage showing 429 bytes of WebAssembly as a hex dump with an ASCII gutter, beginning with the bytes 00 61 73 6d 01 00 00 00.">
+                    <figcaption><b>Fig. 3</b> 429 bytes of WebAssembly &mdash; module, memory, table and code. The first
+                        eight bytes are the standard header: <code>00 61 73 6d</code> is <code>\0asm</code>, followed by
+                        version 1. The header above the dump warns that these bytes carry no block provenance &mdash;
+                        the WAT stage is the last one that can trace back to a block.</figcaption>
                 </figure>
 
                 <p>The module is not a listing pretending to be a binary. Press <strong>Run</strong> and the page
@@ -271,9 +278,9 @@ in factorial 5 &#9655; halt0</code></pre>
 
                 <figure class="help-fig is-shot">
                     <img src="assets/img/bl-wasm-run.png" loading="lazy" style="max-width: 80%;" width="400"
-                        alt="The WASM stage after Run, with a green badge reading matches substitution, 120, in 0.40 milliseconds.">
+                        alt="The WASM stage after Run, with a green badge reading matches substitution, 120, in 7.10 milliseconds.">
                     <figcaption><b>Fig. 4</b> The same program, executed as WebAssembly by the browser:
-                        <em>&check; matches substitution &mdash; 120 (0.40 ms)</em>.</figcaption>
+                        <em>&check; matches substitution &mdash; 120 (7.10 ms)</em>.</figcaption>
                 </figure>
 
                 <p>So a term you built by dragging blocks has been compiled, in the browser, to a WebAssembly module
@@ -289,15 +296,15 @@ in factorial 5 &#9655; halt0</code></pre>
                 <div class="help-callout is-new">
                     <strong>One test guards the whole compiler</strong>
                     <p>The capstone check is that for every program &times; strategy,
-                        <strong>substitution &equiv; CEK &equiv; bytecode</strong> &mdash; with the bytecode run through
+                        <strong>substitution &equiv; CSEK &equiv; bytecode</strong> &mdash; with the bytecode run through
                         an encode/decode round-trip, so the encoder is checked too. If a lowering pass ever changed the
                         meaning of a program, that check would fail rather than the bug reaching a badge.</p>
                 </div>
 
                 <p>Individual passes are checked in their own right as well: that ANF and closure conversion preserve
                     values, that the CFG interpreter matches substitution, that the SSA verifier rejects malformed
-                    graphs, that register allocation spills correctly under pressure, that <code>syncCount</code> equals
-                    the CEK salient-rule count, and that a step never mutates an earlier snapshot.</p>
+                    graphs, that register allocation spills correctly under pressure, that the lockstep sync count
+                    equals the CSEK salient-rule count, and that a step never mutates an earlier snapshot.</p>
 
                 <nav class="help-pager" aria-label="Chapter navigation">
                     <a href="semantics.html">
@@ -312,7 +319,7 @@ in factorial 5 &#9655; halt0</code></pre>
             </article>
 
             <p class="help-foot">Block Lambda is developed at <a href="../index.html">L-Workshop</a>. This help was
-                written against Block Lambda 1.0.0.</p>
+                written against Block Lambda 1.2.0.</p>
         </main>
     </div>
 

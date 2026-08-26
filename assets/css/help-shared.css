@@ -129,6 +129,37 @@ body.help-bfj {
     height: 34px;
 }
 
+/* An empty jump target that keeps an old anchor working after its heading was
+   renamed, so inbound links from the other help sites do not rot. It occupies no
+   space but still needs the sticky top bar's clearance when jumped to. */
+.help-anchor-alias {
+    display: block;
+    height: 0;
+    scroll-margin-top: calc(var(--help-bar) + 18px);
+}
+
+/* B-Lambda is the one help site that flies its own project mark instead of the
+   L-Workshop one, so it ships the mark twice — a dark glyph for light pages and
+   a light glyph for dark ones — and swaps them on the same `data-theme`
+   attribute the no-flash script sets. Scoped to body.help-bl so the other four
+   sites, which still use the single lw-logo.png, are untouched. The technique is
+   lifted from the app's own topbar (Block-Lambda-Calculus styles.css). */
+.help-brand-mark {
+    object-fit: contain;
+}
+
+body.help-bl .help-brand-mark.is-for-dark {
+    display: none;
+}
+
+:root[data-theme="dark"] body.help-bl .help-brand-mark.is-for-light {
+    display: none;
+}
+
+:root[data-theme="dark"] body.help-bl .help-brand-mark.is-for-dark {
+    display: block;
+}
+
 .help-bar-text {
     display: block;
 }

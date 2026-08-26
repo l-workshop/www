@@ -22,7 +22,8 @@
     <meta name="theme-color" content="#ffffff">
     <title>Reference — B-Lambda Help | L-Workshop</title>
     <link rel="canonical" href="https://www.l-workshop.my.id/help-b-lambda/reference.html">
-    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="icon" href="assets/img/bl-favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="../favicon.ico" sizes="any">
     <link rel="stylesheet" href="../vendor/css/bundle.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/custom.css">
@@ -36,11 +37,14 @@
         <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
             aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
         <a class="help-bar-brand" href="index.html">
-            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <img class="help-brand-mark is-for-light" src="assets/img/bl-logo.svg" alt=""
+                width="512" height="512">
+            <img class="help-brand-mark is-for-dark" src="assets/img/bl-logo-dark.svg" alt=""
+                width="512" height="512">
             <span class="help-bar-text"><b>B-Lambda Help</b><span class="help-bar-sub">Block-Based
                     &lambda;-Calculus</span></span>
         </a>
-        <span class="help-version">v1.0.0</span>
+        <span class="help-version">v1.2.0</span>
         <span class="help-bar-spacer"></span>
         <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
             <i class="fa fa-moon" aria-hidden="true"></i>
@@ -69,12 +73,13 @@
                         <li><a href="#keys">Keyboard shortcuts</a></li>
                         <li><a href="#commands">Command palette</a></li>
                         <li><a href="#menus">Menu map</a></li>
+                        <li><a href="#dialogs">Dialogs</a></li>
                         <li><a href="#files">File formats</a></li>
                         <li><a href="#glossary">Glossary</a></li>
                     </ul>
                 </li>
             </ul>
-            <p class="help-rail-note">This help documents <b>Block Lambda 1.0.0</b>, running at
+            <p class="help-rail-note">This help documents <b>Block Lambda 1.2.0</b>, running at
                 <a href="https://b-lambda.l-workshop.my.id" rel="noopener">b-lambda.l-workshop.my.id</a>.</p>
         </nav>
 
@@ -133,7 +138,7 @@
                                 <td>Refresh generated output</td>
                             </tr>
                             <tr>
-                                <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd></td>
+                                <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> or <kbd>F1</kbd></td>
                                 <td>Command palette</td>
                             </tr>
                             <tr>
@@ -145,12 +150,37 @@
                                 <td>Focus the toolbox search field</td>
                             </tr>
                             <tr>
+                                <td><kbd>?</kbd></td>
+                                <td>Open the Keyboard Shortcuts dialog</td>
+                            </tr>
+                            <tr>
                                 <td><kbd>Esc</kbd></td>
-                                <td>Close the palette or an open menu</td>
+                                <td>Close the innermost thing that is open &mdash; see below</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+
+                <div class="help-callout">
+                    <strong>Escape closes one layer at a time</strong>
+                    <p><kbd>Esc</kbd> works innermost-first rather than dismissing everything at once, and it returns
+                        focus to whatever opened the layer it closed. The order is: the Settings dialog, then the
+                        command palette, then the Examples menu, then the Renderer menu, then any other open header
+                        menu, then the compact menu drawer, then the toolbox overlay, then the Inspector overlay, then
+                        the bottom panel. The last three only apply at narrow widths, where those panels are overlays
+                        rather than columns.</p>
+                </div>
+
+                <p>Inside a menu, a tab strip or the program outline, the arrow keys move between items,
+                    <kbd>Home</kbd> and <kbd>End</kbd> jump to the ends, and <kbd>&darr;</kbd> on a closed menu opens it
+                    at the first item while <kbd>&uarr;</kbd> opens it at the last.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bl-shortcuts.png" loading="lazy" style="max-width: 60%;" width="400"
+                        alt="The Keyboard Shortcuts dialog, listing the command palette, file, undo and panel-toggle shortcuts with their key combinations, followed by prose sections explaining what Escape does and how the arrow keys work inside menus and tab strips.">
+                    <figcaption><b>Fig. 1</b> The app carries this table itself, at <kbd>?</kbd>. It is the same list as
+                        above, so if the two ever disagree, believe the app.</figcaption>
+                </figure>
 
                 <h2 id="commands">Command palette</h2>
                 <p><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>. Commands are grouped by prefix; typing the prefix
@@ -182,12 +212,14 @@
                                 <td><code>View:</code></td>
                                 <td>Toggle Primary Sidebar &middot; Toggle Code and Inspector &middot; Toggle Bottom
                                     Panel &middot; Show Blocks &middot; Show Problems &middot; Show Code &middot; Show
-                                    Inferred Types &middot; Show Typing Derivation &middot; Show Outline</td>
+                                    Inferred Types &middot; Show Typing Derivation &middot; Show Outline &middot; Show
+                                    Output</td>
                             </tr>
                             <tr>
                                 <td><code>Run:</code></td>
-                                <td>Call-by-Structure Trace &middot; Call-by-Value Trace &middot; Lockstep Debugger
-                                    &middot; Re-run Active Semantic View &middot; Arrange Reduction Steps</td>
+                                <td>Call-by-Structure Trace &middot; Call-by-Value Trace &middot; CSEK Machine &middot;
+                                    Lockstep Debugger &middot; Re-run Active Semantic View &middot; Arrange Reduction
+                                    Steps</td>
                             </tr>
                             <tr>
                                 <td><code>Perspective:</code></td>
@@ -204,6 +236,10 @@
                             <tr>
                                 <td><code>Code:</code></td>
                                 <td>Synchronize from Workspace</td>
+                            </tr>
+                            <tr>
+                                <td><code>Help:</code></td>
+                                <td>Keyboard Shortcuts</td>
                             </tr>
                         </tbody>
                     </table>
@@ -243,7 +279,7 @@
                                 <td>Undo &middot; Redo &middot; Call-by-Structure Trace &middot; Call-by-Value Trace
                                     &middot; Lockstep Debugger &middot; Refresh Generated Output &middot; Show Inferred
                                     Types &middot; Show Problems &middot; Settings &middot; Command Palette&hellip;
-                                    &middot; About Block Lambda</td>
+                                    &middot; Keyboard Shortcuts &middot; About Block Lambda</td>
                             </tr>
                         </tbody>
                     </table>
@@ -251,8 +287,56 @@
 
                 <p>The right-click menu on an application block adds <strong>Show Type and Value</strong>,
                     <strong>Evaluate &ndash; Call-by-Structure</strong> and
-                    <strong>Evaluate &ndash; Call-by-Value</strong>. <em>Settings</em> holds theme, renderer, perspective
-                    and autosave controls.</p>
+                    <strong>Evaluate &ndash; Call-by-Value</strong>.</p>
+
+                <h2 id="dialogs">Dialogs</h2>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr>
+                                <th>Dialog</th>
+                                <th>Opened by</th>
+                                <th>Holds</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Settings</td>
+                                <td><em>More &rarr; Settings</em>, or <code>Preferences: Settings</code></td>
+                                <td>Three sections only: colour theme, perspective, and the autosave interval. The
+                                    renderer is <em>not</em> here &mdash; it has its own header menu.</td>
+                            </tr>
+                            <tr>
+                                <td>Keyboard Shortcuts</td>
+                                <td><kbd>?</kbd>, <em>More &rarr; Keyboard Shortcuts</em>, or
+                                    <code>Help: Keyboard Shortcuts</code></td>
+                                <td>The shortcut list, plus prose sections on what <kbd>Esc</kbd> does and on arrow-key
+                                    navigation inside menus, tab strips and the outline.</td>
+                            </tr>
+                            <tr>
+                                <td>Block Info</td>
+                                <td><em>Show Type and Value</em> on a block's right-click menu</td>
+                                <td>The selected block's type and value. The value section names the strategy that
+                                    produced it &mdash; <em>Value (Call-by-Structure)</em> &mdash; so the number is
+                                    never ambiguous.</td>
+                            </tr>
+                            <tr>
+                                <td>About Block Lambda</td>
+                                <td><em>More &rarr; About Block Lambda</em></td>
+                                <td>Version and licence. This help is written against the version reported here.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/bl-block-info.png" loading="lazy" style="max-width: 55%;" width="400"
+                        alt="The Block Info dialog for an Application block, listing Block as Application, Type as int, a section headed Value in brackets Call-by-Structure giving 24, and Status as Well typed.">
+                    <figcaption><b>Fig. 2</b> <em>Block Info</em>. The value heading names its strategy &mdash;
+                        <em>Value (Call-by-Structure)</em> &mdash; so a number here is never ambiguous about how it was
+                        produced.</figcaption>
+                </figure>
 
                 <h2 id="files">File formats</h2>
 
@@ -305,18 +389,20 @@
                             </tr>
                             <tr>
                                 <td>Call-by-Structure</td>
-                                <td>B-Lambda's default strategy: substitute the argument's unevaluated
-                                    <em>structure</em>, as independent copies. Duplicated work shows as duplicated
-                                    structure.</td>
+                                <td>B-Lambda's default strategy. Strict in its argument, like Call-by-Value, but it
+                                    substitutes the <em>structured value</em> &mdash; the value paired with the
+                                    expression it came from &mdash; instead of the bare value. Same work, more of the
+                                    derivation left visible.</td>
                             </tr>
                             <tr>
                                 <td>Call-by-Value</td>
                                 <td>Reduce the argument to a value, then substitute. The work happens once.</td>
                             </tr>
                             <tr>
-                                <td>CEK machine</td>
-                                <td>An abstract machine with Control, Environment and Kontinuation &mdash; and no
-                                    store.</td>
+                                <td>CSEK machine</td>
+                                <td>An abstract machine with Control, Structure, Environment and Kontinuation. The
+                                    <strong>S</strong> is the structured value, not a store &mdash; B-Lambda has no
+                                    heap.</td>
                             </tr>
                             <tr>
                                 <td>CPS</td>
@@ -335,8 +421,8 @@
                             </tr>
                             <tr>
                                 <td>Lockstep</td>
-                                <td>The view that runs substitution, the CEK machine and the register VM together and
-                                    checks they agree.</td>
+                                <td>The view that runs substitution, the CSEK machine and the register VM together
+                                    and checks they agree.</td>
                             </tr>
                             <tr>
                                 <td>Normal form</td>
@@ -355,9 +441,17 @@
                                     makes the &phi;-node projection meaningful.</td>
                             </tr>
                             <tr>
+                                <td>Structured value</td>
+                                <td>A computed value paired with the block it was computed from, written
+                                    <code>V<sub>p</sub> &otimes; V<sub>v</sub></code>. What Call-by-Structure
+                                    substitutes, and the <strong>S</strong> in
+                                    <a href="semantics.html#csek">CSEK</a>.</td>
+                            </tr>
+                            <tr>
                                 <td>Thunk</td>
-                                <td>An unevaluated block plus the environment it should be evaluated in. How the CEK
-                                    machine represents a CbS argument without copying it.</td>
+                                <td>An unevaluated block plus the environment it should be evaluated in. Now used only
+                                    for <code>letrec</code>, whose binding is cyclic and is re-entered at each use;
+                                    ordinary arguments are evaluated strictly and bound as structured values.</td>
                             </tr>
                             <tr>
                                 <td>Tude</td>
@@ -388,7 +482,7 @@
             </article>
 
             <p class="help-foot">Block Lambda is developed at <a href="../index.html">L-Workshop</a>. This help was
-                written against Block Lambda 1.0.0.</p>
+                written against Block Lambda 1.2.0.</p>
         </main>
     </div>
 

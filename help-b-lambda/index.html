@@ -22,7 +22,8 @@
     <meta name="theme-color" content="#ffffff">
     <title>Overview — B-Lambda Help | L-Workshop</title>
     <link rel="canonical" href="https://www.l-workshop.my.id/help-b-lambda/index.html">
-    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="icon" href="assets/img/bl-favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="../favicon.ico" sizes="any">
     <link rel="stylesheet" href="../vendor/css/bundle.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/custom.css">
@@ -36,11 +37,14 @@
         <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
             aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
         <a class="help-bar-brand" href="index.html">
-            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <img class="help-brand-mark is-for-light" src="assets/img/bl-logo.svg" alt=""
+                width="512" height="512">
+            <img class="help-brand-mark is-for-dark" src="assets/img/bl-logo-dark.svg" alt=""
+                width="512" height="512">
             <span class="help-bar-text"><b>B-Lambda Help</b><span class="help-bar-sub">Block-Based
                     &lambda;-Calculus</span></span>
         </a>
-        <span class="help-version">v1.0.0</span>
+        <span class="help-version">v1.2.0</span>
         <span class="help-bar-spacer"></span>
         <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
             <i class="fa fa-moon" aria-hidden="true"></i>
@@ -75,7 +79,7 @@
                 <li><a href="pipeline.html"><em>06</em> Compiler pipeline</a></li>
                 <li><a href="reference.html"><em>07</em> Reference</a></li>
             </ul>
-            <p class="help-rail-note">This help documents <b>Block Lambda 1.0.0</b>, running at
+            <p class="help-rail-note">This help documents <b>Block Lambda 1.2.0</b>, running at
                 <a href="https://b-lambda.l-workshop.my.id" rel="noopener">b-lambda.l-workshop.my.id</a>.</p>
         </nav>
 
@@ -96,16 +100,17 @@
 
                 <figure class="help-fig is-shot">
                     <img src="assets/img/bl-workbench.jpg" loading="lazy"
-                        alt="The Block Lambda workbench: blocks toolbox on the left, the factorial program in the workspace, and the Inspector showing the inferred type int on the right.">
+                        alt="The Block Lambda workbench: the blocks palette on the left, the factorial program drawn as nested blocks in the workspace, and the Inspector on the right reporting one top-level term of type int.">
                     <figcaption><b>Fig. 1</b> The workbench with the <em>Factorial 5</em> example loaded. The Inspector
                         reports one top-level term of type <code>int</code>.</figcaption>
                 </figure>
 
                 <p>Three things make it more than a block editor:</p>
                 <ul>
-                    <li><strong>Two independent reference semantics.</strong> A substitution stepper and a CEK abstract
-                        machine evaluate the same term separately, and the <a href="semantics.html#lockstep">Lockstep
-                            view</a> checks that they agree step for step.</li>
+                    <li><strong>Three independent reference semantics.</strong> A substitution stepper, a CSEK
+                        abstract machine, and a register VM evaluate the same term separately, and the
+                        <a href="semantics.html#lockstep">Lockstep view</a> checks that they agree step for
+                        step.</li>
                     <li><strong>A real compiler, not a pretty-printer.</strong> Nine lowering stages end in bytecode and
                         in a genuine WebAssembly module you can execute in the page &mdash; each stage cross-checked
                         against the reference semantics.</li>
@@ -238,7 +243,7 @@
 
                 <figure class="help-fig is-shot">
                     <img src="assets/img/bl-command-palette.jpg" loading="lazy"
-                        alt="The Block Lambda command palette open over the workspace, listing File, Edit, Build and View commands with their keyboard shortcuts.">
+                        alt="The Block Lambda command palette open over the workspace, listing File, Edit, Build and View commands, each with its keyboard shortcut on the right.">
                     <figcaption><b>Fig. 2</b> The palette. Every command shows its shortcut, so it doubles as the
                         keyboard reference.</figcaption>
                 </figure>
@@ -363,7 +368,7 @@
             </article>
 
             <p class="help-foot">Block Lambda is developed at <a href="../index.html">L-Workshop</a>. This help was
-                written against Block Lambda 1.0.0.</p>
+                written against Block Lambda 1.2.0.</p>
         </main>
     </div>
 

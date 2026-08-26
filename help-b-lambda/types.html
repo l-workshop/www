@@ -18,11 +18,12 @@
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
     <meta name="author" content="L-Workshop">
     <meta name="description"
-        content="Hindley-Milner type inference in Block Lambda: fresh type variables, function types, let-polymorphism, monomorphic letrec, and the typing derivation with its T-Var, T-Int, T-NumOp and T-Abs rules.">
+        content="Hindley-Milner type inference in Block Lambda: fresh type variables, function types, let-polymorphism, monomorphic letrec, and the typing derivation, whose judgements pair each inferred type with the block type that carries it.">
     <meta name="theme-color" content="#ffffff">
     <title>Types — B-Lambda Help | L-Workshop</title>
     <link rel="canonical" href="https://www.l-workshop.my.id/help-b-lambda/types.html">
-    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="icon" href="assets/img/bl-favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="../favicon.ico" sizes="any">
     <link rel="stylesheet" href="../vendor/css/bundle.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/custom.css">
@@ -36,11 +37,14 @@
         <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
             aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
         <a class="help-bar-brand" href="index.html">
-            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <img class="help-brand-mark is-for-light" src="assets/img/bl-logo.svg" alt=""
+                width="512" height="512">
+            <img class="help-brand-mark is-for-dark" src="assets/img/bl-logo-dark.svg" alt=""
+                width="512" height="512">
             <span class="help-bar-text"><b>B-Lambda Help</b><span class="help-bar-sub">Block-Based
                     &lambda;-Calculus</span></span>
         </a>
-        <span class="help-version">v1.0.0</span>
+        <span class="help-version">v1.2.0</span>
         <span class="help-bar-spacer"></span>
         <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
             <i class="fa fa-moon" aria-hidden="true"></i>
@@ -67,6 +71,7 @@
                         <li><a href="#inference">How inference runs</a></li>
                         <li><a href="#polymorphism">Let-polymorphism</a></li>
                         <li><a href="#derivation">The typing derivation</a></li>
+                        <li><a href="#judgement">Reading the judgement</a></li>
                         <li><a href="#rules">Rule names</a></li>
                         <li><a href="#problems">When it goes wrong</a></li>
                     </ul>
@@ -75,7 +80,7 @@
                 <li><a href="pipeline.html"><em>06</em> Compiler pipeline</a></li>
                 <li><a href="reference.html"><em>07</em> Reference</a></li>
             </ul>
-            <p class="help-rail-note">This help documents <b>Block Lambda 1.0.0</b>, running at
+            <p class="help-rail-note">This help documents <b>Block Lambda 1.2.0</b>, running at
                 <a href="https://b-lambda.l-workshop.my.id" rel="noopener">b-lambda.l-workshop.my.id</a>.</p>
         </nav>
 
@@ -172,12 +177,44 @@
                     a paper would print them. Each box is a sub-derivation; the label at the right of each bar is the
                     rule that was applied.</p>
 
+                <h3 id="judgement">Reading the judgement</h3>
+                <p>The judgement is the standard one on the left of the colon and a <strong>pair</strong> on the right:</p>
+
+                <pre><code>&Gamma; &vdash; x : int &otimes; lambda_variable</code></pre>
+
+                <p>Read it as <em>&ldquo;in context &Gamma;, the term <code>x</code> has type <code>int</code>, and it is
+                        a variable block.&rdquo;</em> The left of the <code>&otimes;</code> is the inferred type; the
+                    right is <strong>which kind of block carries it</strong>. This is deliberate: B-Lambda is a
+                    <em>visual</em> language, so the thing being typed is not a bare term but a term with a shape, and
+                    the derivation says so rather than leaving you to infer it from the picture.</p>
+
+                <p>Function types are parenthesised before the pair, so the <code>&otimes;</code> can never be misread as
+                    binding inside the arrow:</p>
+
+                <pre><code>&Gamma; &vdash; &lambda;x. x : ('a -&gt; 'a) &otimes; lambda_abstraction</code></pre>
+
+                <p>The membership premise of <code>T-Var</code> carries the pair too &mdash;
+                    <code>x : int &otimes; lambda_variable &isin; &Gamma;</code> &mdash; and when a block has an error
+                    the turnstile flips to <code>&nvdash;</code>, with <code>&isin;</code> becoming <code>&notin;</code>
+                    for an unbound variable.</p>
+
+                <div class="help-callout is-changed">
+                    <strong>Two places the pair does not appear</strong>
+                    <p>An empty socket derives <code>&Gamma; &vdash; &#9633; : unknown</code> with <strong>no</strong>
+                        <code>&otimes;</code>, because a hole has no block to name yet. And the side conditions &mdash;
+                        <code>assume: x : &tau;</code> on <code>T-Abs</code>, <code>bind:</code> on <code>T-Let</code>,
+                        <code>recursive bind:</code> on <code>T-LetRec</code> &mdash; print the bare type. So a
+                        half-finished term will show pairs on its filled sub-terms and a plain
+                        <code>unknown</code> on its holes; that is expected, not an inconsistency.</p>
+                </div>
+
                 <figure class="help-fig is-shot">
                     <img src="../assets/img/b-lambda-type-derivation.png" loading="lazy" style="max-width: 80%;" width="400"
-                        alt="A typing derivation for lambda y. ((2 + 3) + y), with T-Int on the literals, T-Var on y, T-NumOp on each addition, and T-Abs concluding int to int.">
+                        alt="A typing derivation for lambda y. ((2 + 3) + y), with T-Int on the literals, T-Var on y, T-NumOp on each addition, and T-Abs concluding a function type, each judgement showing its type paired with the block type that carries it.">
                     <figcaption><b>Fig. 1</b> The derivation for <code>&lambda;y. ((2 + 3) + y)</code>. Read bottom-up:
                         <code>T-Int</code> on the literals, <code>T-Var</code> on <code>y</code>, <code>T-NumOp</code> on
-                        each addition, and <code>T-Abs</code> concluding <code>int -&gt; int</code>.</figcaption>
+                        each addition, and <code>T-Abs</code> concluding <code>int -&gt; int</code> &mdash; every
+                        judgement pairing its type with the block that carries it.</figcaption>
                 </figure>
 
                 <p>For a recursive program the derivation opens with the binding's own judgement, so you can see the type
@@ -185,10 +222,11 @@
 
                 <figure class="help-fig is-shot">
                     <img src="assets/img/bl-typing.png" loading="lazy" style="max-width: 80%;" width="400"
-                        alt="The typing derivation for the factorial example, headed by recursive bind factorial : int to int, with the condition, then and else branches each derived below.">
+                        alt="The typing derivation for the factorial example, headed by a recursive bind side condition giving factorial a function type, with the condition, then and else branches each derived below.">
                     <figcaption><b>Fig. 2</b> <em>Factorial 5</em>. The header reads
-                        <code>recursive bind factorial : int -&gt; int</code> &mdash; the monomorphic type assumed for
-                        the recursive call &mdash; and each branch is derived beneath it.</figcaption>
+                        <code>recursive bind: factorial : int -&gt; int</code> &mdash; the monomorphic type assumed for
+                        the recursive call, and one of the two places that prints a bare type rather than a pair &mdash;
+                        with each branch derived beneath it.</figcaption>
                 </figure>
 
                 <p>The corresponding <em>Inferred types</em> tab is the summary view: one line per top-level term with
@@ -229,6 +267,19 @@
                                 <td>An application, after unifying argument with parameter</td>
                             </tr>
                             <tr>
+                                <td><code>T-Paren</code></td>
+                                <td>A grouping block: the type of the term inside it, unchanged</td>
+                            </tr>
+                            <tr>
+                                <td><code>T-Let</code></td>
+                                <td>A <code>let</code>, after generalising the bound value</td>
+                            </tr>
+                            <tr>
+                                <td><code>T-LetRec</code></td>
+                                <td>A <code>letrec</code>, with the binding assumed monomorphically while its own body
+                                    is checked</td>
+                            </tr>
+                            <tr>
                                 <td><code>T-NumOp</code></td>
                                 <td>Arithmetic: two <code>int</code>s give an <code>int</code></td>
                             </tr>
@@ -236,20 +287,51 @@
                                 <td><code>T-Cmp</code></td>
                                 <td>Comparison: two <code>int</code>s give a <code>bool</code></td>
                             </tr>
+                            <tr>
+                                <td><code>T-BoolOp</code></td>
+                                <td><code>and</code> / <code>or</code>: two <code>bool</code>s give a
+                                    <code>bool</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>T-Eq</code></td>
+                                <td>The <code>equal</code> case of the boolean operator, which gets its own rule name
+                                    rather than reusing <code>T-BoolOp</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>T-If</code></td>
+                                <td>A conditional, after checking the condition is <code>bool</code> and unifying the
+                                    two branches</td>
+                            </tr>
+                            <tr>
+                                <td><code>T-Hole</code></td>
+                                <td>An empty socket. Concludes <code>unknown</code>, and is the one rule with no
+                                    <code>&otimes;</code> pair</td>
+                            </tr>
+                            <tr>
+                                <td><code>T-Unsupported</code></td>
+                                <td>A block the derivation generator has no rule for &mdash; you should not normally
+                                    see this one</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <p>The judgement form is the standard one, <code>&Gamma; &vdash; term : type</code>, with the context
-                    shown as <code>&Gamma;</code> and additions to it written as <code>assume x : &tau;</code> at the top
-                    of the box that introduces them.</p>
+                <p>Additions to the context are written as <code>assume: x : &tau;</code> at the top of the box that
+                    introduces them, with <code>bind:</code> and <code>recursive bind:</code> for the two binding forms.
+                    Premises are labelled by their role &mdash; <em>function</em>, <em>argument</em>, <em>body</em>,
+                    <em>condition</em>, <em>then</em>, <em>else</em>, <em>left</em>, <em>right</em> &mdash; so a wide
+                    derivation stays readable. Top-level terms are headed <em>Term 1</em>, <em>Term 2</em>, and so on.</p>
 
                 <div class="help-callout is-new">
                     <strong>Comparing notations across the workshop</strong>
                     <p>B-MJ uses the same <code>T-*</code> prefix for expression rules and adds <code>WF-*</code> rules
-                        for statements &mdash; see <a href="../help-b-mj/types.html#rules">B-MJ's types chapter</a>. MnL
-                        uses a richer judgement, <code>&Gamma; &vdash; term : Category &otimes; Type</code>, because
-                        there the block's grammatical category is part of what is being checked.</p>
+                        for statements &mdash; see <a href="../help-b-mj/types.html#rules">B-MJ's types chapter</a>.
+                        <a href="../help-mnl/index.html">MnL</a> writes its judgement as
+                        <code>&Gamma; &vdash; term : Category &otimes; Type</code>, and B-Lambda now pairs on the same
+                        <code>&otimes;</code> &mdash; but the two halves are the other way round, and they mean different
+                        things. MnL's left operand is the block's <em>grammatical category</em>; B-Lambda's right operand
+                        is the <em>block type</em> that carries the term, and its grammar is single-sorted, so nothing is
+                        being checked by the pair. It is there to say which visual form the type belongs to.</p>
                 </div>
 
                 <h2 id="problems">When it goes wrong</h2>
@@ -284,7 +366,7 @@
             </article>
 
             <p class="help-foot">Block Lambda is developed at <a href="../index.html">L-Workshop</a>. This help was
-                written against Block Lambda 1.0.0.</p>
+                written against Block Lambda 1.2.0.</p>
         </main>
     </div>
 
