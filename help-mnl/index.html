@@ -22,24 +22,25 @@
     <meta name="theme-color" content="#ffffff">
     <title>Overview — MnL Help | L-Workshop</title>
     <link rel="canonical" href="https://www.l-workshop.my.id/help-mnl/">
-    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="icon" href="assets/img/mnl-favicon.ico" sizes="any">
     <link rel="stylesheet" href="../vendor/css/bundle.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/custom.css">
     <link rel="stylesheet" href="../assets/css/help-shared.css">
 </head>
 
-<body class="help">
+<body class="help help-mnl">
     <a class="lw-skip" href="#main">Skip to content</a>
 
     <div class="help-bar">
         <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
             aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
         <a class="help-bar-brand" href="index.html">
-            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <img class="help-brand-mark is-for-light" src="assets/img/mnl-logo.png" alt="" width="160" height="138">
+            <img class="help-brand-mark is-for-dark" src="assets/img/mnl-logo-dark.png" alt="" width="160" height="138">
             <span class="help-bar-text"><b>MnL Help</b><span class="help-bar-sub">Macaca nigra Language</span></span>
         </a>
-        <span class="help-version">v5.0 &middot; build 040726</span>
+        <span class="help-version">v5.2.0 &middot; build 240826</span>
         <span class="help-bar-spacer"></span>
         <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
             <i class="fa fa-moon" aria-hidden="true"></i>
@@ -75,7 +76,7 @@
                 <li><a href="visualization.html"><em>07</em> Visualization</a></li>
                 <li><a href="compiler.html"><em>08</em> Compiler</a></li>
             </ul>
-            <p class="help-rail-note">This help documents <b>MnL 5.0</b>, running at
+            <p class="help-rail-note">This help documents <b>MnL 5.2.0</b>, running at
                 <a href="https://mnl.l-workshop.my.id" rel="noopener">mnl.l-workshop.my.id</a>.</p>
         </nav>
 
@@ -106,7 +107,7 @@
                         task at hand.</li>
                     <li>A <strong>command palette</strong> on <kbd>Ctrl</kbd>+<kbd>P</kbd> for every command in the
                         application.</li>
-                    <li>The <strong>CEK machine</strong> and <strong>Lockstep</strong> views, which step the whole
+                    <li>The <strong>CSEK machine</strong> and <strong>Lockstep</strong> views, which step the whole
                         program through an abstract machine rather than only rewriting a selected redex.</li>
                     <li>A <strong>bidirectional code panel</strong>: editing the MNL text rebuilds the blocks.</li>
                     <li>Workspaces save to disk as <code>.mnl</code> files, plus a timed autosave.</li>
@@ -124,7 +125,19 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>5.0 &nbsp;<span class="help-glyph">now</span></td>
+                                <td>5.2.0 &nbsp;<span class="help-glyph">now</span></td>
+                                <td><code>240826</code></td>
+                                <td>Renamed the abstract machine <strong>CSEK</strong>, and named the S: the live block
+                                    structure it steps over, never a copy of it.</td>
+                            </tr>
+                            <tr>
+                                <td>5.1.0</td>
+                                <td><code>210826</code></td>
+                                <td>A legible, keyboard-operable IDE &mdash; per-block label ink, self-hosted
+                                    typography, a colour-token layer, and keyboard operation throughout.</td>
+                            </tr>
+                            <tr>
+                                <td>5.0</td>
                                 <td><code>040726</code></td>
                                 <td>New visualization features, migrating to TypeScript and Blockly 12, and improved
                                     performance.</td>
@@ -153,7 +166,9 @@
                         </tbody>
                     </table>
                 </div>
-                <p>You can check which build you are running at any time from <strong>Help &rsaquo; About MnL</strong>.</p>
+                <p>You can check which build you are running at any time from <strong>Help &rsaquo; About MnL</strong>.
+                    The same <strong>Help</strong> menu also has <strong>Usage</strong>, which opens this help site in a
+                    new tab.</p>
 
                 <h2 id="workspace">The workspace</h2>
                 <p>Everything happens in one window. The screenshot below is the <em>Edit</em> perspective with the
@@ -232,7 +247,7 @@
                 <ul>
                     <li><strong>Edit</strong> &mdash; blocks sidebar, workspace and code panel. The layout for writing a
                         program.</li>
-                    <li><strong>Debug (CEK Machine)</strong> &mdash; hides the sidebar and opens the bottom tools, so the
+                    <li><strong>Debug (CSEK Machine)</strong> &mdash; hides the sidebar and opens the bottom tools, so the
                         workspace sits above the machine views.</li>
                     <li><strong>Presentation</strong> &mdash; strips the chrome back for showing a program to other
                         people.</li>
@@ -318,7 +333,7 @@
             </article>
 
             <p class="help-foot">MnL is developed at <a href="../index.html">L-Workshop</a>. This help was written
-                against MnL 5.0 (build 040726). It supersedes the retired
+                against MnL 5.2.0 (build 240826). It supersedes the retired
                 <code>help.mnl-pl.org</code>.</p>
         </main>
     </div>

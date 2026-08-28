@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="Mirror-C's type universe: int/char/bool/void, pointers and arrays two deep, named structs/unions/enums, const as a carried qualifier, the sizeof-derived width law, and the Typing tab's sequent-style derivation.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Types — Mirror-C Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-mirror-c/types.html">
+    <link rel="icon" href="assets/img/favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-mirrorc">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="assets/img/mirror-c-symbol-dark.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>Mirror-C Help</b><span class="help-bar-sub">A notional machine for C</span></span>
+        </a>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://m-c.l-workshop.my.id" rel="noopener">Open Mirror-C</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li>
+                    <a href="types.html" aria-current="page"><em>04</em> Types</a>
+                    <ul class="help-subnav">
+                        <li><a href="#fragment">The type universe</a></li>
+                        <li><a href="#aggregates">Structs, unions, enums</a></li>
+                        <li><a href="#width">sizeof, and const</a></li>
+                        <li><a href="#derivation">The Typing tab</a></li>
+                        <li><a href="#problems">The Problems tab</a></li>
+                    </ul>
+                </li>
+                <li><a href="semantics.html"><em>05</em> Semantics</a></li>
+                <li><a href="reference.html"><em>06</em> Reference</a></li>
+                <li><a href="study.html"><em>07</em> If you are in a study session</a></li>
+            </ul>
+            <p class="help-rail-note">Two is the ceiling for both pointers and arrays &mdash; not because anything
+                breaks at three, but because a third dimension has no honest picture.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">04 / Types</span>
+                <h1>A type is a name, not a discount from real C</h1>
+                <p class="help-lede">Mirror-C's type checker runs entirely inside the block editor &mdash; the
+                    machine underneath has no static semantics of its own, so a program that builds is a program the
+                    machine is guaranteed to run without a type error. What that checker enforces, and how far the
+                    fragment's type universe reaches, is this chapter.</p>
+
+                <h2 id="fragment">The type universe</h2>
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr><th>Type</th><th>Notes</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>int</code>, <code>char</code>, <code>bool</code></td>
+                                <td>The three scalars. <code>char</code> is a quarter the width of <code>int</code>;
+                                    see <a href="#width">below</a>.</td></tr>
+                            <tr><td><code>void</code></td>
+                                <td>A function's return type only. <code>void x;</code> is not a form the grammar
+                                    admits at all.</td></tr>
+                            <tr><td><code>int*</code>, <code>char*</code>, <code>bool*</code></td>
+                                <td>One level of indirection over each scalar.</td></tr>
+                            <tr><td><code>int**</code>, <code>char**</code>, <code>bool**</code></td>
+                                <td>Two levels &mdash; the ceiling. <code>int**</code> has existed the longest, for
+                                    <code>main</code>'s own <code>char** argv</code>-shaped allocation chain; the other
+                                    two completed the set later so all three scalars reach the same depth.</td></tr>
+                            <tr><td><code>T&nbsp;a[n]</code></td>
+                                <td>One extent, fixed at declaration and never re-read from the store.</td></tr>
+                            <tr><td><code>T&nbsp;m[n][m]</code></td>
+                                <td>Two extents. Drawn as <i>n</i> folded rows of <i>m</i> cells rather than one wide
+                                    strip, so filling it in nested loops shows row-major order happening instead of
+                                    being told about it.</td></tr>
+                            <tr><td><code>struct&nbsp;S</code>, <code>union&nbsp;U</code>, <code>enum&nbsp;E</code></td>
+                                <td>Named types. See <a href="#aggregates">Structs, unions, enums</a>.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p><b>Two is the ceiling, for both constructors, by one decision.</b> <code>T a[n][m][k]</code> and
+                    <code>T***</code> are both refused by name &mdash; in the block editor, in the type checker, and
+                    in the text importer. Nothing about the machine underneath breaks at three levels or three
+                    extents; the bound is pedagogical. A three-dimensional array or a triple pointer has no honest
+                    two-dimensional picture to draw, and the picture is the thing this tool claims is faithful.</p>
+
+                <h2 id="aggregates">Structs, unions, enums</h2>
+                <p>A <code>struct</code>, <code>union</code> or <code>enum</code> is referred to everywhere by
+                    <b>name only</b>. The field or member list is not inlined into the type &mdash; it lives in a
+                    definitions table on the program, looked up the same way a function call resolves a function
+                    name. That indirection is what makes a self-referential shape like a linked list's
+                    <code>struct Node { struct Node *next; }</code> expressible at all: inlining the field list would
+                    never terminate.</p>
+                <ul>
+                    <li><b>struct.</b> Drawn as a container of cells, one per field, exactly the way an array's
+                        elements are drawn. <code>p-&gt;next = q</code> is not a metaphor for reassigning a pointer
+                        &mdash; it visibly moves the arrow from wherever it pointed to <code>q</code>'s target.</li>
+                    <li><b>union.</b> One footprint, several views. The members are drawn stacked, and the
+                        container is as wide as its widest member &mdash; a <code>char</code> view visibly covers
+                        only one of the four bytes an <code>int</code> view covers in the same union. Writing one
+                        member makes every other member's value indeterminate; reading a member you did not last
+                        write reaches <code>IndeterminateRead</code>, the identical stuck reason an uninitialised
+                        scalar reaches (see <a href="semantics.html#stuck">Semantics</a>).</li>
+                    <li><b>enum.</b> A named set of integer constants, usable anywhere an <code>int</code> is
+                        expected.</li>
+                </ul>
+
+                <h2 id="width">sizeof, and const</h2>
+                <p>A cell's on-screen width is <code>sizeof</code> of its type, computed once from the type itself
+                    and read by nothing semantic &mdash; it is geometry, not behaviour. That distinction is not
+                    incidental: an earlier version of the checker keyed a write's truncation rule off a cell's
+                    <em>width</em> rather than its type, which quietly admitted <code>bool b; b = 44;</code>, because
+                    <code>sizeof(bool)</code> and <code>sizeof(char)</code> are both one byte even though the two
+                    types convert differently. The quarter-width rule for <code>char</code> is still exactly a
+                    requirement; it is just derived from the type on demand rather than stored as a fact of its own
+                    that a rule could accidentally consult instead of the type.</p>
+
+                <p><code>const</code> is a qualifier the machine <b>carries and never reads</b>. All of its force is
+                    at the surface: the editor refuses to build any write to a <code>const</code> lvalue, so no
+                    program the block editor accepts ever executes one, and the machine underneath needs no rule for
+                    it at all. A by-value <code>struct</code> or <code>union</code> cannot be marked
+                    <code>const</code> in this fragment &mdash; there is no initialiser form for one, so an
+                    uninitialisable const object would be inexpressible either way &mdash; but a pointer to one can,
+                    and <code>const struct S *p</code> is exactly where the qualifier's propagation matters: every
+                    field reached back through <code>p</code> inherits the same restriction.</p>
+
+                <h2 id="derivation">The Typing tab</h2>
+                <p>The Inspector's <b>Typing</b> tab renders the same well-formedness judgement that gates
+                    <b>&#9673; Load</b>, as a genuine derivation: pick a function, and each statement's premises
+                    expand into a classic premises-over-a-bar proof tree with the rule name at the bar's right end.
+                    Every judgement in the tree is a button &mdash; clicking one selects and centres the block it is
+                    about &mdash; and the printer icon in the tab renders the selected function's whole derivation as
+                    a one-page document.</p>
+                <p>The context threaded through the tree is not one fixed &Gamma;. It is a sequence of
+                    incrementally-named contexts &mdash; <code>&Gamma;&#8320; &#8866; s &#8867; &Gamma;&#8321;</code>,
+                    <code>&Gamma;&#8321; &#8866; s&prime; &#8867; &Gamma;&#8322;</code>, and so on &mdash; because a C
+                    function's context genuinely grows with every declaration and shrinks again at every scope exit.
+                    A block's closing row visibly reverts to the same context name it opened with, which is the
+                    derivation's own way of showing a scope's variables have gone out of it.</p>
+
+                <h2 id="problems">The Problems tab</h2>
+                <p>The same checker's diagnostics surface as a clickable list in the <b>Problems</b> tab, with a
+                    matching warning icon on the offending block and a running count in the status bar. One checker,
+                    three places the same list shows up &mdash; nothing here re-derives its own answer.</p>
+                <div class="help-callout is-changed">
+                    <strong>Two different kinds of wrong</strong>
+                    <p>A program the block editor refuses to build is <b>ill-typed</b> &mdash; a Problems-tab entry,
+                        the same thing <code>gcc</code> would reject before running anything. A program that builds
+                        cleanly and then runs into undefined behaviour is <b>stuck</b> &mdash; a named
+                        <a href="semantics.html#stuck">Reason</a> the machine reports mid-execution. These are
+                        different channels on purpose: a constraint a real compiler would reject at translation time
+                        must never show up as a stuck reason, or the machine's claim that every stuck state has a
+                        name would be describing states that were never reachable to begin with.</p>
+                </div>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="blocks.html">
+                        <span>Previous &mdash; 03</span>
+                        <b>&larr; Blocks</b>
+                    </a>
+                    <a class="is-next" href="semantics.html">
+                        <span>Next &mdash; 05</span>
+                        <b>Semantics &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">Mirror-C is developed at <a href="../index.html">L-Workshop</a>. This help was
+                written against the build running at <a href="https://m-c.l-workshop.my.id"
+                    rel="noopener">m-c.l-workshop.my.id</a>.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

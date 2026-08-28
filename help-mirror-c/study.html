@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="What Mirror-C records during a research session, what it cannot record, and how to read, export or delete your own data.">
+    <meta name="theme-color" content="#ffffff">
+    <title>If you are in a study session — Mirror-C Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-mirror-c/study.html">
+    <link rel="icon" href="assets/img/favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-mirrorc">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="assets/img/mirror-c-symbol-dark.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>Mirror-C Help</b><span class="help-bar-sub">A notional machine for C</span></span>
+        </a>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://m-c.l-workshop.my.id" rel="noopener">Open Mirror-C</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li><a href="semantics.html"><em>05</em> Semantics</a></li>
+                <li><a href="reference.html"><em>06</em> Reference</a></li>
+                <li>
+                    <a href="study.html" aria-current="page"><em>07</em> If you are in a study session</a>
+                    <ul class="help-subnav">
+                        <li><a href="#rec">The REC indicator</a></li>
+                        <li><a href="#recorded">What is recorded</a></li>
+                        <li><a href="#never">What cannot be recorded</a></li>
+                        <li><a href="#where">Where it is kept</a></li>
+                        <li><a href="#review">Reading it, exporting it, deleting it</a></li>
+                        <li><a href="#band">The task band</a></li>
+                        <li><a href="#ask">Questions</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <p class="help-rail-note">This page is here so you can check, in your own time, that what you were
+                told matches what the software does.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">07 / Study sessions</span>
+                <h1>What is being recorded, and what is not</h1>
+                <p class="help-lede">If someone has asked you to take part in a research session with Mirror-C, the
+                    software keeps a record of what you do. This page says exactly what that record contains. You were
+                    told this in person and on the consent form; this is the same thing, written down, so you can check
+                    it rather than take it on trust.</p>
+
+                <div class="help-callout is-changed">
+                    <strong>None of this is switched on unless you are in a session</strong>
+                    <p>Ordinary use of Mirror-C records nothing at all. There is no analytics, no telemetry, and no
+                        network connection of any kind &mdash; the software does not know how to make one.</p>
+                </div>
+
+                <h2 id="rec">The REC indicator</h2>
+                <p>While a session is recording, the status bar at the bottom of the window shows a
+                    <b>&#9679;&nbsp;REC</b> marker. Hovering it shows this sentence, which is the whole promise in one
+                    line:</p>
+                <blockquote>
+                    <p>Recording: block edits and one line per machine step. Never your program text, its output, any
+                        field value, your name, or the time of day. Local to this browser until you export it
+                        yourself.</p>
+                </blockquote>
+                <p>If the marker is not there, nothing is being recorded. If it says <b>Recording STOPPED</b>, something
+                    went wrong and the session should be paused &mdash; tell whoever is running it.</p>
+
+                <h2 id="recorded">What is recorded</h2>
+                <ul>
+                    <li><b>Block edits.</b> That a block was created, moved, deleted, or that one of its fields was
+                        changed &mdash; the <em>kind</em> of block and where it went. Not what you typed into it.</li>
+                    <li><b>One line per machine step.</b> Which control you pressed, which rule the machine applied,
+                        how many frames and cells and pointers existed at that moment, and how many bytes had been
+                        printed.</li>
+                    <li><b>Your answers</b> to the multiple-choice questions, recorded as <em>which option number</em>
+                        you chose, and which attempt it was.</li>
+                    <li><b>When each task started and ended</b>, measured in seconds from the beginning of the session.</li>
+                    <li><b>A short random session code</b> so the file can be told apart from another one. It is
+                        random. It is not derived from anything about you.</li>
+                </ul>
+
+                <h2 id="never">What cannot be recorded</h2>
+                <p>This list is not a filter applied to a bigger record. The record has <em>nowhere to put</em> these
+                    things &mdash; the software would have to be rewritten to hold them:</p>
+                <ul>
+                    <li><b>The text of your program.</b> Only a short checksum, which is enough to notice that you went
+                        back to something you had before, and not enough to reconstruct anything.</li>
+                    <li><b>What your program printed.</b> Only how many bytes, and a checksum.</li>
+                    <li><b>Anything you type into a field</b> &mdash; a number, a variable name, a format string. The
+                        record notes that <em>a</em> field changed, never which one or to what.</li>
+                    <li><b>Your name, your username, your computer's name, your language, your screen size.</b></li>
+                    <li><b>The time of day, or the date beyond the month.</b> All timings are measured from the start of
+                        the session, so the file cannot say when you sat down.</li>
+                </ul>
+                <p>Two extra items &mdash; snapshots of your program at the start and end of a task, and a free-text
+                    answer &mdash; are recorded <em>only</em> if you agreed to them separately on the consent form. They
+                    are off unless you said yes, and the session runs perfectly well without either.</p>
+
+                <h2 id="where">Where it is kept</h2>
+                <p>In this browser, on this computer, and nowhere else. Mirror-C makes no network requests. Nothing
+                    leaves the machine until you press <b>Export</b> yourself, which saves a file to your downloads
+                    folder and hands it to the researcher.</p>
+
+                <h2 id="review">Reading it, exporting it, deleting it</h2>
+                <p>At the end of the session a review panel opens. It shows a summary and the complete record. It is
+                    meant to be read, and you should take as long over it as you want &mdash; this is the point at
+                    which the sentence on the REC marker becomes something you can check rather than believe.</p>
+                <ol class="help-steps">
+                    <li><b>Read it.</b> The raw record is there in full, not just a summary of it.</li>
+                    <li><b>Export it.</b> You press the button, not the researcher. Until you do, the file does not
+                        exist.</li>
+                    <li><b>Delete it, if you want to.</b> <b>Delete all study data</b> removes everything, and it takes
+                        two clicks so that it cannot happen by accident. It is final and there is no copy. Withdrawing
+                        is a normal thing to do and you do not have to give a reason.</li>
+                </ol>
+
+                <h2 id="band">The task band</h2>
+                <p>During a task, a strip appears under the toolbar with what you have been asked to do, and for some
+                    tasks a multiple-choice question. Pressing <b>Submit</b> says <em>&ldquo;Answer recorded&rdquo;</em>
+                    and nothing more &mdash; it will not tell you whether you were right, and that is deliberate rather
+                    than an oversight. Everything will be explained at the end.</p>
+                <p>Some menu items are switched off while a task is open. That is only to keep every session the same;
+                    nothing is being hidden from you personally, and they come back between tasks.</p>
+
+                <h2 id="ask">Questions</h2>
+                <p>Ask the person running the session. If it is a question about what the machine picture <em>means</em>,
+                    they will ask you to hold it until the end &mdash; not to be unhelpful, but because answering it
+                    mid-task would change what the session measures. They will answer everything afterwards.</p>
+                <p>You may stop at any point, without giving a reason, and without it affecting anything else.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="reference.html">
+                        <span>Previous &mdash; 06</span>
+                        <b>&larr; Reference</b>
+                    </a>
+                    <a class="is-next" href="index.html">
+                        <span>Back to &mdash; 01</span>
+                        <b>Overview &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">Mirror-C is developed at <a href="../index.html">L-Workshop</a>.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

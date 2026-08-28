@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="Mirror-C's eleven-drawer block palette, the two block kinds you can never drag out, sizeof-derived cell width, typed sockets, and the five-item right-click menu.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Blocks — Mirror-C Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-mirror-c/blocks.html">
+    <link rel="icon" href="assets/img/favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-mirrorc">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="assets/img/mirror-c-symbol-dark.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>Mirror-C Help</b><span class="help-bar-sub">A notional machine for C</span></span>
+        </a>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://m-c.l-workshop.my.id" rel="noopener">Open Mirror-C</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li>
+                    <a href="blocks.html" aria-current="page"><em>03</em> Blocks</a>
+                    <ul class="help-subnav">
+                        <li><a href="#palette">The palette</a></li>
+                        <li><a href="#canvas">Two roots you can never drag</a></li>
+                        <li><a href="#geometry">Width is sizeof, drawn</a></li>
+                        <li><a href="#connectors">Sockets that refuse</a></li>
+                        <li><a href="#menu">The right-click menu</a></li>
+                    </ul>
+                </li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li><a href="semantics.html"><em>05</em> Semantics</a></li>
+                <li><a href="reference.html"><em>06</em> Reference</a></li>
+                <li><a href="study.html"><em>07</em> If you are in a study session</a></li>
+            </ul>
+            <p class="help-rail-note">Eleven drawers, thirty-one block kinds, two of them you will never see in a
+                drawer at all.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">03 / Blocks</span>
+                <h1>Eleven drawers, and two blocks you can never drag</h1>
+                <p class="help-lede">The palette is a fairly literal reading of the fragment's grammar: one drawer
+                    per family of forms, one block per production, and a label that is usually just the C syntax
+                    itself. The two exceptions &mdash; the program root and <code>main</code> &mdash; are exceptions
+                    on purpose.</p>
+
+                <h2 id="palette">The palette</h2>
+                <p>The block sidebar on the left is not a Blockly flyout &mdash; Blockly is injected with no toolbox
+                    at all, and the palette is its own region, built and laid out independently. It holds eleven
+                    collapsible drawers and a search box (<kbd>Esc</kbd> clears it). A block can be clicked into the
+                    workspace or dragged into it; a click drops it on a small cascading offset so repeated clicks do
+                    not stack invisibly, a drag lands exactly under the cursor at whatever zoom you are at.</p>
+
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr><th>Drawer</th><th>Blocks</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><b>Literals</b></td>
+                                <td><code>number</code> &middot; <code>character&nbsp;'a'</code> &middot;
+                                    <code>NULL</code></td></tr>
+                            <tr><td><b>Variables</b></td>
+                                <td><code>variable&nbsp;x</code> &middot; <code>declaration&nbsp;int&nbsp;x&nbsp;=&nbsp;&hellip;</code>
+                                    &middot; <code>assignment&nbsp;x&nbsp;=&nbsp;&hellip;</code> &middot;
+                                    <code>prefix&nbsp;++x</code> &middot; <code>postfix&nbsp;x++</code></td></tr>
+                            <tr><td><b>Operators</b></td>
+                                <td><code>arithmetic&nbsp;a&nbsp;+&nbsp;b</code> &middot;
+                                    <code>comparison&nbsp;a&nbsp;&lt;&nbsp;b</code> &middot;
+                                    <code>logical&nbsp;a&nbsp;&amp;&amp;&nbsp;b</code> &middot; <code>not&nbsp;!&nbsp;a</code></td></tr>
+                            <tr><td><b>Arrays</b></td>
+                                <td><code>array&nbsp;declaration&nbsp;int&nbsp;a[n]&nbsp;&middot;&nbsp;a[n][m]</code>
+                                    &middot; <code>element&nbsp;a[i]&nbsp;&middot;&nbsp;a[i][j]</code> &middot;
+                                    <code>element&nbsp;assignment</code></td></tr>
+                            <tr><td><b>Structs &amp; enums</b></td>
+                                <td><code>struct&nbsp;definition</code> &middot; <code>union&nbsp;definition</code>
+                                    &middot; <code>enum&nbsp;definition</code> &middot; <code>field&nbsp;s.f</code>
+                                    &middot; <code>field&nbsp;assignment</code> &middot;
+                                    <code>arrow&nbsp;field&nbsp;p-&gt;f</code> &middot; <code>arrow&nbsp;assignment</code></td></tr>
+                            <tr><td><b>Pointers</b></td>
+                                <td><code>address&nbsp;of&nbsp;&amp;x</code> &middot;
+                                    <code>dereference&nbsp;*p</code> &middot;
+                                    <code>store&nbsp;through&nbsp;*p&nbsp;=&nbsp;&hellip;</code> &middot;
+                                    <code>malloc(&nbsp;sizeof(&nbsp;T&nbsp;)&nbsp;)</code></td></tr>
+                            <tr><td><b>Calls</b></td>
+                                <td><code>call&nbsp;f(&hellip;)</code></td></tr>
+                            <tr><td><b>Statements</b></td>
+                                <td><code>expression&nbsp;statement&nbsp;&hellip;;</code> &middot;
+                                    <code>printf(&nbsp;"&hellip;"&nbsp;,&nbsp;&hellip;&nbsp;)</code></td></tr>
+                            <tr><td><b>Control</b></td>
+                                <td><code>if&nbsp;/&nbsp;else</code> &middot; <code>while</code> &middot;
+                                    <code>for</code> &middot; <code>break</code> &middot; <code>continue</code>
+                                    &middot; <code>return</code></td></tr>
+                            <tr><td><b>Memory</b></td>
+                                <td><code>free(&nbsp;p&nbsp;)</code></td></tr>
+                            <tr><td><b>Functions</b></td>
+                                <td><code>function&nbsp;definition</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>Two labelling choices are worth knowing about so a name doesn't slow you down. <code>printf</code>
+                    lives in <b>Statements</b> rather than in a drawer of its own &mdash; it is one statement among
+                    several, not a category the way <code>malloc</code>/<code>free</code> earn one. And a block's
+                    label is usually its own surface syntax (<code>&amp; x</code>, <code>* p</code>,
+                    <code>a&nbsp;[&nbsp;i&nbsp;]</code>) rather than a name, on the theory that you are scanning the
+                    list for the <em>shape</em> of the C you want to write, not for a keyword you already know.</p>
+
+                <h2 id="canvas">Two roots you can never drag</h2>
+                <p>Every workspace has exactly one program root and exactly one <code>main</code>, and neither is
+                    ever offered from the palette. They are not hidden by convention or by a rule you could
+                    accidentally break &mdash; they simply do not exist as insertable block kinds, so there is no
+                    gesture, drag, or search result that could produce a second one. The functions you define live
+                    in the upper region of the workspace; <code>main</code> sits in its own region below, always
+                    present, never deletable.</p>
+
+                <div class="help-callout is-new">
+                    <strong>Why not just refuse a second one</strong>
+                    <p>The more obvious design &mdash; let the block exist, cap it at one instance, and reject the
+                        second attempt &mdash; was considered and turned down. Capping at one still permits the
+                        <em>zero</em>-instance state (a workspace with no <code>main</code> at all) and leaves you to
+                        notice and repair it. Never offering the block at all makes &ldquo;the program has no
+                        root&rdquo; and &ldquo;there are two roots&rdquo; unreachable outright, rather than merely
+                        unusual and caught later by a diagnostic.</p>
+                </div>
+
+                <h2 id="geometry">Width is sizeof, drawn</h2>
+                <p>A block's on-canvas width is not a styling choice &mdash; it is derived from its type's
+                    <code>sizeof</code>, so a <code>char</code> cell is drawn a quarter of the width of an
+                    <code>int</code> cell everywhere it appears: in a declaration, inside a struct, inside an array
+                    element. Widening the box would be lying about the type, in exactly the sense that mislabelling a
+                    value would be.</p>
+                <p>Each of the eleven drawers, and each of the twelve block families inside them, carries its own
+                    colour with a light and a dark fill so the palette reads correctly in either theme. That colour
+                    is resolved through the same table Blockly's own theme is built from, so the swatch you see in
+                    the sidebar is never able to drift from the colour the block actually paints on the canvas.</p>
+
+                <h2 id="connectors">Sockets that refuse</h2>
+                <p>Mirror-C's machine has no static semantics of its own &mdash; type-checking happens entirely at
+                    the block editor, before anything reaches the machine. That makes a socket's willingness to
+                    accept a block a real signal rather than a suggestion: a shape that will not connect is telling
+                    you the two things do not type-check together, the same way <code>gcc</code> would refuse the
+                    equivalent text. Building <code>int *p = &amp;c;</code> for a <code>char c</code> is not possible
+                    to assemble in the first place.</p>
+                <p>An empty socket is not filled with a guessed or default value. It is left visibly empty, and shows
+                    up in the <a href="getting-started.html#reading">Code tab</a> as <code>&#9633;</code> &mdash; a
+                    half-built program reads as a half-built program.</p>
+
+                <h2 id="menu">The right-click menu</h2>
+                <p>Right-clicking the workspace or a block opens a context menu with exactly five entries:
+                    <b>Undo</b>, <b>Redo</b>, <b>Clean up blocks</b>, <b>Duplicate</b>, and <b>Delete</b>. That is a
+                    deliberately short list rather than Blockly's full default set &mdash; the omitted defaults
+                    (collapse, disable, add comment) would let a block sit in the workspace looking inert while the
+                    machine still reads it when you press <b>Load</b>, which would make the picture lie about what
+                    actually runs. The list is an allow-list, not a trim of unwanted items: anything a future Blockly
+                    version adds to its own default menu ships switched off here until someone decides it belongs.
+                </p>
+                <p>Duplicate and Delete never appear on the program root or on <code>main</code> &mdash; both are the
+                    one block of their kind that must always exist, so the two entries that could remove or copy them
+                    are absent rather than present-and-refused.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="getting-started.html">
+                        <span>Previous &mdash; 02</span>
+                        <b>&larr; Getting started</b>
+                    </a>
+                    <a class="is-next" href="types.html">
+                        <span>Next &mdash; 04</span>
+                        <b>Types &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">Mirror-C is developed at <a href="../index.html">L-Workshop</a>. This help was
+                written against the build running at <a href="https://m-c.l-workshop.my.id"
+                    rel="noopener">m-c.l-workshop.my.id</a>.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

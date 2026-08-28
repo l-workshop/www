@@ -63,10 +63,15 @@
     --lw-yellow: #f1c30f;
     --lw-yellow-ink: #8a6d05;
     --lw-slate: #2a2f3a;
+    /* Mirror-C's Imperial Green (its C32 palette phase), deep enough to read
+       as its own accent beside --lw-green rather than as a shade of it. */
+    --lw-imperial: #2e8b62;
+    --lw-imperial-ink: #1b5e43;
 
     /* accent-as-text, safe on the page background in either theme */
     --lw-red-text: var(--lw-red-ink);
     --lw-green-text: var(--lw-green-ink);
+    --lw-imperial-text: var(--lw-imperial-ink);
     --lw-blue-text: var(--lw-blue-ink);
     --lw-yellow-text: var(--lw-yellow-ink);
     --lw-slate-text: var(--lw-slate);
@@ -104,10 +109,12 @@
     --lw-paper: #14171a;
     --lw-paper-2: #1a1e1b;
 
-    /* measured against --lw-paper: red 6.5:1, green 7.6:1, slate 9.8:1;
-       blue/yellow reuse the base hue, which already clears 6.9:1/10.8:1 */
+    /* measured against --lw-paper: red 6.5:1, green 7.6:1, slate 9.8:1,
+       imperial 8.7:1; blue/yellow reuse the base hue, which already clears
+       6.9:1/10.8:1. Light-theme --lw-imperial-ink is 7.7:1 on white. */
     --lw-red-text: #ff6b6b;
     --lw-green-text: #66bb6a;
+    --lw-imperial-text: #5fc79a;
     --lw-blue-text: var(--lw-blue);
     --lw-yellow-text: var(--lw-yellow);
     --lw-slate-text: #b8c0cc;

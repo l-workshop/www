@@ -18,28 +18,29 @@
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
     <meta name="author" content="L-Workshop">
     <meta name="description"
-        content="The five MnL visualization views: call-by-structure, call-by-value, function value, the CEK machine and lockstep — how to run each one and what it shows.">
+        content="The five MnL visualization views: call-by-structure, call-by-value, function value, the CSEK machine and lockstep — how to run each one and what it shows.">
     <meta name="theme-color" content="#ffffff">
     <title>Visualization — MnL Help | L-Workshop</title>
     <link rel="canonical" href="https://www.l-workshop.my.id/help-mnl/visualization.html">
-    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="icon" href="assets/img/mnl-favicon.ico" sizes="any">
     <link rel="stylesheet" href="../vendor/css/bundle.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/custom.css">
     <link rel="stylesheet" href="../assets/css/help-shared.css">
 </head>
 
-<body class="help">
+<body class="help help-mnl">
     <a class="lw-skip" href="#main">Skip to content</a>
 
     <div class="help-bar">
         <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
             aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
         <a class="help-bar-brand" href="index.html">
-            <img src="../assets/img/lw-logo.png" alt="" width="336" height="336">
+            <img class="help-brand-mark is-for-light" src="assets/img/mnl-logo.png" alt="" width="160" height="138">
+            <img class="help-brand-mark is-for-dark" src="assets/img/mnl-logo-dark.png" alt="" width="160" height="138">
             <span class="help-bar-text"><b>MnL Help</b><span class="help-bar-sub">Macaca nigra Language</span></span>
         </a>
-        <span class="help-version">v5.0 &middot; build 040726</span>
+        <span class="help-version">v5.2.0 &middot; build 240826</span>
         <span class="help-bar-spacer"></span>
         <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
             <i class="fa fa-moon" aria-hidden="true"></i>
@@ -68,14 +69,14 @@
                         <li><a href="#panel">The visualization panel</a></li>
                         <li><a href="#function-value">Function value</a></li>
                         <li><a href="#beta-reduction">Call-by-structure and call-by-value</a></li>
-                        <li><a href="#cek">The CEK machine</a></li>
+                        <li><a href="#csek">The CSEK machine</a></li>
                         <li><a href="#lockstep">Lockstep</a></li>
                         <li><a href="#tools">Panel tools</a></li>
                     </ul>
                 </li>
                 <li><a href="compiler.html"><em>08</em> Compiler</a></li>
             </ul>
-            <p class="help-rail-note">This help documents <b>MnL 5.0</b>, running at
+            <p class="help-rail-note">This help documents <b>MnL 5.2.0</b>, running at
                 <a href="https://mnl.l-workshop.my.id" rel="noopener">mnl.l-workshop.my.id</a>.</p>
         </nav>
 
@@ -119,9 +120,9 @@
                                 <td>The lambda that the function denotes, drawn as blocks.</td>
                             </tr>
                             <tr>
-                                <td>CEK Machine</td>
+                                <td>CSEK Machine</td>
                                 <td>The whole program</td>
-                                <td>Control, environment and continuation, one machine step at a time.</td>
+                                <td>Control, structure, environment and kontinuation, one machine step at a time.</td>
                             </tr>
                             <tr>
                                 <td>Lockstep</td>
@@ -136,7 +137,7 @@
                     <strong>Two ways in</strong>
                     <p>The first three views need a <em>selection</em>: right-click an <strong>Application</strong> block
                         and choose Call-by-Structure or Call-by-Value, or right-click a <strong>Function</strong> to see
-                        its value. The <strong>CEK Machine</strong> and <strong>Lockstep</strong> views need no selection
+                        its value. The <strong>CSEK Machine</strong> and <strong>Lockstep</strong> views need no selection
                         &mdash; press <strong>Load</strong> and they step the whole program.</p>
                 </div>
 
@@ -174,19 +175,22 @@
                         they appear.</p>
                 </div>
 
-                <h2 id="cek">The CEK machine</h2>
-                <p>New in version 5. Where the reduction views rewrite a selected redex, the CEK machine runs the
+                <h2 id="csek">The CSEK machine</h2>
+                <p>New in version 5. Where the reduction views rewrite a selected redex, the CSEK machine runs the
                     <em>whole</em> program as an abstract machine and lets you step it. Press <strong>Load</strong>, then
                     <strong>Step</strong> to advance, <strong>Back</strong> to retreat, or <strong>Play</strong> to run.</p>
 
                 <figure class="help-fig is-shot">
-                    <img src="assets/img/v5-cek-machine.jpg" width="1499" height="807" loading="lazy"
-                        alt="The CEK machine view at step 2, rule dec-var: the Control panel holds an expression to evaluate, Environment binds factorial, Kontinuation holds a bind frame, and Globals lists factorial.">
-                    <figcaption><b>MnL 5.0</b> The CEK machine at step 2, applying the <code>dec-var</code> rule. The
+                    <img src="assets/img/v5-csek-machine.jpg" width="1499" height="807" loading="lazy"
+                        alt="The CSEK machine view at step 2, rule dec-var: the controls bar carries a gloss explaining the S, the Control panel holds an expression to evaluate, Environment binds factorial, Kontinuation holds a bind frame, and Globals lists factorial.">
+                    <figcaption><b>MnL 5.2.0</b> The CSEK machine at step 2, applying the <code>dec-var</code> rule. The
                         block being evaluated is highlighted in the workspace above.</figcaption>
                 </figure>
 
-                <p>The machine state is split across four panels:</p>
+                <p>The <strong>S</strong> in <em>CSEK</em> is not a panel of its own: it's the live block structure in
+                    the workspace above &mdash; the same blocks you dragged into place, highlighted as the machine
+                    steps, never a serialized copy of them. The panel below still splits the machine state across
+                    four panels, C/E/K plus Globals:</p>
                 <div class="help-table-wrap">
                     <table class="help-table">
                         <thead>
@@ -232,7 +236,7 @@
 
                 <h2 id="lockstep">Lockstep</h2>
                 <p>Also new in version 5, and the view that ties the other two accounts together. Lockstep advances
-                    substitution rewriting and the CEK machine <em>at the same time</em>, so you can read one against the
+                    substitution rewriting and the CSEK machine <em>at the same time</em>, so you can read one against the
                     other.</p>
 
                 <figure class="help-fig is-shot">
@@ -278,7 +282,7 @@
             </article>
 
             <p class="help-foot">MnL is developed at <a href="../index.html">L-Workshop</a>. This help was written
-                against MnL 5.0 (build 040726).</p>
+                against MnL 5.2.0 (build 240826).</p>
         </main>
     </div>
 

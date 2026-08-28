@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="The SF-CESK abstract machine Mirror-C's picture is proved faithful to: the seven-part configuration, output as machine state, dead cells that stay drawn, and the twelve named stuck states undefined behaviour can reach.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Semantics — Mirror-C Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-mirror-c/semantics.html">
+    <link rel="icon" href="assets/img/favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-mirrorc">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="assets/img/mirror-c-symbol-dark.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>Mirror-C Help</b><span class="help-bar-sub">A notional machine for C</span></span>
+        </a>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://m-c.l-workshop.my.id" rel="noopener">Open Mirror-C</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li>
+                    <a href="semantics.html" aria-current="page"><em>05</em> Semantics</a>
+                    <ul class="help-subnav">
+                        <li><a href="#machine">The configuration</a></li>
+                        <li><a href="#events">One rule, one row</a></li>
+                        <li><a href="#output">Output is state</a></li>
+                        <li><a href="#dead">Cells die but never disappear</a></li>
+                        <li><a href="#stuck">Twelve reasons, closed</a></li>
+                        <li><a href="#divergence">Why it matters</a></li>
+                        <li><a href="#proved">What is proved</a></li>
+                    </ul>
+                </li>
+                <li><a href="reference.html"><em>06</em> Reference</a></li>
+                <li><a href="study.html"><em>07</em> If you are in a study session</a></li>
+            </ul>
+            <p class="help-rail-note">This chapter is the reason the tool exists: the picture is a rendering of a
+                real machine, not an illustration drawn separately from one.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">05 / Semantics</span>
+                <h1>The picture is the machine, not a diagram of one</h1>
+                <p class="help-lede">Every Step advances a real abstract machine &mdash; an extension of the
+                    substitution-free SF-CESK family, with an extra component for output. What the Stack, Heap and
+                    Output regions draw is a rendering function applied to that machine's own configuration, and
+                    nothing else feeds the picture.</p>
+
+                <h2 id="machine">The configuration</h2>
+                <p>A configuration is a seven-part tuple: <code>&lang;C, &rho;, &sigma;, &kappa;<sub>e</sub>,
+                        &kappa;<sub>s</sub>, F, out&rang;</code>.</p>
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead><tr><th>Part</th><th>Holds</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>C</code></td><td>Control &mdash; whatever is currently being evaluated or
+                                executed.</td></tr>
+                            <tr><td><code>&rho;</code></td><td>The environment, mapping a name to the address holding
+                                it.</td></tr>
+                            <tr><td><code>&sigma;</code></td><td>The store: address to cell. Its domain only grows
+                                &mdash; addresses are never reused (<a href="#dead">below</a>).</td></tr>
+                            <tr><td><code>&kappa;<sub>e</sub></code></td><td>The expression continuation &mdash; what
+                                is still owed to finish evaluating the expression in focus.</td></tr>
+                            <tr><td><code>&kappa;<sub>s</sub></code></td><td>The statement continuation &mdash; the
+                                statements still to run once the current one finishes.</td></tr>
+                            <tr><td><code>F</code></td><td>The frame stack: one entry per function call still
+                                live, innermost last.</td></tr>
+                            <tr><td><code>out</code></td><td>Everything printed so far. Part of the configuration,
+                                not a side channel &mdash; see <a href="#output">below</a>.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>A step is a function <code>Conf &rarr; (Conf, Event[])</code>: one configuration in, one
+                    configuration and a list of events out. &ldquo;Small&rdquo; is meant literally &mdash; evaluating
+                    <code>x + 1</code> is several steps, not one, because each operand's read lands in
+                    <code>&kappa;<sub>e</sub></code> as its own transition before the addition itself has both values
+                    it needs.</p>
+
+                <h2 id="events">One rule, one row</h2>
+                <p>Every transition rule the machine can fire has exactly one row in a fixed event table, and every
+                    event that row can emit changes the picture in some observable way &mdash; there is no event that
+                    fires and draws nothing. The rule's name and the block it highlights are set <em>inside</em> the
+                    transition itself, not computed afterwards by inspecting the resulting value, which is what keeps
+                    the sentence above the machine regions and the highlighted block from ever drifting out of sync
+                    with what actually happened. That sentence is the fastest way to answer &ldquo;what did the last
+                    Step actually do&rdquo; without reading the picture cell by cell.</p>
+
+                <h2 id="output">Output is state</h2>
+                <p><code>printf</code>'s bytes live in <code>out</code>, the seventh part of the configuration
+                    &mdash; they are not a log kept beside the machine, they are a component of it. That is why
+                    pressing <b>Back</b> genuinely un-prints text from the Output region with no special-case code of
+                    its own: the region renders the current configuration, stepping backward produces an earlier
+                    configuration, and an earlier configuration simply has a shorter <code>out</code>.</p>
+
+                <h2 id="dead">Cells die but never disappear</h2>
+                <p>The store's domain only grows. When a function returns, its frame's cells are marked dead rather
+                    than removed, and a dead cell is drawn greyed rather than erased. A pointer that still targets one
+                    keeps visibly pointing at something dead instead of silently becoming valid again the way a real
+                    allocator's address reuse would let it.</p>
+
+                <p>The landing example makes this concrete:</p>
+                <pre><code>int *f(void) { int x = 1; return &amp;x; }
+int main(void) { int *p = f(); int y = *p; return y; }</code></pre>
+                <p>Fifteen steps in, Mirror-C stops:</p>
+                <blockquote><p><b>Stuck &mdash; Use After Return (E-DerefPopped)</b></p></blockquote>
+                <p>and the picture shows exactly why: <code>f</code>'s frame is still drawn, greyed, with
+                    <code>x</code> greyed inside it, because <code>p</code> still points there &mdash; two arrows
+                    converging on a dead block. <code>gcc -O0</code> and <code>clang -O0</code> compile the same
+                    program without a word and return <code>1</code>.</p>
+
+                <h2 id="stuck">Twelve reasons, and the list is closed</h2>
+                <p>Every stuck configuration carries a named <b>Reason</b>, and the set of names is fixed at twelve.
+                    That closure is a property the project has actually had to defend, not just assert: adding
+                    structs, enums, a second array extent, or <code>union</code>/<code>const</code> each turned out
+                    to need <em>zero</em> new reasons &mdash; every new way a program can go wrong collapses into a
+                    <code>Reason</code> the set already had.</p>
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead><tr><th>Reason</th><th>Fires when&hellip;</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>NullDeref</code></td><td>a null pointer is dereferenced, indexed, or
+                                followed through <code>-&gt;</code>.</td></tr>
+                            <tr><td><code>UseAfterFree</code></td><td>a pointer into a freed heap cell is read or
+                                written through.</td></tr>
+                            <tr><td><code>UseAfterReturn</code></td><td>a pointer into a stack frame that has already
+                                returned is read or written through.</td></tr>
+                            <tr><td><code>FreeNonHeap</code></td><td><code>free</code> is called on something that
+                                was never returned by <code>malloc</code>.</td></tr>
+                            <tr><td><code>DoubleFree</code></td><td><code>free</code> is called twice on the same
+                                allocation.</td></tr>
+                            <tr><td><code>FreeIndeterminate</code></td><td><code>free</code> is called on a pointer
+                                whose own value was never written.</td></tr>
+                            <tr><td><code>IndeterminateRead</code></td><td>a cell is read that was declared but never
+                                assigned &mdash; or a union member that is not the one last written.</td></tr>
+                            <tr><td><code>OutOfBounds</code></td><td>an array read or write's index falls outside its
+                                declared extent, on either dimension of a two-extent array.</td></tr>
+                            <tr><td><code>DivByZero</code></td><td>a division or modulo has a zero right-hand
+                                side.</td></tr>
+                            <tr><td><code>FellOffNonVoid</code></td><td>a non-<code>void</code> function's body runs
+                                out of statements without reaching a <code>return</code>.</td></tr>
+                            <tr><td><code>BreakOutsideLoop</code></td><td>a <code>break</code> is reached with no
+                                enclosing loop.</td></tr>
+                            <tr><td><code>ContinueOutsideLoop</code></td><td>a <code>continue</code> is reached with
+                                no enclosing loop.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>A stuck state is not the same thing as an <a href="types.html#problems">ill-typed program</a>.
+                    Anything a real compiler would reject before running &mdash; a non-integer array index, for
+                    instance &mdash; is refused at the block editor and never reaches a <code>Reason</code> at all;
+                    the twelve names above are exclusively for programs that build cleanly and then meet genuine
+                    undefined behaviour while running.</p>
+
+                <h2 id="divergence">Why it matters</h2>
+                <p>Twelve programs, one per reachable stuck reason, live in the project's divergence corpus, each
+                    recording what <code>gcc</code> does, what <code>clang</code> does, and what Mirror-C does with
+                    it &mdash; and those programs are recompiled against both real compilers on every test run, so
+                    the comparison cannot go stale silently. The landing example above is one of the twelve; a
+                    starker one is <em>Freeing through one of two pointers</em>, where liveness belongs to the
+                    <em>cell</em> rather than to whichever alias you called <code>free</code> through, so every alias
+                    goes stale at once &mdash; while <code>gcc</code>, given no reason to stop, keeps running and
+                    returns a plausible-looking <code>72</code>.</p>
+                <div class="help-callout is-changed">
+                    <strong>This is not what your compiler does</strong>
+                    <p>A program Mirror-C stops on may well run and print something plausible under <code>gcc</code>
+                        or <code>clang</code>. That is the point: undefined behaviour permits both outcomes, and the
+                        one that looks fine is the more dangerous of the two, because nothing about running it once
+                        tells you it was ever unsafe.</p>
+                </div>
+
+                <h2 id="proved">What is proved, and what is not</h2>
+                <p>The claim behind Mirror-C is deliberately narrow, and it is checked rather than assumed. Every
+                    source form has a transition rule; every rule has exactly one row in the event table; every
+                    stuck configuration's reason is one of the twelve above; and the rendering function is total and
+                    a function of the configuration alone &mdash; two configurations that render identically are
+                    guaranteed the same future, not merely observed to be so in the cases anyone tried.</p>
+                <p>That last guarantee was not true on the first attempt. A rendering that ignored the shape of
+                    pending evaluation contexts made two genuinely different configurations &mdash;
+                    <code>0 + 0</code> having just reduced its left operand versus having just reduced its right one
+                    &mdash; draw identically despite having different futures, which is exactly the property the
+                    guarantee promises cannot happen. The repair renders the evaluation context explicitly, one entry
+                    per pending frame, and the counterexample is now a regression test rather than an open
+                    finding.</p>
+                <p>Not everything is proved to the same standard. The soundness of the layer that turns a mouse
+                    action into a machine-level edit is measured by exhaustive testing over a corpus of programs
+                    rather than established as a theorem, and the project says so plainly rather than rounding it
+                    up. Readers who want the full mechanization &mdash; the Coq development, the numbered findings
+                    and decisions &mdash; will find them in the paper's own repository rather than here; this help
+                    documents the tool, not the proof.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="types.html">
+                        <span>Previous &mdash; 04</span>
+                        <b>&larr; Types</b>
+                    </a>
+                    <a class="is-next" href="reference.html">
+                        <span>Next &mdash; 06</span>
+                        <b>Reference &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">Mirror-C is developed at <a href="../index.html">L-Workshop</a>. This help was
+                written against the build running at <a href="https://m-c.l-workshop.my.id"
+                    rel="noopener">m-c.l-workshop.my.id</a>.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

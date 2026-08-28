@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="Mirror-C quick reference: keyboard shortcuts, the full command palette, the menu map, perspectives and responsive breakpoints, the .m_c file format, and a glossary.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Reference — Mirror-C Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-mirror-c/reference.html">
+    <link rel="icon" href="assets/img/favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-mirrorc">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="assets/img/mirror-c-symbol-dark.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>Mirror-C Help</b><span class="help-bar-sub">A notional machine for C</span></span>
+        </a>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://m-c.l-workshop.my.id" rel="noopener">Open Mirror-C</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li><a href="semantics.html"><em>05</em> Semantics</a></li>
+                <li>
+                    <a href="reference.html" aria-current="page"><em>06</em> Reference</a>
+                    <ul class="help-subnav">
+                        <li><a href="#keys">Keyboard shortcuts</a></li>
+                        <li><a href="#commands">Command palette</a></li>
+                        <li><a href="#menus">Menu map</a></li>
+                        <li><a href="#perspectives">Perspectives &amp; layout</a></li>
+                        <li><a href="#files">File formats</a></li>
+                        <li><a href="#glossary">Glossary</a></li>
+                    </ul>
+                </li>
+                <li><a href="study.html"><em>07</em> If you are in a study session</a></li>
+            </ul>
+            <p class="help-rail-note">Shortcuts, commands, menus, files and vocabulary &mdash; the things you look
+                up rather than read.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">06 / Reference</span>
+                <h1>Reference</h1>
+                <p class="help-lede">Everything in this chapter is also reachable by exploring the interface. It is
+                    here so you do not have to.</p>
+
+                <h2 id="keys">Keyboard shortcuts</h2>
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead><tr><th>Keys</th><th>Action</th></tr></thead>
+                        <tbody>
+                            <tr><td><kbd>R</kbd></td><td>Load</td></tr>
+                            <tr><td><kbd>&rarr;</kbd> or <kbd>.</kbd></td><td>Step</td></tr>
+                            <tr><td><kbd>&larr;</kbd> or <kbd>,</kbd></td><td>Back</td></tr>
+                            <tr><td><kbd>Space</kbd></td><td>Play / pause</td></tr>
+                            <tr><td><kbd>Ctrl</kbd> + <kbd>N</kbd></td><td>New workspace</td></tr>
+                            <tr><td><kbd>Ctrl</kbd> + <kbd>O</kbd></td><td>Open&hellip;</td></tr>
+                            <tr><td><kbd>Ctrl</kbd> + <kbd>S</kbd></td><td>Save workspace</td></tr>
+                            <tr><td><kbd>Ctrl</kbd> + <kbd>Enter</kbd></td><td>Apply the Code tab's text back to the
+                                blocks</td></tr>
+                            <tr><td><kbd>Ctrl</kbd> + <kbd>Z</kbd></td><td>Undo one block edit</td></tr>
+                            <tr><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd></td><td>Command palette
+                                &mdash; every command by name</td></tr>
+                            <tr><td><kbd>Esc</kbd></td><td>Close whatever is currently open</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p><kbd>Ctrl</kbd>+<kbd>N</kbd>/<kbd>O</kbd>/<kbd>S</kbd> are suppressed while the Code tab's text
+                    editor has focus &mdash; there, those keys belong to the editor. Arrow keys also move focus
+                    between inspector tabs and along a resizer handle once it has focus.</p>
+
+                <h2 id="commands">Command palette</h2>
+                <p><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>, searchable by name and grouped by category:</p>
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead><tr><th>Group</th><th>Commands</th></tr></thead>
+                        <tbody>
+                            <tr><td>File</td><td>New workspace &middot; Open&hellip; &middot; Save workspace &middot;
+                                Export C source&hellip; &middot; Save screenshot&hellip; &middot; Restore
+                                autosave</td></tr>
+                            <tr><td>Machine</td><td>Run (Load + Play) &middot; Load &middot; Step &middot; Back
+                                &middot; Play / Pause &middot; Run to end</td></tr>
+                            <tr><td>View</td><td>Toggle light/dark theme &middot; Toggle block palette &middot;
+                                Toggle code panel &middot; Toggle machine dock &middot; Toggle maximize inspector
+                                &middot; Toggle maximize machine dock</td></tr>
+                            <tr><td>Code</td><td>Copy program as C text</td></tr>
+                            <tr><td>Examples</td><td>One command per example, loading it by name</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 id="menus">Menu map</h2>
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead><tr><th>Menu</th><th>Contents</th></tr></thead>
+                        <tbody>
+                            <tr><td>File</td><td>New &middot; Open&hellip; (<code>.m_c</code>) &middot; Save workspace
+                                &middot; Import C source&hellip; (<code>.c</code>/<code>.txt</code>) &middot; Export
+                                C source&hellip; &middot; Save screenshot&hellip; &middot; Restore autosave</td></tr>
+                            <tr><td>Examples</td><td>Twenty-six programs grouped Simple / Intermediate / Advanced.
+                                Hovering previews the one-line description in <a href="index.html#examples">Overview
+                                    &sect; The example library</a>; loading over existing blocks asks first.</td></tr>
+                            <tr><td>View</td><td>Toggle theme (default light) &middot; show/hide the block palette,
+                                code panel and machine dock &middot; autosave interval (1&ndash;20 minutes) &middot;
+                                perspective picker &middot; maximize inspector &middot; maximize machine dock</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p><b>Open</b> and <b>Import</b> are deliberately separate doors: Open takes only a Mirror-C
+                    workspace, Import takes only C or plain text into the Code tab, and each names the other if you
+                    hand it the wrong kind of file.</p>
+
+                <h2 id="perspectives">Perspectives &amp; layout</h2>
+                <p>A perspective is a named preset of which panels are open, not a mode with state of its own. It
+                    reads each panel's current collapse state and clicks only the ones that disagree with the
+                    preset &mdash; so toggling any one panel by hand afterwards demotes the current perspective to
+                    <b>Custom</b> rather than leaving a label on screen that no longer describes the layout.</p>
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead><tr><th>Perspective</th><th>Shows</th></tr></thead>
+                        <tbody>
+                            <tr><td><b>Presentation</b></td><td>Blocks and the machine dock; the palette and
+                                inspector step away, and the canvas zooms in.</td></tr>
+                            <tr><td><b>Edit</b></td><td>All four regions, for building a program.</td></tr>
+                            <tr><td><b>Debug</b></td><td>All four regions, tuned toward stepping and the machine
+                                dock.</td></tr>
+                            <tr><td><b>Custom</b></td><td>Whatever you have arranged by hand.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>The layout is responsive at five widths: below <b>1260px</b> the side panels' widths cap; below
+                    <b>1100px</b> they become overlay drawers opened from the workspace title bar and dismissed by
+                    the scrim or <kbd>Esc</kbd>; below <b>900px</b> the menu bar collapses behind a single
+                    <b>Menu</b> toggle; below <b>700px</b> the chrome grows to touch size and the machine dock becomes
+                    a bottom sheet; at <b>480px</b> the toolbar thins to essentials. The machine dock also has its
+                    own maximize button, independent of the inspector's, for a deep stack or a large heap that the
+                    resizer alone cannot make room for.</p>
+
+                <h2 id="files">File formats</h2>
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead><tr><th>Format</th><th>Holds</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>.m_c</code></td><td>A workspace, saved as a JSON envelope carrying a
+                                format tag and a version. A file that does not match either is refused with a
+                                message rather than half-loaded.</td></tr>
+                            <tr><td>C text</td><td>Not a saved format of its own, but <b>Export C source</b> writes
+                                your program as plain <code>.c</code>, and <b>Import C source</b> reads one back into
+                                the Code tab, applying it at once if it parses.</td></tr>
+                            <tr><td>Local storage</td><td>The rolling autosave, plus your layout, theme, perspective
+                                and autosave interval. Autosave never restores itself on load &mdash; you bring it
+                                back with <b>Restore autosave</b>, so a silent auto-restore can never race the
+                                application's own boot demo.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>If you are in a research session, a separate, much narrower record is also kept &mdash; see
+                    <a href="study.html">If you are in a study session</a> for exactly what that contains.</p>
+
+                <h2 id="glossary">Glossary</h2>
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead><tr><th>Term</th><th>Means</th></tr></thead>
+                        <tbody>
+                            <tr><td>SF-CESK</td><td>The abstract machine: store, control, environment, expression
+                                and statement kontinuations, and a frame stack. Mirror-C's own configuration adds an
+                                output component on top, for <code>printf</code>.</td></tr>
+                            <tr><td>Cell</td><td>One unit of storage in the store. Its drawn width is its type's
+                                <code>sizeof</code>.</td></tr>
+                            <tr><td>Edge / arrow</td><td>How a pointer value is drawn &mdash; a line to the cell it
+                                points at, never a numeric address.</td></tr>
+                            <tr><td>Frame</td><td>One live function call's box in the Stack region, holding its own
+                                cells.</td></tr>
+                            <tr><td>Reason</td><td>The closed, twelve-member label a stuck configuration carries.
+                                See <a href="semantics.html#stuck">Semantics</a>.</td></tr>
+                            <tr><td>Dead cell</td><td>A cell whose frame returned or was freed. Stays drawn, greyed,
+                                and its address is never reused.</td></tr>
+                            <tr><td>Perspective</td><td>A named panel-visibility preset, applied only where it
+                                disagrees with the current layout.</td></tr>
+                            <tr><td>Divergence corpus</td><td>Twelve programs, one per stuck reason, each recording
+                                what <code>gcc</code>, <code>clang</code> and Mirror-C do with it.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="semantics.html">
+                        <span>Previous &mdash; 05</span>
+                        <b>&larr; Semantics</b>
+                    </a>
+                    <a class="is-next" href="study.html">
+                        <span>Next &mdash; 07</span>
+                        <b>If you are in a study session &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">Mirror-C is developed at <a href="../index.html">L-Workshop</a>. This help was
+                written against the build running at <a href="https://m-c.l-workshop.my.id"
+                    rel="noopener">m-c.l-workshop.my.id</a>.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

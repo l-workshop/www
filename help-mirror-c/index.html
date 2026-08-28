@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Sets the theme before first paint, so there is no flash of the wrong
+         theme: localStorage 'lw-theme' if the visitor has chosen one, else
+         the OS/browser preference. Shared verbatim across every page. -->
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="Mirror-C is a block-based notional machine for C: build a C program as blocks, then step it and watch the stack, the heap and the pointers that connect them.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Overview — Mirror-C Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-mirror-c/index.html">
+    <link rel="icon" href="assets/img/favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-mirrorc">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="assets/img/mirror-c-symbol-dark.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>Mirror-C Help</b><span class="help-bar-sub">A notional machine for C</span></span>
+        </a>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://m-c.l-workshop.my.id" rel="noopener">Open Mirror-C</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li>
+                    <a href="index.html" aria-current="page"><em>01</em> Overview</a>
+                    <ul class="help-subnav">
+                        <li><a href="#what">What Mirror-C is</a></li>
+                        <li><a href="#workbench">The workbench</a></li>
+                        <li><a href="#regions">Stack, Heap, Output</a></li>
+                        <li><a href="#stuck">Stuck states have names</a></li>
+                        <li><a href="#examples">The example library</a></li>
+                    </ul>
+                </li>
+                <li><a href="getting-started.html"><em>02</em> Getting started</a></li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li><a href="semantics.html"><em>05</em> Semantics</a></li>
+                <li><a href="reference.html"><em>06</em> Reference</a></li>
+                <li><a href="study.html"><em>07</em> If you are in a study session</a></li>
+            </ul>
+            <p class="help-rail-note">This help document is for Mirror-C 1.0.0, running at <a href="https://m-c.l-workshop.my.id"
+                    rel="noopener">m-c.l-workshop.my.id</a></p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">01 / Overview</span>
+                <h1>C, with the machine drawn</h1>
+                <p class="help-lede">Mirror-C is a block-based editor for a fragment of C, attached to a machine that
+                    executes your program one small step at a time and <em>draws</em> what it is doing. Not a diagram of
+                    what C is like &mdash; the actual state the program is in, at the step you are looking at.</p>
+
+                <h2 id="what">What Mirror-C is</h2>
+                <p>Most explanations of pointers come with a picture and a promise: the picture is drawn by hand, and
+                    you are asked to believe it describes the program. Mirror-C removes the promise. The picture is
+                    computed from the same machine that produces the program's output, so if the picture and the output
+                    ever disagreed, that would be a defect rather than a simplification.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/mirror-c-stepping.png" loading="lazy"
+                        alt="The Mirror-C workbench part way through a pointer swap. The blocks sidebar is on the left, the block program in the middle, the C source on the right with the current line highlighted, and along the bottom a Stack region showing two frames — main and swap — with arrows running from swap's parameters back into main's cells.">
+                    <figcaption><b>Fig. 1</b> A swap through pointers, twenty-six steps in. Two frames are alive at
+                        once; the arrows from <code>swap</code>'s parameters land on <code>main</code>'s cells, and
+                        <code>x</code> already holds the new value while <code>y</code> does not yet.</figcaption>
+                </figure>
+
+                <p>Three things follow from that, and they are the reason to use it:</p>
+                <ul>
+                    <li><strong>Pointers are edges, not numbers.</strong> You never see
+                        <code>0x7ffc9044</code>. A pointer is drawn as an arrow to the cell it points at, because the
+                        identity of the cell <em>is</em> the address. Two pointers to one cell is two arrows meeting
+                        &mdash; aliasing becomes something you can see rather than something you have to infer.</li>
+                    <li><strong>A cell's width is its type's size.</strong> A <code>char</code> cell is drawn a quarter
+                        the width of an <code>int</code> cell. That is not decoration; it is <code>sizeof</code>, on
+                        screen.</li>
+                    <li><strong>Dead cells stay put.</strong> Addresses are never reused. When a frame returns its cells
+                        are marked dead rather than removed, so a pointer left over from a returned function keeps
+                        pointing at something visibly dead instead of silently becoming valid again.</li>
+                </ul>
+
+                <h2 id="workbench">The workbench</h2>
+                <p>Four areas, and you can hide any of them from the <b>View</b> menu.</p>
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead>
+                            <tr><th>Area</th><th>What it is for</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><b>Blocks</b>, on the left</td>
+                                <td>The palette. Drag a block into the workspace, or search it by name. Sockets only
+                                    accept the category they want, so a shape that will not connect is telling you
+                                    something.</td></tr>
+                            <tr><td><b>Workspace</b>, in the middle</td>
+                                <td>Your program. Two regions: the function definitions, and <code>main</code>.</td></tr>
+                            <tr><td><b>Inspector</b>, on the right</td>
+                                <td>Three tabs. <b>Code</b> is your program as C text, kept in step with the blocks, and
+                                    it highlights the line the machine is executing. <b>Typing</b> shows how a type is
+                                    derived. <b>Problems</b> lists anything wrong.</td></tr>
+                            <tr><td><b>Machine</b>, along the bottom</td>
+                                <td>The controls &mdash; Load, Back, Step, Play, Finish &mdash; and the picture itself.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 id="regions">Stack, Heap, Output</h2>
+                <p>The machine panel is three regions side by side, and each says how much is in it.</p>
+                <ul>
+                    <li><strong>Stack.</strong> One box per live function call, innermost on the right. Inside each box
+                        are its cells, with the variable's name, its type and its current value. Empty at the start:
+                        <em>0 frames</em>.</li>
+                    <li><strong>Heap.</strong> Whatever <code>malloc</code> has handed out and <code>free</code> has not
+                        taken back. Empty at the start: <em>nothing allocated yet</em>.</li>
+                    <li><strong>Output.</strong> Exactly what <code>printf</code> has printed so far &mdash; and it
+                        <em>un-prints</em> when you step backwards, because the output is part of the machine's state
+                        rather than a log beside it.</li>
+                </ul>
+                <p>Above the regions, a line of prose names the rule the machine just applied and says in words what it
+                    did.</p>
+
+                <h2 id="stuck">A program that stops has a reason, and the reason has a name</h2>
+                <p>When a C program does something undefined, real compilers are free to do anything at all, which is
+                    exactly why undefined behaviour is hard to teach. Mirror-C stops instead, and says which of a fixed
+                    list of things happened: following a null pointer, using a pointer into a frame that has already
+                    returned, using memory after it was freed, reading a cell that was never written.</p>
+                <div class="help-callout is-changed">
+                    <strong>This is not what your compiler does</strong>
+                    <p>A program Mirror-C stops on may well run and print something plausible under gcc or clang. That
+                        is the point: it is undefined, so both behaviours are allowed, and the one that looks fine is
+                        the more dangerous of the two.</p>
+                </div>
+
+                <h2 id="examples">The example library</h2>
+                <p>Twenty-six programs under <b>Examples</b>, from three lines to a linked list, each with a sentence
+                    saying what it is for. Hovering one previews that sentence; loading it needs a click, so you can
+                    read your way down the list without replacing your work. If the workspace already has blocks it
+                    asks before replacing them, and one Undo brings the previous program back.</p>
+                <p>If you only run one, run <b>The swap that does nothing</b> and then <b>The swap that works</b>. They
+                    are the same three statements with one type changed, and the pictures are not alike at all.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="../index.html">
+                        <span>Up &mdash; site</span>
+                        <b>&larr; L-Workshop</b>
+                    </a>
+                    <a class="is-next" href="getting-started.html">
+                        <span>Next &mdash; 02</span>
+                        <b>Getting started &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">Mirror-C is developed at <a href="../index.html">L-Workshop</a>.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

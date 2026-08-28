@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <script>(function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());</script>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="author" content="L-Workshop">
+    <meta name="description"
+        content="A first half hour with Mirror-C: build a program from blocks, press Load, then Step, and read what the stack and the pointers are doing.">
+    <meta name="theme-color" content="#ffffff">
+    <title>Getting started — Mirror-C Help | L-Workshop</title>
+    <link rel="canonical" href="https://www.l-workshop.my.id/help-mirror-c/getting-started.html">
+    <link rel="icon" href="assets/img/favicon.ico" sizes="any">
+    <link rel="stylesheet" href="../vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/help-shared.css">
+</head>
+
+<body class="help help-mirrorc">
+    <a class="lw-skip" href="#main">Skip to content</a>
+
+    <div class="help-bar">
+        <button class="help-menu-toggle" type="button" aria-expanded="false" aria-controls="help-rail"
+            aria-label="Toggle help navigation"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <a class="help-bar-brand" href="index.html">
+            <img src="assets/img/mirror-c-symbol-dark.png" alt="" width="336" height="336">
+            <span class="help-bar-text"><b>Mirror-C Help</b><span class="help-bar-sub">A notional machine for C</span></span>
+        </a>
+        <span class="help-bar-spacer"></span>
+        <button class="lw-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <div class="help-bar-links">
+            <a class="is-secondary" href="../index.html">L-Workshop</a>
+            <a class="is-primary" href="https://m-c.l-workshop.my.id" rel="noopener">Open Mirror-C</a>
+        </div>
+    </div>
+
+    <div class="help-scrim"></div>
+
+    <div class="help-shell">
+        <nav class="help-rail" id="help-rail" aria-label="Help contents">
+            <h2>Contents</h2>
+            <ul class="help-nav">
+                <li><a href="index.html"><em>01</em> Overview</a></li>
+                <li>
+                    <a href="getting-started.html" aria-current="page"><em>02</em> Getting started</a>
+                    <ul class="help-subnav">
+                        <li><a href="#first">Your first program</a></li>
+                        <li><a href="#load">Load, then Step</a></li>
+                        <li><a href="#reading">Reading the picture</a></li>
+                        <li><a href="#problems">When something is wrong</a></li>
+                        <li><a href="#keys">Keys worth knowing</a></li>
+                        <li><a href="#files">Saving and opening</a></li>
+                    </ul>
+                </li>
+                <li><a href="blocks.html"><em>03</em> Blocks</a></li>
+                <li><a href="types.html"><em>04</em> Types</a></li>
+                <li><a href="semantics.html"><em>05</em> Semantics</a></li>
+                <li><a href="reference.html"><em>06</em> Reference</a></li>
+                <li><a href="study.html"><em>07</em> If you are in a study session</a></li>
+            </ul>
+            <p class="help-rail-note">Nothing here needs to be memorised. If you get stuck, the
+                <b>Problems</b> tab and the sentence above the machine picture are the two places to look.</p>
+        </nav>
+
+        <main class="help-main" id="main">
+            <article class="help-doc">
+                <span class="help-kicker">02 / Getting started</span>
+                <h1>The first half hour</h1>
+                <p class="help-lede">You do not need to know Mirror-C to use it. There are two things worth learning
+                    before you start: <em>the blocks are the program</em>, and <em>nothing runs until you press
+                    Load</em>.</p>
+
+                <h2 id="first">Your first program</h2>
+                <ol class="help-steps">
+                    <li><b>Open an example.</b> <b>Examples</b> in the menu bar lists twenty-six programs with a
+                        sentence each. Start with <b>Hello, output</b> or <b>One cell, one value</b>. Hovering shows you
+                        what a program is about; clicking loads it.</li>
+                    <li><b>Or build one.</b> Drag blocks out of <b>Blocks</b> on the left and drop them into the
+                        <code>main</code> region. Blocks connect only where they fit &mdash; if one will not go
+                        somewhere, that socket wants a different kind of thing.</li>
+                    <li><b>Look at the Code tab.</b> On the right, your blocks are shown as ordinary C text. It updates
+                        as you build, so you can always check what you have actually written.</li>
+                </ol>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/mirror-c-workbench.png" loading="lazy"
+                        alt="The Mirror-C workbench with a two-function program loaded: the blocks palette on the left, the program in the workspace, the C source in the Inspector on the right, and the machine controls along the bottom.">
+                    <figcaption><b>Fig. 1</b> A program in the workspace, before anything has been run. The functions
+                        sit in the upper region and <code>main</code> in its own below.</figcaption>
+                </figure>
+
+                <h2 id="load">Load, then Step</h2>
+                <p>The controls along the bottom, left to right:</p>
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead><tr><th>Button</th><th>What it does</th></tr></thead>
+                        <tbody>
+                            <tr><td><b>Load</b></td><td>Hands the current blocks to the machine and puts it at step
+                                zero. <b>Nothing you build has any effect until you press this.</b> Edit the blocks
+                                afterwards and the status line will tell you to press Load again.</td></tr>
+                            <tr><td><b>Step</b></td><td>One small step forward. Small: evaluating <code>x + 1</code>
+                                takes several.</td></tr>
+                            <tr><td><b>Back</b></td><td>One step <em>backwards</em>. Everything undoes, including
+                                printed output.</td></tr>
+                            <tr><td><b>Play</b></td><td>Steps repeatedly at the speed of the slider beside it. Press
+                                again to stop.</td></tr>
+                            <tr><td><b>Finish</b></td><td>Runs to the end at once.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="help-callout is-changed">
+                    <strong>Step is the one to use</strong>
+                    <p>Finish tells you the answer. Step tells you why it is the answer. If a program surprises you,
+                        press Back until just before the surprise and step through it again.</p>
+                </div>
+
+                <h2 id="reading">Reading the picture</h2>
+                <p>Work from the bottom of the screen upwards.</p>
+                <ul>
+                    <li><b>Stack.</b> One box per function call that is still running. Each box holds that call's
+                        variables: name, type, and the value right now. A cell with nothing in it yet is drawn empty
+                        &mdash; that is a variable that has been declared but not assigned.</li>
+                    <li><b>Arrows.</b> A pointer is an arrow to the cell it points at. If two arrows land on the same
+                        cell, those two pointers are aliases, and writing through one changes what the other reads.</li>
+                    <li><b>Heap.</b> Cells from <code>malloc</code>. They stay until <code>free</code>, and then they
+                        are marked dead rather than removed &mdash; so an arrow still pointing at one is visibly
+                        pointing at something dead.</li>
+                    <li><b>Output.</b> What has been printed so far.</li>
+                    <li><b>The sentence above them</b> names the rule that just fired and says what it did, in words.
+                        It is the fastest way to find out what the last Step actually accomplished.</li>
+                </ul>
+
+                <h2 id="problems">When something is wrong</h2>
+                <p>Two different situations, and they show up in two different places.</p>
+                <ol class="help-steps">
+                    <li><b>The program cannot be built.</b> An empty socket, a missing piece. The <b>Problems</b> tab
+                        names it and the status bar counts it. Note that an empty socket is reported when you press
+                        <b>Load</b> &mdash; Problems may read <em>&ldquo;No problems&rdquo;</em> until then, so if Load
+                        does not seem to work, look at Problems.</li>
+                    <li><b>The program runs and then stops.</b> The machine reached something undefined. A banner names
+                        it &mdash; a null pointer followed, a pointer into a frame that has returned, memory used after
+                        it was freed &mdash; and the picture is frozen at the moment it happened, which is usually
+                        enough to see the cause.</li>
+                </ol>
+
+                <h2 id="keys">Keys worth knowing</h2>
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead><tr><th>Key</th><th></th></tr></thead>
+                        <tbody>
+                            <tr><td><kbd>R</kbd></td><td>Load</td></tr>
+                            <tr><td><kbd>&rarr;</kbd> or <kbd>.</kbd></td><td>Step</td></tr>
+                            <tr><td><kbd>&larr;</kbd> or <kbd>,</kbd></td><td>Back</td></tr>
+                            <tr><td><kbd>Space</kbd></td><td>Play / pause</td></tr>
+                            <tr><td><kbd>Ctrl</kbd>+<kbd>Z</kbd></td><td>Undo an edit to the blocks</td></tr>
+                            <tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd></td><td>Command palette &mdash; every
+                                command by name, if you would rather type than hunt</td></tr>
+                            <tr><td><kbd>Esc</kbd></td><td>Close whatever is open</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 id="files">Saving and opening</h2>
+                <p><b>File</b> saves your workspace as a <code>.m_c</code> file and opens one back. It also exports your
+                    program as plain <code>.c</code> text, and saves a screenshot of the canvas. Work is kept
+                    automatically as you go, so closing the tab by accident is recoverable.</p>
+
+                <nav class="help-pager" aria-label="Chapter navigation">
+                    <a href="index.html">
+                        <span>Previous &mdash; 01</span>
+                        <b>&larr; Overview</b>
+                    </a>
+                    <a class="is-next" href="blocks.html">
+                        <span>Next &mdash; 03</span>
+                        <b>Blocks &rarr;</b>
+                    </a>
+                </nav>
+            </article>
+
+            <p class="help-foot">Mirror-C is developed at <a href="../index.html">L-Workshop</a>.</p>
+        </main>
+    </div>
+
+    <script src="../assets/js/help-shared.js"></script>
+</body>
+
+</html>

@@ -87,6 +87,12 @@ body.help-bfj {
     --help-accent-text: var(--lw-slate-text);
 }
 
+body.help-mirrorc {
+    --help-accent: var(--lw-imperial);
+    --help-accent-ink: var(--lw-imperial-ink);
+    --help-accent-text: var(--lw-imperial-text);
+}
+
 .help-shell {
     display: grid;
     grid-template-columns: var(--help-rail) minmax(0, 1fr);
@@ -157,6 +163,24 @@ body.help-bl .help-brand-mark.is-for-dark {
 }
 
 :root[data-theme="dark"] body.help-bl .help-brand-mark.is-for-dark {
+    display: block;
+}
+
+/* MnL is the second help site to fly its own project mark. Its source repo
+   only ships a single flat PNG (no SVG, no dark variant), so the "dark" glyph
+   here is the same mark de-matted against transparency instead of white —
+   same shapes and colors, just without the light edge-halo the white-matted
+   original would show on a dark background. Scoped to body.help-mnl so the
+   three remaining sites, still on lw-logo.png, are untouched. */
+body.help-mnl .help-brand-mark.is-for-dark {
+    display: none;
+}
+
+:root[data-theme="dark"] body.help-mnl .help-brand-mark.is-for-light {
+    display: none;
+}
+
+:root[data-theme="dark"] body.help-mnl .help-brand-mark.is-for-dark {
     display: block;
 }
 
