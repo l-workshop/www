@@ -143,6 +143,14 @@
                         expected.</li>
                 </ul>
 
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/mirror-c-struct-block.png" loading="lazy"
+                        alt="A linked list example on the heap: two struct Node cells, each with a val and a next field, with arrows from main's pointer variables a and b landing on the two heap cells.">
+                    <figcaption><b>Fig. 1</b> Two <code>struct Node</code> cells on the heap, <code>a</code> and
+                        <code>b</code> pointing at them from <code>main</code>'s frame &mdash; a container of cells,
+                        drawn exactly the way an array's elements are.</figcaption>
+                </figure>
+
                 <h2 id="width">sizeof, and const</h2>
                 <p>A cell's on-screen width is <code>sizeof</code> of its type, computed once from the type itself
                     and read by nothing semantic &mdash; it is geometry, not behaviour. That distinction is not
@@ -175,6 +183,13 @@
                     function's context genuinely grows with every declaration and shrinks again at every scope exit.
                     A block's closing row visibly reverts to the same context name it opened with, which is the
                     derivation's own way of showing a scope's variables have gone out of it.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/mirror-c-typing-tab.png" loading="lazy"
+                        alt="The Typing tab showing a derivation for main: a premises-over-a-bar proof tree with rows labelled WF-Decl, WF-Expr, T-Int and T-ArrowAssign, each row a clickable judgement.">
+                    <figcaption><b>Fig. 2</b> A derivation for <code>main</code>, expanded. Each row names the rule
+                        that justifies it, and clicking one selects the block it is about.</figcaption>
+                </figure>
 
                 <h2 id="problems">The Problems tab</h2>
                 <p>The same checker's diagnostics surface as a clickable list in the <b>Problems</b> tab, with a

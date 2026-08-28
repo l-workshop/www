@@ -92,6 +92,13 @@
                     workspace or dragged into it; a click drops it on a small cascading offset so repeated clicks do
                     not stack invisibly, a drag lands exactly under the cursor at whatever zoom you are at.</p>
 
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/mirror-c-palette.png" loading="lazy"
+                        alt="Mirror-C's default boot program with the block palette open on the left, showing the Literals, Variables and Operators drawers and the search box above them.">
+                    <figcaption><b>Fig. 1</b> The palette, on the default boot program &mdash; a minimal
+                        <code>main</code> with nothing else built yet.</figcaption>
+                </figure>
+
                 <div class="help-table-wrap">
                     <table class="help-table">
                         <thead>
@@ -114,8 +121,8 @@
                                     &middot; <code>element&nbsp;a[i]&nbsp;&middot;&nbsp;a[i][j]</code> &middot;
                                     <code>element&nbsp;assignment</code></td></tr>
                             <tr><td><b>Structs &amp; enums</b></td>
-                                <td><code>struct&nbsp;definition</code> &middot; <code>union&nbsp;definition</code>
-                                    &middot; <code>enum&nbsp;definition</code> &middot; <code>field&nbsp;s.f</code>
+                                <td><code>structure&nbsp;definition</code> &middot; <code>union&nbsp;definition</code>
+                                    &middot; <code>enumeration&nbsp;definition</code> &middot; <code>field&nbsp;s.f</code>
                                     &middot; <code>field&nbsp;assignment</code> &middot;
                                     <code>arrow&nbsp;field&nbsp;p-&gt;f</code> &middot; <code>arrow&nbsp;assignment</code></td></tr>
                             <tr><td><b>Pointers</b></td>
@@ -127,13 +134,13 @@
                                 <td><code>call&nbsp;f(&hellip;)</code></td></tr>
                             <tr><td><b>Statements</b></td>
                                 <td><code>expression&nbsp;statement&nbsp;&hellip;;</code> &middot;
-                                    <code>printf(&nbsp;"&hellip;"&nbsp;,&nbsp;&hellip;&nbsp;)</code></td></tr>
+                                    <code>printf&nbsp;"&hellip;"&nbsp;&hellip;</code></td></tr>
                             <tr><td><b>Control</b></td>
                                 <td><code>if&nbsp;/&nbsp;else</code> &middot; <code>while</code> &middot;
                                     <code>for</code> &middot; <code>break</code> &middot; <code>continue</code>
                                     &middot; <code>return</code></td></tr>
                             <tr><td><b>Memory</b></td>
-                                <td><code>free(&nbsp;p&nbsp;)</code></td></tr>
+                                <td><code>free&nbsp;p</code></td></tr>
                             <tr><td><b>Functions</b></td>
                                 <td><code>function&nbsp;definition</code></td></tr>
                         </tbody>
@@ -143,9 +150,13 @@
                 <p>Two labelling choices are worth knowing about so a name doesn't slow you down. <code>printf</code>
                     lives in <b>Statements</b> rather than in a drawer of its own &mdash; it is one statement among
                     several, not a category the way <code>malloc</code>/<code>free</code> earn one. And a block's
-                    label is usually its own surface syntax (<code>&amp; x</code>, <code>* p</code>,
+                    label stays close to its own surface syntax (<code>&amp; x</code>, <code>* p</code>,
                     <code>a&nbsp;[&nbsp;i&nbsp;]</code>) rather than a name, on the theory that you are scanning the
-                    list for the <em>shape</em> of the C you want to write, not for a keyword you already know.</p>
+                    list for the <em>shape</em> of the C you want to write, not for a keyword you already know
+                    &mdash; though not always literal C: a few labels spell a word out
+                    (<code>structure</code>, <code>enumeration</code>, <code>argument&nbsp;0</code>) where the raw
+                    C keyword or a bare position number would read as noise in a block instead of code on a
+                    line.</p>
 
                 <h2 id="canvas">Two roots you can never drag</h2>
                 <p>Every workspace has exactly one program root and exactly one <code>main</code>, and neither is
@@ -199,6 +210,13 @@
                 <p>Duplicate and Delete never appear on the program root or on <code>main</code> &mdash; both are the
                     one block of their kind that must always exist, so the two entries that could remove or copy them
                     are absent rather than present-and-refused.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/mirror-c-context-menu.png" loading="lazy"
+                        alt="A right-click on an ordinary block, opening a small menu with two entries: Duplicate and Delete 2 Blocks. Right-clicking empty workspace instead opens a different menu with Undo, Redo and Clean up Blocks.">
+                    <figcaption><b>Fig. 2</b> The block menu &mdash; Duplicate and Delete. Right-click the empty
+                        workspace instead and you get the other three entries: Undo, Redo, Clean up blocks.</figcaption>
+                </figure>
 
                 <nav class="help-pager" aria-label="Chapter navigation">
                     <a href="getting-started.html">

@@ -142,12 +142,19 @@
                 <p>The landing example makes this concrete:</p>
                 <pre><code>int *f(void) { int x = 1; return &amp;x; }
 int main(void) { int *p = f(); int y = *p; return y; }</code></pre>
-                <p>Fifteen steps in, Mirror-C stops:</p>
+                <p>Thirteen steps in, Mirror-C stops:</p>
                 <blockquote><p><b>Stuck &mdash; Use After Return (E-DerefPopped)</b></p></blockquote>
                 <p>and the picture shows exactly why: <code>f</code>'s frame is still drawn, greyed, with
                     <code>x</code> greyed inside it, because <code>p</code> still points there &mdash; two arrows
                     converging on a dead block. <code>gcc -O0</code> and <code>clang -O0</code> compile the same
                     program without a word and return <code>1</code>.</p>
+
+                <figure class="help-fig is-shot">
+                    <img src="assets/img/mirror-c-stuck-use-after-return.png" loading="lazy"
+                        alt="The Mirror-C machine stopped with a red banner reading Stuck: UseAfterReturn. The status line reads step 13, Stuck — Use After Return (E-DerefPopped). The Stack region shows main's frame, with f's greyed-out frame still drawn beside it and an arrow from p landing on the dead cell.">
+                    <figcaption><b>Fig. 1</b> The landing example, stopped. <code>f</code>'s frame stays drawn and
+                        greyed after it returns, and <code>p</code>'s arrow still lands on it.</figcaption>
+                </figure>
 
                 <h2 id="stuck">Twelve reasons, and the list is closed</h2>
                 <p>Every stuck configuration carries a named <b>Reason</b>, and the set of names is fixed at twelve.
