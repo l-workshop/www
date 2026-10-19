@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <script>
+            (function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());
+        </script>
+        <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+        <meta content="L-Workshop" name="author"/>
+        <meta content="GraphLambda checks integers, Booleans and function types before execution. Socket shapes and wire geometry make those distinctions visible." name="description"/>
+        <meta content="#ffffff" name="theme-color"/>
+        <title>
+            Types — GraphLambda Help | L-Workshop
+        </title>
+        <link href="https://www.l-workshop.my.id/help-graphlambda/types.html" rel="canonical"/>
+        <link href="../favicon.ico" rel="icon" sizes="any"/>
+        <link href="../vendor/css/bundle.min.css" rel="stylesheet"/>
+        <link href="../assets/css/style.css" rel="stylesheet"/>
+        <link href="../assets/css/custom.css" rel="stylesheet"/>
+        <link href="../assets/css/help-shared.css" rel="stylesheet"/>
+    </head>
+    <body class="help help-graphlambda">
+        <a class="lw-skip" href="#main">
+            Skip to content
+        </a>
+        <div class="help-bar">
+            <button aria-controls="help-rail" aria-expanded="false" aria-label="Toggle help navigation" class="help-menu-toggle" type="button">
+                <i aria-hidden="true" class="fa fa-bars">
+                </i>
+            </button>
+            <a class="help-bar-brand" href="index.html">
+                <img alt="" height="336" src="../assets/img/lw-logo.png" width="336"/>
+                <span class="help-bar-text">
+                    <b>
+                        GraphLambda Help
+                    </b>
+                    <span class="help-bar-sub">
+                        Graph-native functional programming
+                    </span>
+                </span>
+            </a>
+            <span class="help-bar-spacer">
+            </span>
+            <button aria-label="Switch to dark theme" aria-pressed="false" class="lw-theme-toggle" type="button">
+                <i aria-hidden="true" class="fa fa-moon">
+                </i>
+            </button>
+            <div class="help-bar-links">
+                <a class="is-secondary" href="../index.html">
+                    L-Workshop
+                </a>
+                <a class="is-primary" href="https://g-l.l-workshop.my.id" rel="noopener">
+                    Open GraphLambda
+                </a>
+            </div>
+        </div>
+        <div class="help-scrim">
+        </div>
+        <div class="help-shell">
+            <nav aria-label="Help contents" class="help-rail" id="help-rail">
+                <h2>
+                    Contents
+                </h2>
+                <ul class="help-nav">
+                    <li>
+                        <a href="index.html">
+                            <em>
+                                01
+                            </em>
+                            Overview
+                        </a>
+                    </li>
+                    <li>
+                        <a href="getting-started.html">
+                            <em>
+                                02
+                            </em>
+                            Getting started
+                        </a>
+                    </li>
+                    <li>
+                        <a href="graphs.html">
+                            <em>
+                                03
+                            </em>
+                            Graphs and connections
+                        </a>
+                    </li>
+                    <li>
+                        <a href="functions.html">
+                            <em>
+                                04
+                            </em>
+                            Functions and scope
+                        </a>
+                    </li>
+                    <li>
+                        <a aria-current="page" href="types.html">
+                            <em>
+                                05
+                            </em>
+                            Types
+                        </a>
+                        <ul class="help-subnav">
+                            <li>
+                                <a href="#language">
+                                    The type language
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#notation">
+                                    Sockets and wires
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#constraints">
+                                    What a valid connection requires
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#properties">
+                                    Inspect and edit declarations
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#scope">
+                                    Type compatibility is not the whole check
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="semantics.html">
+                            <em>
+                                06
+                            </em>
+                            Semantics and debugger
+                        </a>
+                    </li>
+                    <li>
+                        <a href="source-code.html">
+                            <em>
+                                07
+                            </em>
+                            Source code
+                        </a>
+                    </li>
+                    <li>
+                        <a href="reference.html">
+                            <em>
+                                08
+                            </em>
+                            Reference
+                        </a>
+                    </li>
+                </ul>
+                <p class="help-rail-note">
+                    GraphLambda · eight chapters. Open the editor at
+                    <a href="https://g-l.l-workshop.my.id" rel="noopener">g-l.l-workshop.my.id</a>.
+                </p>
+            </nav>
+            <main class="help-main" id="main">
+                <article class="help-doc">
+                    <span class="help-kicker">
+                        05 / Types
+                    </span>
+                    <h1>
+                        Types travel with the values
+                    </h1>
+                    <p class="help-lede">
+                        GraphLambda checks integers, Booleans and function types before execution. Socket shapes and wire geometry make those distinctions visible.
+                    </p>
+                    <h2 id="language">
+                        The type language
+                    </h2>
+                    <pre><code>Int
+Bool
+Int -> Int
+(Int -> Int) -> Int</code></pre>
+                    <p>
+                        Function arrows associate to the right:
+                        <code>
+                            Int -> Bool -> Int
+                        </code>
+                        means
+                        <code>
+                            Int -> (Bool -> Int)
+                        </code>
+                        . Lambda parameters and recursive binders carry declarations; the checker solves the remaining port constraints. The language is monomorphic: local type variables in unfinished nodes are constraints to solve, not user-defined polymorphic functions.
+                    </p>
+                    <h2 id="notation">
+                        Sockets and wires
+                    </h2>
+                    <div class="help-table-wrap">
+                        <table class="help-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Type
+                                    </th>
+                                    <th scope="col">
+                                        Socket silhouette
+                                    </th>
+                                    <th scope="col">
+                                        Wire
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Int
+                                    </td>
+                                    <td>
+                                        Square
+                                    </td>
+                                    <td>
+                                        Single solid line
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Bool
+                                    </td>
+                                    <td>
+                                        Diamond
+                                    </td>
+                                    <td>
+                                        Single dashed line
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Function
+                                    </td>
+                                    <td>
+                                        Hexagon
+                                    </td>
+                                    <td>
+                                        Doubled rail, with its function type
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Unresolved
+                                    </td>
+                                    <td>
+                                        Round / rounded socket notation
+                                    </td>
+                                    <td>
+                                        Fine dotted line
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        These shapes depend on the port’s type, not the producer’s node kind. Application can return either data or a function. Arrowheads identify flow; colours are supplementary, so shape and line style continue to distinguish values in monochrome.
+                    </p>
+                    <h2 id="constraints">
+                        What a valid connection requires
+                    </h2>
+                    <div class="help-table-wrap">
+                        <table class="help-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Construct
+                                    </th>
+                                    <th scope="col">
+                                        Constraint
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Add, Subtract, Multiply
+                                    </td>
+                                    <td>
+                                        Both inputs and the result are Int.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Less
+                                    </td>
+                                    <td>
+                                        Both inputs are Int; the result is Bool.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Application
+                                    </td>
+                                    <td>
+                                        If the function has type A -> B, the argument has type A and the result has type B.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        If
+                                    </td>
+                                    <td>
+                                        Condition is Bool; both branches and the result have one common type.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Lambda
+                                    </td>
+                                    <td>
+                                        Parameter has declared type A; the body determines B; the function has type A -> B.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        LetRec
+                                    </td>
+                                    <td>
+                                        The recursive declaration is a function type matching the definition Lambda.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Output
+                                    </td>
+                                    <td>
+                                        Its input carries the result type of the program.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        For example, connect an
+                        <code>
+                            Int -> Int
+                        </code>
+                        function to Application, then try a Bool argument. The connection is refused. The same type constraints apply to a text draft submitted through Update Flowchart.
+                    </p>
+                    <h2 id="properties">
+                        Inspect and edit declarations
+                    </h2>
+                    <p>
+                        Select a node or wire, then open
+                        <b>
+                            Type / Properties
+                        </b>
+                        . Intrinsic signatures, such as Add’s integer inputs, are reported rather than offered as arbitrary editable text. Literals expose their values; Lambda and LetRec expose binder names and declaration selectors.
+                    </p>
+                    <p>
+                        The palette’s type selector offers Int, Bool and Int -> Int. Existing declaration selectors offer further simple arrow choices. Use
+                        <a href="source-code.html#syntax">
+                            Source Code
+                        </a>
+                        for nested arrow annotations such as
+                        <code>
+                            (Int -> Int) -> Int
+                        </code>
+                        .
+                    </p>
+                    <p>
+                        A refused update leaves the previous graph and history in place. Fix the connected values or the declaration rather than trying to change the visual socket shape.
+                    </p>
+                    <h2 id="scope">
+                        Type compatibility is not the whole check
+                    </h2>
+                    <p>
+                        Two ports can both be Int and still form an illegal connection: a Lambda-local value cannot escape into an outside computation, and a binder must be used in its lexical scope. Direction, one producer per input and cycle restrictions also apply.
+                    </p>
+                    <p>
+                        Read the full diagnostic, including the code. Type holes are allowed during editing, so an expected type next to an empty socket is guidance for the next connection. It does not make the graph executable yet.
+                    </p>
+                    <nav aria-label="Chapter navigation" class="help-pager">
+                        <a href="functions.html">
+                            <span>
+                                Previous — 04
+                            </span>
+                            <b>
+                                ← Functions and scope
+                            </b>
+                        </a>
+                        <a class="is-next" href="semantics.html">
+                            <span>
+                                Next — 06
+                            </span>
+                            <b>
+                                Semantics and debugger →
+                            </b>
+                        </a>
+                    </nav>
+                </article>
+                <p class="help-foot">
+                    GraphLambda is developed at
+                    <a href="../index.html">
+                        L-Workshop
+                    </a>
+                    .
+                </p>
+            </main>
+        </div>
+        <script src="../assets/js/help-shared.js">
+        </script>
+    </body>
+</html>

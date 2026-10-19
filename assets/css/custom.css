@@ -67,6 +67,8 @@
        as its own accent beside --lw-green rather than as a shade of it. */
     --lw-imperial: #2e8b62;
     --lw-imperial-ink: #1b5e43;
+    --lw-violet: #8b6bc4;
+    --lw-violet-ink: #654298;
 
     /* accent-as-text, safe on the page background in either theme */
     --lw-red-text: var(--lw-red-ink);
@@ -75,6 +77,7 @@
     --lw-blue-text: var(--lw-blue-ink);
     --lw-yellow-text: var(--lw-yellow-ink);
     --lw-slate-text: var(--lw-slate);
+    --lw-violet-text: var(--lw-violet-ink);
 
     /* always-dark, regardless of theme — pairs with a fill that also
        never changes with theme (the yellow badge/notice icon) */
@@ -118,6 +121,7 @@
     --lw-blue-text: var(--lw-blue);
     --lw-yellow-text: var(--lw-yellow);
     --lw-slate-text: #b8c0cc;
+    --lw-violet-text: #c6a8f0;
 
     --lw-notice-bg: #2c2410;
     --lw-notice-border: #4d3f16;
@@ -355,7 +359,30 @@ summary:focus-visible,
     transform: translateY(-2px);
 }
 
-/* side (mobile) menu */
+/* Template navigation: the bar starts at the bottom of the first viewport,
+   then docks at the top after that position has scrolled past. */
+.lw-site-header {
+    --lw-nav-height: 70px;
+    --lw-nav-top: calc(100vh - var(--lw-nav-height));
+}
+
+.lw-site-header .bottom-nav {
+    top: var(--lw-nav-top);
+    bottom: auto;
+    height: var(--lw-nav-height);
+    background: var(--lw-paper);
+}
+
+.lw-site-header.header-appear .bottom-nav {
+    top: 0;
+    height: 75px;
+}
+
+body.lw-menu-open {
+    overflow: hidden;
+}
+
+/* Full-screen side menu, shared by the mobile and desktop openers. */
 
 /* close button: template defaults left this as a stark white quarter-circle
    blob with a flat black X, which clashes with the dark, bordered-pill
@@ -1413,26 +1440,33 @@ summary:focus-visible,
     overflow: hidden;
 }
 
+.lw-pub-future {
+    grid-column: 1 / -1;
+}
+
 .lw-pub-flag {
     position: absolute;
     top: 0;
     right: 0;
     padding: 7px 14px;
-    background: var(--lw-yellow);
+    background: var(--lw-red-fill);
     border-bottom-left-radius: 5px;
     font-family: var(--lw-mono);
     font-size: 0.66rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: var(--lw-ink);
+    color: #fff;
 }
 
 .lw-pub-flag-open {
-    background: var(--lw-paper-2);
-    border-left: 1px solid var(--lw-line);
-    border-bottom: 1px solid var(--lw-line);
-    color: var(--lw-muted);
+    background: var(--lw-green-ink);
+    color: #fff;
+}
+
+.lw-pub-flag-future {
+    background: #6b7280;
+    color: #fff;
 }
 
 .lw-pub-venue {

@@ -93,6 +93,41 @@ body.help-mirrorc {
     --help-accent-text: var(--lw-imperial-text);
 }
 
+/* GraphLambda's function-wire violet, with separate text and fill colours. */
+body.help-graphlambda {
+    --help-accent: #8b6bc4;
+    --help-accent-ink: #654298;
+    --help-accent-text: #654298;
+}
+
+:root[data-theme="dark"] body.help-graphlambda {
+    --help-accent-text: #c6a8f0;
+}
+
+@media (max-width: 480px) {
+    body.help-graphlambda .help-bar {
+        gap: 10px;
+        padding-inline: 12px;
+    }
+
+    body.help-graphlambda .help-bar-links {
+        display: none;
+    }
+
+    body.help-graphlambda .help-bar-brand {
+        gap: 8px;
+    }
+
+    body.help-graphlambda .help-bar-brand img {
+        width: 26px;
+        height: 26px;
+    }
+
+    body.help-graphlambda .help-bar-brand b {
+        font-size: 0.84rem;
+    }
+}
+
 .help-shell {
     display: grid;
     grid-template-columns: var(--help-rail) minmax(0, 1fr);

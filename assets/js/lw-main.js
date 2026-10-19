@@ -61,20 +61,33 @@
         });
 
         /* ===============================================
-           Fixed header on scroll
+           Template bottom navigation -> fixed header
            =============================================== */
-        var $header = $('header');
+        var $header = $('header.lw-site-header');
         var $window = $(window);
+        var $bottomNav = $header.find('nav.bottom-nav');
+        var navTop = 80;
 
         function onScroll() {
-            $header.toggleClass('header-appear', $window.scrollTop() >= 80);
+            $header.toggleClass('header-appear', $window.scrollTop() > navTop);
+        }
+
+        function positionNavigation() {
+            if ($bottomNav.length) {
+                var navHeight = parseFloat(getComputedStyle($header.get(0))
+                    .getPropertyValue('--lw-nav-height')) || 70;
+                navTop = Math.max(0, $window.height() - navHeight);
+                $header.get(0).style.setProperty('--lw-nav-top', navTop + 'px');
+            }
+            onScroll();
         }
 
         $window.on('scroll', onScroll);
-        onScroll();
+        $window.on('resize', positionNavigation);
+        positionNavigation();
 
         /* ===============================================
-           Smooth scroll for in-page links
+           Template smooth scroll (40px offset, 1100ms)
            =============================================== */
         $('.scroll').on('click', function (event) {
             var $target = $(this.hash);
@@ -84,66 +97,82 @@
             }
 
             event.preventDefault();
-
-            var top = $target.offset().top - 70;
+            var top = Math.max(0, $target.offset().top - 40);
+            $('html, body').stop(true);
 
             if (reduceMotion) {
                 window.scrollTo(0, top);
             } else {
-                $('html, body').animate({ scrollTop: top }, 900);
+                $('html, body').animate({ scrollTop: top }, 1100);
             }
 
-            // move keyboard focus with the viewport
             $target.attr('tabindex', '-1').get(0).focus({ preventScroll: true });
         });
 
         /* ===============================================
-           Side menu
+           Template full-screen side menu
            =============================================== */
         var $sideMenu = $('.side-menu');
         var $overlay = $('#close_side_menu');
         var $toggles = $('.sidemenu_toggle');
         var $closeBtn = $('#btn_sideNavClose');
+        var menuOpener = null;
 
         function openMenu(event) {
             if (event) {
                 event.preventDefault();
+                menuOpener = event.currentTarget;
             }
 
-            $sideMenu.addClass('side-menu-active');
-            $overlay.fadeIn(300);
+            $sideMenu.removeAttr('inert').attr('aria-hidden', 'false')
+                .addClass('side-menu-active');
+            $('body').addClass('lw-menu-open');
+            $overlay.stop(true, true).fadeIn(reduceMotion ? 0 : 700);
             $toggles.attr('aria-expanded', 'true');
-            $closeBtn.get(0) && $closeBtn.get(0).focus();
+            $closeBtn.get(0) && $closeBtn.get(0).focus({ preventScroll: true });
         }
 
-        function closeMenu(event) {
-            if (event) {
-                event.preventDefault();
-            }
-
-            if (!$sideMenu.hasClass('side-menu-active')) {
-                return;
-            }
+        function closeMenu(event, restoreFocus) {
+            if (event) event.preventDefault();
+            if (!$sideMenu.hasClass('side-menu-active')) return;
 
             $sideMenu.removeClass('side-menu-active');
-            $overlay.fadeOut(200);
+            $('body').removeClass('lw-menu-open');
+            $overlay.stop(true, true).fadeOut(reduceMotion ? 0 : 200);
             $toggles.attr('aria-expanded', 'false');
-            $toggles.filter(':visible').first().focus();
+            if (restoreFocus !== false && menuOpener && $(menuOpener).is(':visible')) {
+                menuOpener.focus({ preventScroll: true });
+            }
+            $sideMenu.attr({ inert: '', 'aria-hidden': 'true' });
         }
 
-        $toggles.on('click', openMenu);
+        $toggles.on('click', openMenu).on('keydown', function (event) {
+            if (event.key === ' ') {
+                event.preventDefault();
+                $(this).trigger('click');
+            }
+        });
         $overlay.on('click', closeMenu);
         $closeBtn.on('click', closeMenu);
-        $('.side-nav .navbar-nav .nav-link').on('click', function () {
-            // let the link do its work, then close
-            $sideMenu.removeClass('side-menu-active');
-            $overlay.fadeOut(200);
-            $toggles.attr('aria-expanded', 'false');
+        $sideMenu.find('a').on('click', function () {
+            closeMenu(null, false);
         });
 
         $(document).on('keydown', function (event) {
+            if (!$sideMenu.hasClass('side-menu-active')) return;
             if (event.key === 'Escape') {
-                closeMenu();
+                closeMenu(event);
+            } else if (event.key === 'Tab') {
+                var $focusable = $sideMenu.find('a[href], button:not(:disabled)').filter(':visible');
+                var first = $focusable.get(0);
+                var last = $focusable.get($focusable.length - 1);
+                if (event.shiftKey && document.activeElement === first) {
+                    event.preventDefault();
+                    last && last.focus();
+                } else if (!event.shiftKey && document.activeElement === last) {
+                    event.preventDefault();
+                    first && first.focus();
+                }
             }
         });
 

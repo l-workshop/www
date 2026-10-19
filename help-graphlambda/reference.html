@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <script>
+            (function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());
+        </script>
+        <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+        <meta content="L-Workshop" name="author"/>
+        <meta content="A compact reference for the editor’s implemented controls and the most common reasons a graph will not run." name="description"/>
+        <meta content="#ffffff" name="theme-color"/>
+        <title>
+            Reference — GraphLambda Help | L-Workshop
+        </title>
+        <link href="https://www.l-workshop.my.id/help-graphlambda/reference.html" rel="canonical"/>
+        <link href="../favicon.ico" rel="icon" sizes="any"/>
+        <link href="../vendor/css/bundle.min.css" rel="stylesheet"/>
+        <link href="../assets/css/style.css" rel="stylesheet"/>
+        <link href="../assets/css/custom.css" rel="stylesheet"/>
+        <link href="../assets/css/help-shared.css" rel="stylesheet"/>
+    </head>
+    <body class="help help-graphlambda">
+        <a class="lw-skip" href="#main">
+            Skip to content
+        </a>
+        <div class="help-bar">
+            <button aria-controls="help-rail" aria-expanded="false" aria-label="Toggle help navigation" class="help-menu-toggle" type="button">
+                <i aria-hidden="true" class="fa fa-bars">
+                </i>
+            </button>
+            <a class="help-bar-brand" href="index.html">
+                <img alt="" height="336" src="../assets/img/lw-logo.png" width="336"/>
+                <span class="help-bar-text">
+                    <b>
+                        GraphLambda Help
+                    </b>
+                    <span class="help-bar-sub">
+                        Graph-native functional programming
+                    </span>
+                </span>
+            </a>
+            <span class="help-bar-spacer">
+            </span>
+            <button aria-label="Switch to dark theme" aria-pressed="false" class="lw-theme-toggle" type="button">
+                <i aria-hidden="true" class="fa fa-moon">
+                </i>
+            </button>
+            <div class="help-bar-links">
+                <a class="is-secondary" href="../index.html">
+                    L-Workshop
+                </a>
+                <a class="is-primary" href="https://g-l.l-workshop.my.id" rel="noopener">
+                    Open GraphLambda
+                </a>
+            </div>
+        </div>
+        <div class="help-scrim">
+        </div>
+        <div class="help-shell">
+            <nav aria-label="Help contents" class="help-rail" id="help-rail">
+                <h2>
+                    Contents
+                </h2>
+                <ul class="help-nav">
+                    <li>
+                        <a href="index.html">
+                            <em>
+                                01
+                            </em>
+                            Overview
+                        </a>
+                    </li>
+                    <li>
+                        <a href="getting-started.html">
+                            <em>
+                                02
+                            </em>
+                            Getting started
+                        </a>
+                    </li>
+                    <li>
+                        <a href="graphs.html">
+                            <em>
+                                03
+                            </em>
+                            Graphs and connections
+                        </a>
+                    </li>
+                    <li>
+                        <a href="functions.html">
+                            <em>
+                                04
+                            </em>
+                            Functions and scope
+                        </a>
+                    </li>
+                    <li>
+                        <a href="types.html">
+                            <em>
+                                05
+                            </em>
+                            Types
+                        </a>
+                    </li>
+                    <li>
+                        <a href="semantics.html">
+                            <em>
+                                06
+                            </em>
+                            Semantics and debugger
+                        </a>
+                    </li>
+                    <li>
+                        <a href="source-code.html">
+                            <em>
+                                07
+                            </em>
+                            Source code
+                        </a>
+                    </li>
+                    <li>
+                        <a aria-current="page" href="reference.html">
+                            <em>
+                                08
+                            </em>
+                            Reference
+                        </a>
+                        <ul class="help-subnav">
+                            <li>
+                                <a href="#gestures">
+                                    Mouse and keyboard
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#diagnostics">
+                                    When an edit is refused
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#recipes">
+                                    Useful expressions
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#terms">
+                                    A short glossary
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#related">
+                                    Other L-Workshop help
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <p class="help-rail-note">
+                    GraphLambda · eight chapters. Open the editor at
+                    <a href="https://g-l.l-workshop.my.id" rel="noopener">g-l.l-workshop.my.id</a>.
+                </p>
+            </nav>
+            <main class="help-main" id="main">
+                <article class="help-doc">
+                    <span class="help-kicker">
+                        08 / Reference
+                    </span>
+                    <h1>
+                        Controls, diagnostics and examples
+                    </h1>
+                    <p class="help-lede">
+                        A compact reference for the editor’s implemented controls and the most common reasons a graph will not run.
+                    </p>
+                    <h2 id="gestures">
+                        Mouse and keyboard
+                    </h2>
+                    <div class="help-table-wrap">
+                        <table class="help-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Gesture or control
+                                    </th>
+                                    <th scope="col">
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Click a palette item; drag it to the canvas
+                                    </td>
+                                    <td>
+                                        Create a node in the focused region.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Output click, then input click; output-to-input drag
+                                    </td>
+                                    <td>
+                                        Connect a producer to a consumer.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Escape during connection
+                                    </td>
+                                    <td>
+                                        Cancel the pending connection.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Click a node or wire
+                                    </td>
+                                    <td>
+                                        Select that source entity.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Drag a node title
+                                    </td>
+                                    <td>
+                                        Move its visual layout.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Delete / Backspace outside text fields
+                                    </td>
+                                    <td>
+                                        Delete a selected node or disconnect a selected wire while editing.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Mouse wheel
+                                    </td>
+                                    <td>
+                                        Zoom at the pointer.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Middle-button drag; Shift+primary drag
+                                    </td>
+                                    <td>
+                                        Pan the canvas.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Enter on a region header; Inspector Body / Then / Else / Scope
+                                    </td>
+                                    <td>
+                                        Focus an exact nested region.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Double-click Lambda / LetRec
+                                    </td>
+                                    <td>
+                                        Enter its Body / Scope.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Breadcrumb; Exit Region
+                                    </td>
+                                    <td>
+                                        Return to an enclosing region.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Ctrl+Enter / Cmd+Enter in Source Code
+                                    </td>
+                                    <td>
+                                        Parse, check and apply the draft.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Toolbar Undo / Redo
+                                    </td>
+                                    <td>
+                                        Restore document snapshots. Disabled during a run.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        Toolbar icons expose their names as tooltips. Theme offers
+                        <b>
+                            Light
+                        </b>
+                        ,
+                        <b>
+                            Dark
+                        </b>
+                        and
+                        <b>
+                            System
+                        </b>
+                        . Tools, Inspector and Tool Panel toggle the side and bottom panels.
+                    </p>
+                    <h2 id="diagnostics">
+                        When an edit is refused
+                    </h2>
+                    <div class="help-table-wrap">
+                        <table class="help-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Code or symptom
+                                    </th>
+                                    <th scope="col">
+                                        What to check
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        EDGE_TYPE_MISMATCH
+                                    </td>
+                                    <td>
+                                        The producer type must match the consumer. Check function arguments, Boolean conditions and both branch results.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        LAMBDA_VALUE_ESCAPE
+                                    </td>
+                                    <td>
+                                        A value is leaving a Lambda body through an illegal route. Return it through the designated body boundary.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        OUT_OF_SCOPE_BINDER_USE / INVALID_BINDER_USE
+                                    </td>
+                                    <td>
+                                        A binder occurrence must refer to the correct declaration in its lexical scope. Equal spelling does not make declarations interchangeable.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        TYPE_ERROR / INVALID_PROPERTY
+                                    </td>
+                                    <td>
+                                        An edited declaration or literal is incompatible or malformed. Read the accompanying checker message.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        OPEN_INPUT / ? : expected-type
+                                    </td>
+                                    <td>
+                                        A required input is unconnected. Finish the connection before running.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        AMBIGUOUS_PORT_TYPE
+                                    </td>
+                                    <td>
+                                        Connections have not yet constrained a port’s type. Complete the surrounding graph.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        INVALID_BODY_RESULT / INVALID_LETREC_BODY
+                                    </td>
+                                    <td>
+                                        Complete the body or recursive scope and its designated result.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Run disabled
+                                    </td>
+                                    <td>
+                                        The installed graph is empty, incomplete, ill-typed or structurally invalid.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        LetRec disabled
+                                    </td>
+                                    <td>
+                                        Select the existing Lambda you want to wrap first.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Draft rejected
+                                    </td>
+                                    <td>
+                                        Fix the parse / type diagnostic; the previous installed graph is still in place.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        Diagnostic codes identify the failed check. A refused graph edit does not add an Undo checkpoint. For a pending connection, Escape clears the preview without changing the program.
+                    </p>
+                    <h2 id="recipes">
+                        Useful expressions
+                    </h2>
+                    <pre><code>\x : Int . x
+
+(\x : Int . x + 1) 5
+
+(\f : Int -> Int . f 10) (\x : Int . x + 1)
+
+let x = 10 + 20 in x * x
+
+if 2 < 3 then 10 else 20</code></pre>
+                    <p>
+                        Submit one expression at a time. Expected results are a closure, 6, 11, 900 and 10 respectively. See
+                        <a href="source-code.html#factorial">
+                            factorial
+                        </a>
+                        for explicit recursion.
+                    </p>
+                    <h2 id="terms">
+                        A short glossary
+                    </h2>
+                    <div class="help-table-wrap">
+                        <table class="help-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Term
+                                    </th>
+                                    <th scope="col">
+                                        Meaning
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Graph
+                                    </td>
+                                    <td>
+                                        Persistent semantic program: nodes, ports, edges and regions.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Binder
+                                    </td>
+                                    <td>
+                                        A declaration identified independently of its displayed name.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Binder use
+                                    </td>
+                                    <td>
+                                        An edge referring to a lexical parameter or recursive declaration.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Region
+                                    </td>
+                                    <td>
+                                        An owned scope or branch, such as a Lambda body or If branch.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Capture
+                                    </td>
+                                    <td>
+                                        An external value or binding retained by a function body.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Closure
+                                    </td>
+                                    <td>
+                                        A runtime function value with its source Lambda and captured context.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Sharing
+                                    </td>
+                                    <td>
+                                        One producer value reaching multiple consumers.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        SAVAM
+                                    </td>
+                                    <td>
+                                        Source-Anchored Visual Abstract Machine: base-machine state plus source-anchored observations.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Provenance
+                                    </td>
+                                    <td>
+                                        The persistent source elements associated with a machine component or runtime value.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <h2 id="related">
+                        Other L-Workshop help
+                    </h2>
+                    <p>
+                        <a href="../help-b-lambda/index.html">
+                            B-Lambda
+                        </a>
+                        presents a different Lambda workbench with its own evaluation and compiler views.
+                        <a href="../help-mnl/index.html">
+                            MnL
+                        </a>
+                        covers reactive block-based functional programming. Their controls and semantics should not be assumed to be GraphLambda features.
+                    </p>
+                    <p>
+                        Return to
+                        <a href="../index.html">
+                            L-Workshop
+                        </a>
+                        for the wider project network.
+                    </p>
+                    <nav aria-label="Chapter navigation" class="help-pager">
+                        <a href="source-code.html">
+                            <span>
+                                Previous — 07
+                            </span>
+                            <b>
+                                ← Source code
+                            </b>
+                        </a>
+                        <a class="is-next" href="index.html">
+                            <span>
+                                Back to overview
+                            </span>
+                            <b>
+                                GraphLambda →
+                            </b>
+                        </a>
+                    </nav>
+                </article>
+                <p class="help-foot">
+                    GraphLambda is developed at
+                    <a href="../index.html">
+                        L-Workshop
+                    </a>
+                    .
+                </p>
+            </main>
+        </div>
+        <script src="../assets/js/help-shared.js">
+        </script>
+    </body>
+</html>

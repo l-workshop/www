@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <script>
+            (function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());
+        </script>
+        <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+        <meta content="L-Workshop" name="author"/>
+        <meta content="Run a complete example first, then build a small arithmetic graph from Empty. You will use the same connections for functions later." name="description"/>
+        <meta content="#ffffff" name="theme-color"/>
+        <title>
+            Getting started — GraphLambda Help | L-Workshop
+        </title>
+        <link href="https://www.l-workshop.my.id/help-graphlambda/getting-started.html" rel="canonical"/>
+        <link href="../favicon.ico" rel="icon" sizes="any"/>
+        <link href="../vendor/css/bundle.min.css" rel="stylesheet"/>
+        <link href="../assets/css/style.css" rel="stylesheet"/>
+        <link href="../assets/css/custom.css" rel="stylesheet"/>
+        <link href="../assets/css/help-shared.css" rel="stylesheet"/>
+    </head>
+    <body class="help help-graphlambda">
+        <a class="lw-skip" href="#main">
+            Skip to content
+        </a>
+        <div class="help-bar">
+            <button aria-controls="help-rail" aria-expanded="false" aria-label="Toggle help navigation" class="help-menu-toggle" type="button">
+                <i aria-hidden="true" class="fa fa-bars">
+                </i>
+            </button>
+            <a class="help-bar-brand" href="index.html">
+                <img alt="" height="336" src="../assets/img/lw-logo.png" width="336"/>
+                <span class="help-bar-text">
+                    <b>
+                        GraphLambda Help
+                    </b>
+                    <span class="help-bar-sub">
+                        Graph-native functional programming
+                    </span>
+                </span>
+            </a>
+            <span class="help-bar-spacer">
+            </span>
+            <button aria-label="Switch to dark theme" aria-pressed="false" class="lw-theme-toggle" type="button">
+                <i aria-hidden="true" class="fa fa-moon">
+                </i>
+            </button>
+            <div class="help-bar-links">
+                <a class="is-secondary" href="../index.html">
+                    L-Workshop
+                </a>
+                <a class="is-primary" href="https://g-l.l-workshop.my.id" rel="noopener">
+                    Open GraphLambda
+                </a>
+            </div>
+        </div>
+        <div class="help-scrim">
+        </div>
+        <div class="help-shell">
+            <nav aria-label="Help contents" class="help-rail" id="help-rail">
+                <h2>
+                    Contents
+                </h2>
+                <ul class="help-nav">
+                    <li>
+                        <a href="index.html">
+                            <em>
+                                01
+                            </em>
+                            Overview
+                        </a>
+                    </li>
+                    <li>
+                        <a aria-current="page" href="getting-started.html">
+                            <em>
+                                02
+                            </em>
+                            Getting started
+                        </a>
+                        <ul class="help-subnav">
+                            <li>
+                                <a href="#first-run">
+                                    Run the Application example
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#build">
+                                    Build 2 + 3 from Empty
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#edit">
+                                    Change a value and try again
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#text-first">
+                                    A second way: start from text
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#local">
+                                    Run the editor locally
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="graphs.html">
+                            <em>
+                                03
+                            </em>
+                            Graphs and connections
+                        </a>
+                    </li>
+                    <li>
+                        <a href="functions.html">
+                            <em>
+                                04
+                            </em>
+                            Functions and scope
+                        </a>
+                    </li>
+                    <li>
+                        <a href="types.html">
+                            <em>
+                                05
+                            </em>
+                            Types
+                        </a>
+                    </li>
+                    <li>
+                        <a href="semantics.html">
+                            <em>
+                                06
+                            </em>
+                            Semantics and debugger
+                        </a>
+                    </li>
+                    <li>
+                        <a href="source-code.html">
+                            <em>
+                                07
+                            </em>
+                            Source code
+                        </a>
+                    </li>
+                    <li>
+                        <a href="reference.html">
+                            <em>
+                                08
+                            </em>
+                            Reference
+                        </a>
+                    </li>
+                </ul>
+                <p class="help-rail-note">
+                    GraphLambda · eight chapters. Open the editor at
+                    <a href="https://g-l.l-workshop.my.id" rel="noopener">g-l.l-workshop.my.id</a>.
+                </p>
+            </nav>
+            <main class="help-main" id="main">
+                <article class="help-doc">
+                    <span class="help-kicker">
+                        02 / Getting started
+                    </span>
+                    <h1>
+                        Your first graph, step by step
+                    </h1>
+                    <p class="help-lede">
+                        Run a complete example first, then build a small arithmetic graph from Empty. You will use the same connections for functions later.
+                    </p>
+                    <p>Open <a href="https://g-l.l-workshop.my.id" rel="noopener">GraphLambda online</a> to follow this tutorial. No local installation is required.</p>
+                    <h2 id="first-run">
+                        Run the Application example
+                    </h2>
+                    <ol class="help-steps">
+                        <li>
+                            Under
+                            <b>
+                                Examples
+                            </b>
+                            , choose
+                            <b>
+                                Application
+                            </b>
+                            . If the graph is outside the view, select
+                            <b>
+                                Fit Graph
+                            </b>
+                            .
+                        </li>
+                        <li>
+                            Find the Lambda, the integer 5, Application and Output. The Lambda body adds 1 to its parameter.
+                        </li>
+                        <li>
+                            Select
+                            <b>
+                                Run
+                            </b>
+                            . This opens a session; it does not immediately run the program to completion.
+                        </li>
+                        <li>
+                            Select
+                            <b>
+                                Step
+                            </b>
+                            a few times. The dashed focus and the Debugger change as the machine evaluates the graph.
+                        </li>
+                        <li>
+                            Select
+                            <b>
+                                Run to End
+                            </b>
+                            . Control eventually reads
+                            <b>
+                                Final value 6
+                            </b>
+                            . Use
+                            <b>
+                                Step Back
+                            </b>
+                            to revisit an earlier recorded state.
+                        </li>
+                        <li>
+                            Select
+                            <b>
+                                Close Run
+                            </b>
+                            to return to structural editing.
+                        </li>
+                    </ol>
+                    <h2 id="build">
+                        Build 2 + 3 from Empty
+                    </h2>
+                    <ol class="help-steps">
+                        <li>
+                            Choose
+                            <b>
+                                Empty
+                            </b>
+                            . In the integer value field below Data, enter
+                            <code>
+                                2
+                            </code>
+                            , then click
+                            <b>
+                                Integer
+                            </b>
+                            . Repeat with
+                            <code>
+                                3
+                            </code>
+                            .
+                        </li>
+                        <li>
+                            Add
+                            <b>
+                                Add
+                            </b>
+                            from Processes, then
+                            <b>
+                                Output
+                            </b>
+                            . Click to add automatically, or drag an item to choose its position.
+                        </li>
+                        <li>
+                            Click the output port of 2, then an Add input. Connect 3 to the other Add input. You can also drag an output handle onto an input.
+                        </li>
+                        <li>
+                            Connect Add’s output to Output’s input. Hover a socket for its title; the semantic roles of Add’s inputs are
+                            <code>
+                                left
+                            </code>
+                            and
+                            <code>
+                                right
+                            </code>
+                            .
+                        </li>
+                        <li>
+                            Use
+                            <b>
+                                Run
+                            </b>
+                            , then
+                            <b>
+                                Run to End
+                            </b>
+                            . Control shows the final value
+                            <code>
+                                5
+                            </code>
+                            .
+                        </li>
+                    </ol>
+                    <div class="help-callout">
+                        <strong>
+                            Why Run may be disabled
+                        </strong>
+                        <p>
+                            Empty and incomplete graphs cannot start a run. Check for unconnected required inputs, finish owned body regions and read the diagnostics. An empty socket is a typed hole, not a default value.
+                        </p>
+                    </div>
+                    <h2 id="edit">
+                        Change a value and try again
+                    </h2>
+                    <p>
+                        Close the run, select an integer node and open
+                        <b>
+                            Type / Properties
+                        </b>
+                        . Edit
+                        <b>
+                            Integer Literal Value
+                        </b>
+                        and select
+                        <b>
+                            Apply Value
+                        </b>
+                        . For a Boolean, the value selector applies the change directly. A change that conflicts with the graph’s type or scope constraints is refused.
+                    </p>
+                    <p>
+                        To remove a node, select it and use
+                        <b>
+                            Delete Node
+                        </b>
+                        in the Inspector, or press Delete / Backspace outside a text field. To remove a connection, select its wire and use
+                        <b>
+                            Disconnect
+                        </b>
+                        . Undo and Redo restore document snapshots, including layout and region focus.
+                    </p>
+                    <h2 id="text-first">
+                        A second way: start from text
+                    </h2>
+                    <p>
+                        Open the
+                        <b>
+                            Source Code
+                        </b>
+                        tab and replace the draft with:
+                    </p>
+                    <pre><code>(\x : Int . x + 1) 5</code></pre>
+                    <p>
+                        Select
+                        <b>
+                            Update Flowchart
+                        </b>
+                        or press Ctrl+Enter (Cmd+Enter also works) while the text field is focused. Successful parsing and type checking replace the graph in one undoable edit. An invalid draft leaves the installed graph unchanged. See
+                        <a href="source-code.html">
+                            Source code
+                        </a>
+                        for sharing, conditionals and recursion.
+                    </p>
+                    <h2 id="local">
+                        Run the editor locally
+                    </h2>
+                    <p>
+                        If you have the GraphLambda source checkout, open a terminal in
+                        <code>
+                            Codes/GraphLambda
+                        </code>
+                        . With Node.js 22 or newer and npm installed:
+                    </p>
+                    <pre><code>npm install
+npm run dev --workspace @graphlambda/editor</code></pre>
+                    <p>
+                        Open the local URL printed by Vite. The help pages are static documentation and can be hosted independently of that editor.
+                    </p>
+                    <nav aria-label="Chapter navigation" class="help-pager">
+                        <a href="index.html">
+                            <span>
+                                Previous — 01
+                            </span>
+                            <b>
+                                ← Overview
+                            </b>
+                        </a>
+                        <a class="is-next" href="graphs.html">
+                            <span>
+                                Next — 03
+                            </span>
+                            <b>
+                                Graphs and connections →
+                            </b>
+                        </a>
+                    </nav>
+                </article>
+                <p class="help-foot">
+                    GraphLambda is developed at
+                    <a href="../index.html">
+                        L-Workshop
+                    </a>
+                    .
+                </p>
+            </main>
+        </div>
+        <script src="../assets/js/help-shared.js">
+        </script>
+    </body>
+</html>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <script>
+            (function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());
+        </script>
+        <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+        <meta content="L-Workshop" name="author"/>
+        <meta content="GraphLambda is a statically typed, higher-order visual functional language. Build a program as nodes, typed ports, directed wires and nested regions, then step its machine without rewriting the source graph." name="description"/>
+        <meta content="#ffffff" name="theme-color"/>
+        <title>
+            Overview — GraphLambda Help | L-Workshop
+        </title>
+        <link href="https://www.l-workshop.my.id/help-graphlambda/index.html" rel="canonical"/>
+        <link href="../favicon.ico" rel="icon" sizes="any"/>
+        <link href="../vendor/css/bundle.min.css" rel="stylesheet"/>
+        <link href="../assets/css/style.css" rel="stylesheet"/>
+        <link href="../assets/css/custom.css" rel="stylesheet"/>
+        <link href="../assets/css/help-shared.css" rel="stylesheet"/>
+    </head>
+    <body class="help help-graphlambda">
+        <a class="lw-skip" href="#main">
+            Skip to content
+        </a>
+        <div class="help-bar">
+            <button aria-controls="help-rail" aria-expanded="false" aria-label="Toggle help navigation" class="help-menu-toggle" type="button">
+                <i aria-hidden="true" class="fa fa-bars">
+                </i>
+            </button>
+            <a class="help-bar-brand" href="index.html">
+                <img alt="" height="336" src="../assets/img/lw-logo.png" width="336"/>
+                <span class="help-bar-text">
+                    <b>
+                        GraphLambda Help
+                    </b>
+                    <span class="help-bar-sub">
+                        Graph-native functional programming
+                    </span>
+                </span>
+            </a>
+            <span class="help-bar-spacer">
+            </span>
+            <button aria-label="Switch to dark theme" aria-pressed="false" class="lw-theme-toggle" type="button">
+                <i aria-hidden="true" class="fa fa-moon">
+                </i>
+            </button>
+            <div class="help-bar-links">
+                <a class="is-secondary" href="../index.html">
+                    L-Workshop
+                </a>
+                <a class="is-primary" href="https://g-l.l-workshop.my.id" rel="noopener">
+                    Open GraphLambda
+                </a>
+            </div>
+        </div>
+        <div class="help-scrim">
+        </div>
+        <div class="help-shell">
+            <nav aria-label="Help contents" class="help-rail" id="help-rail">
+                <h2>
+                    Contents
+                </h2>
+                <ul class="help-nav">
+                    <li>
+                        <a aria-current="page" href="index.html">
+                            <em>
+                                01
+                            </em>
+                            Overview
+                        </a>
+                        <ul class="help-subnav">
+                            <li>
+                                <a href="#what">
+                                    What GraphLambda is
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#workbench">
+                                    The workbench
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#source">
+                                    What stays fixed during a run
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#examples">
+                                    Five examples and an empty canvas
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="getting-started.html">
+                            <em>
+                                02
+                            </em>
+                            Getting started
+                        </a>
+                    </li>
+                    <li>
+                        <a href="graphs.html">
+                            <em>
+                                03
+                            </em>
+                            Graphs and connections
+                        </a>
+                    </li>
+                    <li>
+                        <a href="functions.html">
+                            <em>
+                                04
+                            </em>
+                            Functions and scope
+                        </a>
+                    </li>
+                    <li>
+                        <a href="types.html">
+                            <em>
+                                05
+                            </em>
+                            Types
+                        </a>
+                    </li>
+                    <li>
+                        <a href="semantics.html">
+                            <em>
+                                06
+                            </em>
+                            Semantics and debugger
+                        </a>
+                    </li>
+                    <li>
+                        <a href="source-code.html">
+                            <em>
+                                07
+                            </em>
+                            Source code
+                        </a>
+                    </li>
+                    <li>
+                        <a href="reference.html">
+                            <em>
+                                08
+                            </em>
+                            Reference
+                        </a>
+                    </li>
+                </ul>
+                <p class="help-rail-note">
+                    GraphLambda · eight chapters. Open the editor at
+                    <a href="https://g-l.l-workshop.my.id" rel="noopener">g-l.l-workshop.my.id</a>.
+                </p>
+            </nav>
+            <main class="help-main" id="main">
+                <article class="help-doc">
+                    <span class="help-kicker">
+                        01 / Overview
+                    </span>
+                    <h1>
+                        A program graph that stays put
+                    </h1>
+                    <p class="help-lede">
+                        GraphLambda is a statically typed, higher-order visual functional language. Build a program as nodes, typed ports, directed wires and nested regions, then step its machine without rewriting the source graph.
+                    </p>
+                    <h2 id="what">
+                        What GraphLambda is
+                    </h2>
+                    <p>
+                        The graph is the program, rather than a diagram reconstructed from a running interpreter. A Lambda owns a body region; a wire carries a value or a reference to a declared binder; one producer can feed several consumers. Execution adds values, focus and source links to that same graph.
+                    </p>
+                    <p>
+                        The language supports integers, Booleans, functions, application, arithmetic, conditionals, shared computations and explicit recursive functions. Its evaluation strategy is
+                        <strong>
+                            call-by-value
+                        </strong>
+                        . The editor uses native SVG; its nodes are not Blockly blocks.
+                    </p>
+                    <h2 id="workbench">
+                        The workbench
+                    </h2>
+                    <figure class="help-fig is-shot">
+                        <a aria-label="View full-size screenshot: GraphLambda Application example with an increment Lambda, a literal 5, Application and Output, flanked by the authoring palette and Inspector." href="assets/img/gl-workbench.jpg">
+                            <img alt="GraphLambda Application example with an increment Lambda, a literal 5, Application and Output, flanked by the authoring palette and Inspector." height="1000" loading="lazy" src="assets/img/gl-workbench.jpg" width="1600"/>
+                        </a>
+                        <figcaption>
+                            The
+                            <b>
+                                Application
+                            </b>
+                            example. The Lambda sends a function value to Application; the integer 5 enters its argument input. Select the image to view it at full size.
+                        </figcaption>
+                    </figure>
+                    <div class="help-table-wrap">
+                        <table class="help-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Area
+                                    </th>
+                                    <th scope="col">
+                                        What to look for
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Toolbar
+                                    </td>
+                                    <td>
+                                        History, zoom and fit controls, region breadcrumbs, panel toggles, Run and the Light / Dark / System theme preference.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Authoring, on the left
+                                    </td>
+                                    <td>
+                                        Click or drag a palette item to add a node. Examples include Empty and five complete programs.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Canvas, in the middle
+                                    </td>
+                                    <td>
+                                        The persistent source graph. Nested BODY, THEN, ELSE and LETREC SCOPE regions show ownership and scope.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Inspector, on the right
+                                    </td>
+                                    <td>
+                                        Inspector, Type / Properties and Source Code tabs. Select a source entity to inspect it or edit supported properties.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Tool Panel, below
+                                    </td>
+                                    <td>
+                                        Console diagnostics and the source-anchored Debugger. Starting a run opens the debugger.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <h2 id="source">
+                        What stays fixed during a run
+                    </h2>
+                    <p>
+                        A run keeps its source graph fixed. Machine state changes, values appear on wires and a dashed outline follows execution, but nodes and edges are not substituted away. Structural editing and Undo / Redo are locked until
+                        <b>
+                            Close Run
+                        </b>
+                        . You can still move a node, navigate into a region and change the camera.
+                    </p>
+                    <div class="help-callout">
+                        <strong>
+                            Three different marks
+                        </strong>
+                        <p>
+                            A solid selection stroke identifies your selection; a dashed stroke identifies machine focus; corner brackets, a dotted ring or a dotted trace identify a selected provenance anchor. Colour supplements those shapes.
+                        </p>
+                    </div>
+                    <h2 id="examples">
+                        Five examples and an empty canvas
+                    </h2>
+                    <div class="help-table-wrap">
+                        <table class="help-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Starting point
+                                    </th>
+                                    <th scope="col">
+                                        What it demonstrates
+                                    </th>
+                                    <th scope="col">
+                                        Result
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Empty
+                                    </td>
+                                    <td>
+                                        A root region with no program. Build with the palette.
+                                    </td>
+                                    <td>
+                                        Run disabled
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Lambda
+                                    </td>
+                                    <td>
+                                        A function with one parameter and a body.
+                                    </td>
+                                    <td>
+                                        A closure
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Application
+                                    </td>
+                                    <td>
+                                        Apply the increment function to 5.
+                                    </td>
+                                    <td>
+                                        6
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Higher order
+                                    </td>
+                                    <td>
+                                        Pass increment as a function argument, then apply it to 10.
+                                    </td>
+                                    <td>
+                                        11
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Let sharing
+                                    </td>
+                                    <td>
+                                        Compute 10 + 20 once; feed its value into both inputs of Multiply.
+                                    </td>
+                                    <td>
+                                        900
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Letrec
+                                    </td>
+                                    <td>
+                                        Factorial with an explicit recursive binder.
+                                    </td>
+                                    <td>
+                                        120
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        Start with
+                        <a href="getting-started.html">
+                            Application
+                        </a>
+                        , then compare
+                        <a href="graphs.html#sharing">
+                            Let sharing
+                        </a>
+                        and
+                        <a href="functions.html#recursion">
+                            Letrec
+                        </a>
+                        . Choosing a different example replaces the displayed document; copy any textual work you want to keep before switching.
+                    </p>
+                    <nav aria-label="Chapter navigation" class="help-pager">
+                        <a href="../index.html">
+                            <span>
+                                Up — site
+                            </span>
+                            <b>
+                                ← L-Workshop
+                            </b>
+                        </a>
+                        <a class="is-next" href="getting-started.html">
+                            <span>
+                                Next — 02
+                            </span>
+                            <b>
+                                Getting started →
+                            </b>
+                        </a>
+                    </nav>
+                </article>
+                <p class="help-foot">
+                    GraphLambda is developed at
+                    <a href="../index.html">
+                        L-Workshop
+                    </a>
+                    .
+                </p>
+            </main>
+        </div>
+        <script src="../assets/js/help-shared.js">
+        </script>
+    </body>
+</html>

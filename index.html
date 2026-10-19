@@ -19,9 +19,9 @@
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
     <meta name="author" content="L-Workshop">
     <meta name="description"
-        content="L-Workshop (Language Workshop) is a research workshop on visual and block-based programming languages and compiler construction, home to Macaca Nigra Language, Block Lambda, Block MiniJava, Visual SML and Block Featherweight Java.">
+        content="L-Workshop (Language Workshop) is a research workshop on visual and block-based programming languages and compiler construction, home to Macaca Nigra Language, Block Lambda, Block MiniJava, Visual SML, Block Featherweight Java, Mirror-C and GraphLambda.">
     <meta name="keywords"
-        content="L-Workshop, Language Workshop, visual programming language, block-based programming language, compiler construction, MNL, Macaca Nigra Language, Block Lambda, Block MiniJava, Visual SML, Block Featherweight Java, program visualization, type inference">
+        content="L-Workshop, Language Workshop, visual programming language, block-based programming language, compiler construction, MNL, Macaca Nigra Language, Block Lambda, Block MiniJava, Visual SML, Block Featherweight Java, Mirror-C, GraphLambda, graph-native programming, SAVAM, program visualization, type inference">
     <meta name="theme-color" content="#ffffff">
 
     <!-- Page Title -->
@@ -38,7 +38,7 @@
     <meta property="og:site_name" content="L-Workshop">
     <meta property="og:title" content="L-Workshop | Language Workshop">
     <meta property="og:description"
-        content="A research workshop on visual and block-based programming languages and compiler construction. Five projects, five domains.">
+        content="A research workshop on visual and block-based programming languages and compiler construction. Seven projects, seven domains.">
     <meta property="og:url" content="https://www.l-workshop.my.id/">
     <meta property="og:image" content="https://www.l-workshop.my.id/assets/img/lw-logo-large.png">
     <meta name="twitter:card" content="summary">
@@ -61,13 +61,13 @@
     <link rel="stylesheet" href="assets/css/custom.css">
 </head>
 
-<body data-spy="scroll" data-target="#lw-nav" data-offset="120">
+<body data-spy="scroll" data-target=".lw-section-nav" data-offset="90">
 
     <a class="lw-skip" href="#main">Skip to content</a>
 
     <!-- Header start -->
-    <header>
-        <nav class="navbar navbar-top-default navbar-expand-lg nav-three-circles black nav-box-shadow no-animation">
+    <header class="lw-site-header">
+        <nav class="navbar navbar-top-default navbar-expand-lg nav-three-circles black bottom-nav nav-box-shadow no-animation" aria-label="Main navigation">
             <div class="container-fluid">
                 <a class="logo lw-brand ml-lg-1" href="#home" aria-label="L-Workshop, home">
                     <img src="assets/img/lw-logo.png" alt="L-Workshop" width="336" height="336">
@@ -77,7 +77,7 @@
                     </span>
                 </a>
                 <div class="collapse navbar-collapse d-none d-lg-block">
-                    <ul class="nav navbar-nav mx-auto" id="lw-nav">
+                    <ul class="nav navbar-nav mx-auto lw-section-nav" id="lw-nav">
                         <li class="nav-item"><a href="#home" class="scroll nav-link">home</a></li>
                         <li class="nav-item"><a href="#about" class="scroll nav-link">about</a></li>
                         <li class="nav-item"><a href="#projects" class="scroll nav-link">projects</a></li>
@@ -103,8 +103,18 @@
             </div>
         </nav>
 
+        <!-- The template exposes a second opener above the hero on desktop. -->
+        <a class="menu_bars menu-bars-setting sidemenu_toggle d-lg-inline-block d-none" href="#side-menu"
+            role="button" aria-label="Open menu" aria-expanded="false" aria-controls="side-menu">
+            <div class="menu-lines">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </a>
+
         <!-- Side Menu -->
-        <div class="side-menu center" id="side-menu" aria-label="Site menu">
+        <div class="side-menu center" id="side-menu" role="dialog" aria-modal="true" aria-label="Site menu" aria-hidden="true" inert>
             <div class="quarter-circle">
                 <button class="menu_bars2 active" id="btn_sideNavClose" type="button" aria-label="Close menu">
                     <span></span>
@@ -119,7 +129,7 @@
                     <div class="lw-side-sub">Language Workshop</div>
                 </div>
                 <nav class="side-nav m-0" aria-label="Menu">
-                    <ul class="navbar-nav flex-lg-row">
+                    <ul class="navbar-nav flex-lg-row lw-section-nav">
                         <li class="nav-item"><a href="#home" class="scroll nav-link">home</a></li>
                         <li class="nav-item"><a href="#about" class="scroll nav-link">about</a></li>
                         <li class="nav-item"><a href="#projects" class="scroll nav-link">projects</a></li>
@@ -137,6 +147,8 @@
                         <a href="https://b-mj.l-workshop.my.id" rel="noopener">b-mj</a>
                         <a href="https://visml.l-workshop.my.id" rel="noopener">visml</a>
                         <a href="https://bfj.l-workshop.my.id" rel="noopener">bfj</a>
+                        <a href="https://m-c.l-workshop.my.id" rel="noopener">m-c</a>
+                        <a href="https://g-l.l-workshop.my.id" rel="noopener">g-l</a>
                         <a href="https://mnl-legacy.l-workshop.my.id" rel="noopener">mnl-legacy</a>
                     </div>
                     <button class="lw-theme-toggle lw-theme-toggle-side" type="button" aria-pressed="false"
@@ -201,6 +213,8 @@
                     <a class="lw-chip" style="--accent: var(--lw-blue)" href="https://b-mj.l-workshop.my.id" rel="noopener">B-MJ</a>
                     <a class="lw-chip" style="--accent: var(--lw-yellow)" href="https://visml.l-workshop.my.id" rel="noopener">ViSML</a>
                     <a class="lw-chip" style="--accent: var(--lw-slate)" href="https://bfj.l-workshop.my.id" rel="noopener">BFJ</a>
+                    <a class="lw-chip" style="--accent: var(--lw-imperial)" href="https://m-c.l-workshop.my.id" rel="noopener">Mirror-C</a>
+                    <a class="lw-chip" style="--accent: var(--lw-violet)" href="https://g-l.l-workshop.my.id" rel="noopener">GraphLambda</a>
                 </div>
             </div>
 
@@ -244,9 +258,10 @@
                                 block-based programming languages and compiler construction. It designs languages where
                                 the notation itself carries grammar and type information, and builds the compiler paths
                                 that take those notations to running code.</p>
-                            <p>Five projects are developed here, from a block-based functional language used in
-                                programming education to block front ends for Standard ML, MiniJava and Featherweight
-                                Java. Each one is published on its own domain.</p>
+                            <p>Seven projects are developed here: block-based languages and front ends for functional
+                                and object-oriented programming, a notional machine for C, and GraphLambda, a
+                                graph-native functional language whose source stays fixed during execution.
+                                Each project is published on its own domain.</p>
                         </div>
                     </div>
                 </div>
@@ -259,7 +274,7 @@
             <div class="container">
                 <div class="lw-section-title text-center lw-reveal">
                     <span class="lw-eyebrow">02 / Project index</span>
-                    <h2 id="projects-title">Five languages, <strong>five domains</strong>.</h2>
+                    <h2 id="projects-title">Seven projects, <strong>seven domains</strong>.</h2>
                     <p>Every project runs on its own subdomain of l-workshop.my.id.</p>
                 </div>
 
@@ -286,9 +301,8 @@
                                 help</a>
                             <span>8 chapters &middot; v5.2.0</span>
                         </p>
-                        <!-- A quiet pointer, not a sixth card — mnl-legacy is kept reachable for
-                             anyone still on the old version, without competing with the "Read the
-                             MnL help" CTA above or breaking the "five languages, five domains" count. -->
+                        <!-- Keep the legacy MnL reachable as an archive within the primary project,
+                             rather than counting it as a separate current project. -->
                         <p class="lw-project-legacy">
                             <i class="fa fa-archive" aria-hidden="true"></i> Looking for the older MnL?
                             <a href="https://mnl-legacy.l-workshop.my.id" rel="noopener">mnl-legacy.l-workshop.my.id</a>
@@ -409,6 +423,29 @@
                         <p class="lw-project-link"><span>m-c.l-workshop.my.id</span><i class="fa fa-arrow-right" aria-hidden="true"></i></p>
                     </article>
 
+                    <article class="lw-project lw-reveal" data-lw-delay="300"
+                        style="--accent: var(--lw-violet); --accent-ink: var(--lw-violet-ink); --accent-text: var(--lw-violet-text)">
+                        <div class="lw-project-head">
+                            <h3><a href="https://g-l.l-workshop.my.id" rel="noopener">GraphLambda</a></h3>
+                            <span class="lw-badge" style="text-transform: none">&lambda;G</span>
+                        </div>
+                        <p>A statically typed, higher-order visual functional language with a persistent source graph.
+                            Typed ports, directed wires and nested regions express functions, sharing and recursion;
+                            a source-anchored debugger steps execution without rewriting the program.</p>
+                        <div class="lw-tags">
+                            <span class="lw-tag">graph-native</span>
+                            <span class="lw-tag">higher-order functions</span>
+                            <span class="lw-tag">static typing</span>
+                            <span class="lw-tag">SAVAM</span>
+                        </div>
+                        <p class="lw-project-help">
+                            <a href="help-graphlambda/index.html"><i class="fa fa-book" aria-hidden="true"></i> Read the
+                                GraphLambda help</a>
+                            <span>8 chapters</span>
+                        </p>
+                        <p class="lw-project-link"><span>g-l.l-workshop.my.id</span><i class="fa fa-arrow-right" aria-hidden="true"></i></p>
+                    </article>
+
                 </div>
             </div>
         </section>
@@ -420,7 +457,7 @@
                 <div class="lw-section-title text-center lw-reveal">
                     <span class="lw-eyebrow">03 / Research threads</span>
                     <h2 id="research-title">What the workshop is <strong>actually studying</strong>.</h2>
-                    <p>Seven threads run across the projects. Each one is grounded in a working environment rather than
+                    <p>Eight threads run across the projects. Each one is grounded in a working environment rather than
                         a specification alone.</p>
                 </div>
 
@@ -447,8 +484,9 @@
                                 BFJ</span>
                         </div>
                         <h3>Shape and color as semantics</h3>
-                        <p>Every project pairs a grammar-aware Blockly renderer with its own connector shapes and
-                            category colors, so shape signals grammar and color signals type before a term is read.</p>
+                        <p>The block-based projects use grammar-aware Blockly renderers with distinct connector
+                            shapes and category colors. GraphLambda uses typed SVG ports and wire geometry to
+                            distinguish integers, Booleans and function values.</p>
                         <a class="lw-thread-more" href="https://mnl.l-workshop.my.id" rel="noopener">Shape and color <i
                                 class="fa fa-arrow-right" aria-hidden="true"></i></a>
                     </article>
@@ -488,8 +526,9 @@
                                 BFJ</span>
                         </div>
                         <h3>Text &#8646; blocks, structure preserved</h3>
-                        <p>Every project keeps a written and a block form of the same program in sync, from live
-                            text-to-block parsing to a block&ndash;AST correspondence BFJ has proved as a theorem.</p>
+                        <p>The block-based projects connect written and visual forms, from live text-to-block
+                            parsing to a block&ndash;AST correspondence BFJ has proved as a theorem. GraphLambda
+                            also compiles typed &lambda;G text into its persistent source graph.</p>
                         <a class="lw-thread-more" href="https://visml.l-workshop.my.id" rel="noopener">Visual SML <i
                                 class="fa fa-arrow-right" aria-hidden="true"></i></a>
                     </article>
@@ -518,6 +557,20 @@
                         <p>YAKI, the Yet Another Compiler Interface, converts block-based MNL into text-based languages
                             including SML and Scala, and writes MNL&rsquo;s typing derivations.</p>
                         <a class="lw-thread-more" href="https://mnl.l-workshop.my.id" rel="noopener">Compiler <i
+                                class="fa fa-arrow-right" aria-hidden="true"></i></a>
+                    </article>
+
+                    <article class="lw-thread lw-reveal" data-lw-delay="100"
+                        style="--accent: var(--lw-violet); --accent-ink: var(--lw-violet-ink); --accent-text: var(--lw-violet-text)">
+                        <div class="lw-thread-top">
+                            <span class="lw-thread-no">08</span>
+                            <span class="lw-thread-project">GraphLambda</span>
+                        </div>
+                        <h3>Source-anchored execution</h3>
+                        <p>The source graph stays fixed while the abstract machine advances. SAVAM observations
+                            expose focus, transition rules and effects; runtime values and closures link back to
+                            the source nodes, ports and regions that anchor them.</p>
+                        <a class="lw-thread-more" href="help-graphlambda/semantics.html">GraphLambda debugger <i
                                 class="fa fa-arrow-right" aria-hidden="true"></i></a>
                     </article>
 
@@ -583,18 +636,18 @@
                 <div class="lw-section-title text-center lw-reveal">
                     <span class="lw-eyebrow" style="--accent: var(--lw-blue)">04 / Case studies</span>
                     <h2 id="in-action-title">The <strong>notation</strong> at work.</h2>
-                    <p>Captures from the MNL, B-MJ, B-Lambda, BFJ, and ViSML environments: evaluation strategies, compiler
-                        pipelines, type derivations, and renderer notation as they appear on screen.</p>
+                    <p>Captures from MNL, B-MJ, B-Lambda, BFJ, ViSML and GraphLambda: evaluation strategies,
+                        compiler pipelines, type derivations, visual notation and source-anchored execution.</p>
                 </div>
 
                 <div class="lw-filters" role="group" aria-label="Filter case studies">
-                    <button class="lw-filter" type="button" data-filter="all" aria-pressed="true">All <span>14</span></button>
-                    <button class="lw-filter" type="button" data-filter="eval-vpl" aria-pressed="false">VPL-Eval <span>5</span></button>
+                    <button class="lw-filter" type="button" data-filter="all" aria-pressed="true">All <span>16</span></button>
+                    <button class="lw-filter" type="button" data-filter="eval-vpl" aria-pressed="false">VPL-Eval <span>6</span></button>
                     <button class="lw-filter" type="button" data-filter="compiler" aria-pressed="false">Compiler <span>2</span></button>
                     <button class="lw-filter" type="button" data-filter="hof" aria-pressed="false">Higher-order functions <span>2</span></button>
                     <button class="lw-filter" type="button" data-filter="fcf" aria-pressed="false">First-class functions <span>1</span></button>
                     <button class="lw-filter" type="button" data-filter="typing" aria-pressed="false">Type derivations <span>2</span></button>
-                    <button class="lw-filter" type="button" data-filter="notation" aria-pressed="false">Renderer notation <span>2</span></button>
+                    <button class="lw-filter" type="button" data-filter="notation" aria-pressed="false">Renderer notation <span>3</span></button>
                 </div>
 
                 <div class="lw-gallery" id="lw-gallery">
@@ -790,10 +843,38 @@
                             <i class="fa fa-search-plus" aria-hidden="true"></i>
                         </span>
                     </a>
+
+                    <a class="lw-shot" data-kind="notation" data-fancybox="cases"
+                        data-caption="GraphLambda: a Lambda body, typed function wire, Application and Output on the persistent source graph"
+                        href="help-graphlambda/assets/img/gl-workbench.jpg">
+                        <img src="help-graphlambda/assets/img/gl-workbench.jpg" width="1600" height="1000" loading="lazy"
+                            alt="GraphLambda Application example: an increment Lambda and integer 5 feed Application, which connects to Output; the authoring palette and Inspector flank the graph.">
+                        <span class="lw-shot-body">
+                            <span>
+                                <span class="lw-shot-kind">Graph notation</span>
+                                <span class="lw-shot-title">GraphLambda &middot; Application</span>
+                            </span>
+                            <i class="fa fa-search-plus" aria-hidden="true"></i>
+                        </span>
+                    </a>
+
+                    <a class="lw-shot" data-kind="eval-vpl" data-fancybox="cases"
+                        data-caption="GraphLambda: runtime values on the unchanged source graph, with SAVAM observations and the five machine components below"
+                        href="help-graphlambda/assets/img/gl-debugger.jpg">
+                        <img src="help-graphlambda/assets/img/gl-debugger.jpg" width="1600" height="1000" loading="lazy"
+                            alt="A paused GraphLambda Application run showing runtime wire values and a debugger panel for observation, Control, Environment, Store, Kontinuation, Ready Frontier and source provenance.">
+                        <span class="lw-shot-body">
+                            <span>
+                                <span class="lw-shot-kind">Source-anchored execution</span>
+                                <span class="lw-shot-title">GraphLambda &middot; SAVAM debugger</span>
+                            </span>
+                            <i class="fa fa-search-plus" aria-hidden="true"></i>
+                        </span>
+                    </a>
                 </div>
 
-                <p class="lw-gallery-note" id="lw-gallery-status" role="status">All captures come from MNL, B-MJ, B-Lambda, BFJ, or ViSML, and are taken from
-                    the live environment.</p>
+                <p class="lw-gallery-note" id="lw-gallery-status" role="status">All captures show running project environments. GraphLambda screenshots were captured
+                    from its local distribution build; see the help for the corresponding editor walkthrough.</p>
             </div>
         </section>
         <!-- In action end -->
@@ -820,7 +901,7 @@
                     </article>
 
                     <article class="lw-pub lw-reveal" data-lw-delay="150">
-                        <span class="lw-pub-flag lw-pub-flag-open">In preparation</span>
+                        <span class="lw-pub-flag lw-pub-flag-open">In Progress</span>
                         <div class="lw-pub-venue">
                             <h3>Ongoing</h3>
                             <span>work in progress</span>
@@ -830,6 +911,19 @@
                             <li>Preserving the structure of a textual grammar when it becomes a block language.</li>
                             <li>Live types: principal typing suggestions for incrementally built programs.</li>
                             <li>An abstract machine for visual programming languages.</li>
+                        </ul>
+                    </article>
+
+                    <article class="lw-pub lw-pub-future lw-reveal" data-lw-delay="250">
+                        <span class="lw-pub-flag lw-pub-flag-future">Future work</span>
+                        <div class="lw-pub-venue">
+                            <h3>Future work</h3>
+                        </div>
+                        <ul>
+                            <li>Live Effects: Liveness Through Holes Under Algebraic Handlers</li>
+                            <li>One Demand, Two Directions: Type-Directed Editing and Type-Error Explanation from a Single Projection</li>
+                            <li>Mirror-C: Proving a Block-Based Visualisation Faithful to a C Abstract Machine</li>
+                            <li>Derived, Not Stipulated: Type-Directed Edit Propagation from a Machine-Validated Signature Table</li>
                         </ul>
                     </article>
                 </div>
@@ -875,6 +969,8 @@
                         <a style="--accent: var(--lw-blue)" href="https://b-mj.l-workshop.my.id" rel="noopener">b-mj.l-workshop.my.id</a>
                         <a style="--accent: var(--lw-yellow)" href="https://visml.l-workshop.my.id" rel="noopener">visml.l-workshop.my.id</a>
                         <a style="--accent: var(--lw-slate)" href="https://bfj.l-workshop.my.id" rel="noopener">bfj.l-workshop.my.id</a>
+                        <a style="--accent: var(--lw-imperial)" href="https://m-c.l-workshop.my.id" rel="noopener">m-c.l-workshop.my.id</a>
+                        <a style="--accent: var(--lw-violet)" href="https://g-l.l-workshop.my.id" rel="noopener">g-l.l-workshop.my.id</a>
                     </div>
                 </div>
                 <div>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <script>
+            (function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());
+        </script>
+        <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+        <meta content="L-Workshop" name="author"/>
+        <meta content="The Source Code tab provides a textual view of the graph and a draft editor. A successful update installs a newly compiled graph; merely typing does not change the running program." name="description"/>
+        <meta content="#ffffff" name="theme-color"/>
+        <title>
+            Source code — GraphLambda Help | L-Workshop
+        </title>
+        <link href="https://www.l-workshop.my.id/help-graphlambda/source-code.html" rel="canonical"/>
+        <link href="../favicon.ico" rel="icon" sizes="any"/>
+        <link href="../vendor/css/bundle.min.css" rel="stylesheet"/>
+        <link href="../assets/css/style.css" rel="stylesheet"/>
+        <link href="../assets/css/custom.css" rel="stylesheet"/>
+        <link href="../assets/css/help-shared.css" rel="stylesheet"/>
+    </head>
+    <body class="help help-graphlambda">
+        <a class="lw-skip" href="#main">
+            Skip to content
+        </a>
+        <div class="help-bar">
+            <button aria-controls="help-rail" aria-expanded="false" aria-label="Toggle help navigation" class="help-menu-toggle" type="button">
+                <i aria-hidden="true" class="fa fa-bars">
+                </i>
+            </button>
+            <a class="help-bar-brand" href="index.html">
+                <img alt="" height="336" src="../assets/img/lw-logo.png" width="336"/>
+                <span class="help-bar-text">
+                    <b>
+                        GraphLambda Help
+                    </b>
+                    <span class="help-bar-sub">
+                        Graph-native functional programming
+                    </span>
+                </span>
+            </a>
+            <span class="help-bar-spacer">
+            </span>
+            <button aria-label="Switch to dark theme" aria-pressed="false" class="lw-theme-toggle" type="button">
+                <i aria-hidden="true" class="fa fa-moon">
+                </i>
+            </button>
+            <div class="help-bar-links">
+                <a class="is-secondary" href="../index.html">
+                    L-Workshop
+                </a>
+                <a class="is-primary" href="https://g-l.l-workshop.my.id" rel="noopener">
+                    Open GraphLambda
+                </a>
+            </div>
+        </div>
+        <div class="help-scrim">
+        </div>
+        <div class="help-shell">
+            <nav aria-label="Help contents" class="help-rail" id="help-rail">
+                <h2>
+                    Contents
+                </h2>
+                <ul class="help-nav">
+                    <li>
+                        <a href="index.html">
+                            <em>
+                                01
+                            </em>
+                            Overview
+                        </a>
+                    </li>
+                    <li>
+                        <a href="getting-started.html">
+                            <em>
+                                02
+                            </em>
+                            Getting started
+                        </a>
+                    </li>
+                    <li>
+                        <a href="graphs.html">
+                            <em>
+                                03
+                            </em>
+                            Graphs and connections
+                        </a>
+                    </li>
+                    <li>
+                        <a href="functions.html">
+                            <em>
+                                04
+                            </em>
+                            Functions and scope
+                        </a>
+                    </li>
+                    <li>
+                        <a href="types.html">
+                            <em>
+                                05
+                            </em>
+                            Types
+                        </a>
+                    </li>
+                    <li>
+                        <a href="semantics.html">
+                            <em>
+                                06
+                            </em>
+                            Semantics and debugger
+                        </a>
+                    </li>
+                    <li>
+                        <a aria-current="page" href="source-code.html">
+                            <em>
+                                07
+                            </em>
+                            Source code
+                        </a>
+                        <ul class="help-subnav">
+                            <li>
+                                <a href="#update">
+                                    Use Update Flowchart
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#syntax">
+                                    The surface syntax
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#factorial">
+                                    Try factorial
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#projection">
+                                    Read graph changes as code
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#keep">
+                                    Keep your program text
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="reference.html">
+                            <em>
+                                08
+                            </em>
+                            Reference
+                        </a>
+                    </li>
+                </ul>
+                <p class="help-rail-note">
+                    GraphLambda · eight chapters. Open the editor at
+                    <a href="https://g-l.l-workshop.my.id" rel="noopener">g-l.l-workshop.my.id</a>.
+                </p>
+            </nav>
+            <main class="help-main" id="main">
+                <article class="help-doc">
+                    <span class="help-kicker">
+                        07 / Source code
+                    </span>
+                    <h1>
+                        Write λG, then update the graph
+                    </h1>
+                    <p class="help-lede">
+                        The Source Code tab provides a textual view of the graph and a draft editor. A successful update installs a newly compiled graph; merely typing does not change the running program.
+                    </p>
+                    <h2 id="update">
+                        Use Update Flowchart
+                    </h2>
+                    <figure class="help-fig is-shot">
+                        <a aria-label="View full-size screenshot: GraphLambda Source Code tab showing the increment application text, synchronization status and Update Flowchart button beside the corresponding graph." href="assets/img/gl-source.jpg">
+                            <img alt="GraphLambda Source Code tab showing the increment application text, synchronization status and Update Flowchart button beside the corresponding graph." height="1000" loading="lazy" src="assets/img/gl-source.jpg" width="1600"/>
+                        </a>
+                        <figcaption>
+                            The Source Code tab and the graph it describes. The draft becomes a program only after a successful update. Select the image to view it at full size.
+                        </figcaption>
+                    </figure>
+                    <ol class="help-steps">
+                        <li>
+                            Close any open run and choose
+                            <b>
+                                Source Code
+                            </b>
+                            in the right Inspector.
+                        </li>
+                        <li>
+                            Enter a complete expression. The draft status indicates whether the text is synchronized with the flowchart.
+                        </li>
+                        <li>
+                            Select
+                            <b>
+                                Update Flowchart
+                            </b>
+                            , or press Ctrl+Enter / Cmd+Enter in the field.
+                        </li>
+                        <li>
+                            On success, the new graph appears at its root with a fresh layout and selection. Use Undo to restore the previous document.
+                        </li>
+                    </ol>
+                    <p>
+                        Parse or type errors leave the installed graph unchanged and display diagnostics beside the draft. Correct the draft and submit it again.
+                    </p>
+                    <h2 id="syntax">
+                        The surface syntax
+                    </h2>
+                    <div class="help-table-wrap">
+                        <table class="help-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Form
+                                    </th>
+                                    <th scope="col">
+                                        Example
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Integer and Boolean
+                                    </td>
+                                    <td>
+                                        <code>
+                                            42
+                                        </code>
+                                        ,
+                                        <code>
+                                            true
+                                        </code>
+                                        ,
+                                        <code>
+                                            false
+                                        </code>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Lambda with annotated parameter
+                                    </td>
+                                    <td>
+                                        <code>
+                                            \x : Int . x + 1
+                                        </code>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Application by juxtaposition
+                                    </td>
+                                    <td>
+                                        <code>
+                                            (\x : Int . x + 1) 5
+                                        </code>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Ordinary sharing
+                                    </td>
+                                    <td>
+                                        <code>
+                                            let x = 10 + 20 in x * x
+                                        </code>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Conditional
+                                    </td>
+                                    <td>
+                                        <code>
+                                            if 2 < 3 then 10 else 20
+                                        </code>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Recursive function
+                                    </td>
+                                    <td>
+                                        <code>
+                                            letrec f : Int -> Int = \x : Int . x in f 5
+                                        </code>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Primitive operators
+                                    </td>
+                                    <td>
+                                        <code>
+                                            +
+                                        </code>
+                                        ,
+                                        <code>
+                                            -
+                                        </code>
+                                        ,
+                                        <code>
+                                            *
+                                        </code>
+                                        ,
+                                        <code>
+                                            <
+                                        </code>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        Use a backslash for Lambda, a colon before its parameter type and a dot before its body. Parentheses group expressions and function types. An ordinary let binder is available in its body, but not its initializer; a letrec binder is available in both.
+                    </p>
+                    <h2 id="factorial">
+                        Try factorial
+                    </h2>
+                    <pre><code>letrec fact : Int -> Int =
+  \n : Int . if n < 1 then 1 else n * fact (n - 1)
+in fact 5</code></pre>
+                    <p>
+                        Update the flowchart, then Run to End. The final value is
+                        <code>
+                            120
+                        </code>
+                        . The definition must be a Lambda of the declared function type. An arbitrary cyclic graph is not a substitute for LetRec.
+                    </p>
+                    <h2 id="projection">
+                        Read graph changes as code
+                    </h2>
+                    <p>
+                        The textual projection follows the executable expression rooted at Output. A shared producer is represented with an explicit let, so reading the text does not turn sharing into duplicated work. Generated binder names and formatting need not preserve the exact characters originally typed.
+                    </p>
+                    <p>
+                        A graph with missing required inputs or no single root Output cannot provide a complete executable text projection. Finish the graph, or use a complete text draft to replace it. Successful text replacement creates a new graph; source identities are not promised to survive that replacement.
+                    </p>
+                    <h2 id="keep">
+                        Keep your program text
+                    </h2>
+                    <p>
+                        The current editor has no file-open / file-save controls for programs. Copy your complete λG text to a file you keep, then paste it back and use Update Flowchart when needed. Do this before reloading or replacing a document with another example.
+                    </p>
+                    <p>
+                        The saved theme preference is separate from program persistence. A copied expression preserves the program you can recompile; it does not preserve node positions, source identities or debugger history.
+                    </p>
+                    <nav aria-label="Chapter navigation" class="help-pager">
+                        <a href="semantics.html">
+                            <span>
+                                Previous — 06
+                            </span>
+                            <b>
+                                ← Semantics and debugger
+                            </b>
+                        </a>
+                        <a class="is-next" href="reference.html">
+                            <span>
+                                Next — 08
+                            </span>
+                            <b>
+                                Reference →
+                            </b>
+                        </a>
+                    </nav>
+                </article>
+                <p class="help-foot">
+                    GraphLambda is developed at
+                    <a href="../index.html">
+                        L-Workshop
+                    </a>
+                    .
+                </p>
+            </main>
+        </div>
+        <script src="../assets/js/help-shared.js">
+        </script>
+    </body>
+</html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <script>
+            (function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());
+        </script>
+        <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+        <meta content="L-Workshop" name="author"/>
+        <meta content="A Lambda is a value-producing function with a nested region. Its parameter, captured values and returned value have distinct roles." name="description"/>
+        <meta content="#ffffff" name="theme-color"/>
+        <title>
+            Functions and scope — GraphLambda Help | L-Workshop
+        </title>
+        <link href="https://www.l-workshop.my.id/help-graphlambda/functions.html" rel="canonical"/>
+        <link href="../favicon.ico" rel="icon" sizes="any"/>
+        <link href="../vendor/css/bundle.min.css" rel="stylesheet"/>
+        <link href="../assets/css/style.css" rel="stylesheet"/>
+        <link href="../assets/css/custom.css" rel="stylesheet"/>
+        <link href="../assets/css/help-shared.css" rel="stylesheet"/>
+    </head>
+    <body class="help help-graphlambda">
+        <a class="lw-skip" href="#main">
+            Skip to content
+        </a>
+        <div class="help-bar">
+            <button aria-controls="help-rail" aria-expanded="false" aria-label="Toggle help navigation" class="help-menu-toggle" type="button">
+                <i aria-hidden="true" class="fa fa-bars">
+                </i>
+            </button>
+            <a class="help-bar-brand" href="index.html">
+                <img alt="" height="336" src="../assets/img/lw-logo.png" width="336"/>
+                <span class="help-bar-text">
+                    <b>
+                        GraphLambda Help
+                    </b>
+                    <span class="help-bar-sub">
+                        Graph-native functional programming
+                    </span>
+                </span>
+            </a>
+            <span class="help-bar-spacer">
+            </span>
+            <button aria-label="Switch to dark theme" aria-pressed="false" class="lw-theme-toggle" type="button">
+                <i aria-hidden="true" class="fa fa-moon">
+                </i>
+            </button>
+            <div class="help-bar-links">
+                <a class="is-secondary" href="../index.html">
+                    L-Workshop
+                </a>
+                <a class="is-primary" href="https://g-l.l-workshop.my.id" rel="noopener">
+                    Open GraphLambda
+                </a>
+            </div>
+        </div>
+        <div class="help-scrim">
+        </div>
+        <div class="help-shell">
+            <nav aria-label="Help contents" class="help-rail" id="help-rail">
+                <h2>
+                    Contents
+                </h2>
+                <ul class="help-nav">
+                    <li>
+                        <a href="index.html">
+                            <em>
+                                01
+                            </em>
+                            Overview
+                        </a>
+                    </li>
+                    <li>
+                        <a href="getting-started.html">
+                            <em>
+                                02
+                            </em>
+                            Getting started
+                        </a>
+                    </li>
+                    <li>
+                        <a href="graphs.html">
+                            <em>
+                                03
+                            </em>
+                            Graphs and connections
+                        </a>
+                    </li>
+                    <li>
+                        <a aria-current="page" href="functions.html">
+                            <em>
+                                04
+                            </em>
+                            Functions and scope
+                        </a>
+                        <ul class="help-subnav">
+                            <li>
+                                <a href="#lambda">
+                                    Build and apply a function
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#higher-order">
+                                    Pass a function as a value
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#captures">
+                                    Capture an outside value
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#regions">
+                                    Navigate to the right region
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#recursion">
+                                    Declare recursion explicitly
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="types.html">
+                            <em>
+                                05
+                            </em>
+                            Types
+                        </a>
+                    </li>
+                    <li>
+                        <a href="semantics.html">
+                            <em>
+                                06
+                            </em>
+                            Semantics and debugger
+                        </a>
+                    </li>
+                    <li>
+                        <a href="source-code.html">
+                            <em>
+                                07
+                            </em>
+                            Source code
+                        </a>
+                    </li>
+                    <li>
+                        <a href="reference.html">
+                            <em>
+                                08
+                            </em>
+                            Reference
+                        </a>
+                    </li>
+                </ul>
+                <p class="help-rail-note">
+                    GraphLambda · eight chapters. Open the editor at
+                    <a href="https://g-l.l-workshop.my.id" rel="noopener">g-l.l-workshop.my.id</a>.
+                </p>
+            </nav>
+            <main class="help-main" id="main">
+                <article class="help-doc">
+                    <span class="help-kicker">
+                        04 / Functions and scope
+                    </span>
+                    <h1>
+                        Functions have bodies, and bodies have boundaries
+                    </h1>
+                    <p class="help-lede">
+                        A Lambda is a value-producing function with a nested region. Its parameter, captured values and returned value have distinct roles.
+                    </p>
+                    <h2 id="lambda">
+                        Build and apply a function
+                    </h2>
+                    <p>
+                        Set
+                        <b>
+                            Binder name
+                        </b>
+                        and
+                        <b>
+                            Binder type
+                        </b>
+                        in the palette before adding a Lambda. The parameter declaration appears at the BODY boundary. Connect that parameter to computations inside the body, then connect the body’s final producer to the designated body-result socket.
+                    </p>
+                    <p>
+                        The Lambda’s outer
+                        <code>
+                            out
+                        </code>
+                        carries the whole function. Connect it to Application’s
+                        <code>
+                            function
+                        </code>
+                        input, connect a value to
+                        <code>
+                            argument
+                        </code>
+                        , then connect Application’s
+                        <code>
+                            result
+                        </code>
+                        to its consumer. Creating a Lambda does not evaluate its body; applying the closure does.
+                    </p>
+                    <p>
+                        To change an existing parameter, select the Lambda and open
+                        <b>
+                            Type / Properties
+                        </b>
+                        . Use
+                        <b>
+                            Parameter Name
+                        </b>
+                        with
+                        <b>
+                            Rename Binder
+                        </b>
+                        , or the
+                        <b>
+                            Parameter Type
+                        </b>
+                        selector. Connections follow binder identity, so changing its displayed name does not reconnect occurrences by spelling.
+                    </p>
+                    <h2 id="higher-order">
+                        Pass a function as a value
+                    </h2>
+                    <figure class="help-fig is-shot">
+                        <a aria-label="View full-size screenshot: Higher order example with an Int-to-Int function passed into a Lambda whose body applies its function parameter to 10." href="assets/img/gl-higher-order.jpg">
+                            <img alt="Higher order example with an Int-to-Int function passed into a Lambda whose body applies its function parameter to 10." height="1000" loading="lazy" src="assets/img/gl-higher-order.jpg" width="1600"/>
+                        </a>
+                        <figcaption>
+                            The Higher order example passes increment as a function value. The doubled function wire keeps it distinct from an integer wire. Select the image to view it at full size.
+                        </figcaption>
+                    </figure>
+                    <pre><code>(\f : Int -> Int . f 10) (\x : Int . x + 1)</code></pre>
+                    <p>
+                        The outer parameter
+                        <code>
+                            f
+                        </code>
+                        has type
+                        <code>
+                            Int -> Int
+                        </code>
+                        . The argument is itself a Lambda, so the program returns
+                        <code>
+                            11
+                        </code>
+                        . A function wire is not an instruction to run the function immediately.
+                    </p>
+                    <h2 id="captures">
+                        Capture an outside value
+                    </h2>
+                    <p>
+                        An outside value may enter a Lambda body as a
+                        <strong>
+                            capture
+                        </strong>
+                        , provided its type and lexical scope permit it. An inner body value cannot be wired straight to an unrelated outside consumer. Return it through the body boundary and apply the function instead.
+                    </p>
+                    <p>
+                        When a body is focused, the editor retains the external sources it already captures as labelled boundary handles. They refer to the original source ports. Introduce a new external dependency from the full graph view first; an existing capture handle can then participate in more connections.
+                    </p>
+                    <p>
+                        A closure retains its Lambda, body region and captured environment / ports. The
+                        <a href="semantics.html#provenance">
+                            Debugger
+                        </a>
+                        lets you follow these back to source.
+                    </p>
+                    <h2 id="regions">
+                        Navigate to the right region
+                    </h2>
+                    <p>
+                        Use a region header’s
+                        <b>
+                            Enter
+                        </b>
+                        control, or select its owner and use the Inspector’s role-specific buttons:
+                    </p>
+                    <div class="help-table-wrap">
+                        <table class="help-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Owner
+                                    </th>
+                                    <th scope="col">
+                                        Destination
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Lambda
+                                    </td>
+                                    <td>
+                                        Body
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        If
+                                    </td>
+                                    <td>
+                                        Then or Else, chosen explicitly
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        LetRec
+                                    </td>
+                                    <td>
+                                        Scope
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        Double-clicking a Lambda or LetRec opens its body or scope. If requires an explicit branch choice. Use
+                        <b>
+                            Exit Region
+                        </b>
+                        or the breadcrumb to return. Breadcrumbs include the owner and role, such as
+                        <code>
+                            root / if / then
+                        </code>
+                        . Region headers also expose Collapse / Expand to manage the visible detail.
+                    </p>
+                    <h2 id="recursion">
+                        Declare recursion explicitly
+                    </h2>
+                    <figure class="help-fig is-shot">
+                        <a aria-label="View full-size screenshot: Letrec factorial example showing the recursive scope, definition Lambda, conditional branches and recursive function connection." href="assets/img/gl-letrec.jpg">
+                            <img alt="Letrec factorial example showing the recursive scope, definition Lambda, conditional branches and recursive function connection." height="1000" loading="lazy" src="assets/img/gl-letrec.jpg" width="1600"/>
+                        </a>
+                        <figcaption>
+                            Factorial uses LetRec. Only the self-reference inside the definition receives recursion notation. Select the image to view it at full size.
+                        </figcaption>
+                    </figure>
+                    <p>
+                        To author recursion visually, first create and select a Lambda in the region you want to wrap. Set the recursive binder name and an arrow type, then add
+                        <b>
+                            LetRec
+                        </b>
+                        . The control is disabled until a Lambda is selected. Wrapping moves the same Lambda into the new scope and connects it as the recursive definition.
+                    </p>
+                    <p>
+                        Use the recursive declaration in the definition for self-calls, and in the LetRec body for the initial call. Complete the body-result connection before running. The recursive type must agree with the definition Lambda.
+                    </p>
+                    <p>
+                        A recursive occurrence inside the definition is drawn with a loop marker. The ordinary call in the surrounding LetRec body stays an ordinary function wire. Drawing a cycle elsewhere does not declare recursion.
+                    </p>
+                    <nav aria-label="Chapter navigation" class="help-pager">
+                        <a href="graphs.html">
+                            <span>
+                                Previous — 03
+                            </span>
+                            <b>
+                                ← Graphs and connections
+                            </b>
+                        </a>
+                        <a class="is-next" href="types.html">
+                            <span>
+                                Next — 05
+                            </span>
+                            <b>
+                                Types →
+                            </b>
+                        </a>
+                    </nav>
+                </article>
+                <p class="help-foot">
+                    GraphLambda is developed at
+                    <a href="../index.html">
+                        L-Workshop
+                    </a>
+                    .
+                </p>
+            </main>
+        </div>
+        <script src="../assets/js/help-shared.js">
+        </script>
+    </body>
+</html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <script>
+            (function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());
+        </script>
+        <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+        <meta content="L-Workshop" name="author"/>
+        <meta content="Run opens a call-by-value machine session. The source graph stays fixed while the machine computes and its observations identify what changed." name="description"/>
+        <meta content="#ffffff" name="theme-color"/>
+        <title>
+            Semantics and debugger — GraphLambda Help | L-Workshop
+        </title>
+        <link href="https://www.l-workshop.my.id/help-graphlambda/semantics.html" rel="canonical"/>
+        <link href="../favicon.ico" rel="icon" sizes="any"/>
+        <link href="../vendor/css/bundle.min.css" rel="stylesheet"/>
+        <link href="../assets/css/style.css" rel="stylesheet"/>
+        <link href="../assets/css/custom.css" rel="stylesheet"/>
+        <link href="../assets/css/help-shared.css" rel="stylesheet"/>
+    </head>
+    <body class="help help-graphlambda">
+        <a class="lw-skip" href="#main">
+            Skip to content
+        </a>
+        <div class="help-bar">
+            <button aria-controls="help-rail" aria-expanded="false" aria-label="Toggle help navigation" class="help-menu-toggle" type="button">
+                <i aria-hidden="true" class="fa fa-bars">
+                </i>
+            </button>
+            <a class="help-bar-brand" href="index.html">
+                <img alt="" height="336" src="../assets/img/lw-logo.png" width="336"/>
+                <span class="help-bar-text">
+                    <b>
+                        GraphLambda Help
+                    </b>
+                    <span class="help-bar-sub">
+                        Graph-native functional programming
+                    </span>
+                </span>
+            </a>
+            <span class="help-bar-spacer">
+            </span>
+            <button aria-label="Switch to dark theme" aria-pressed="false" class="lw-theme-toggle" type="button">
+                <i aria-hidden="true" class="fa fa-moon">
+                </i>
+            </button>
+            <div class="help-bar-links">
+                <a class="is-secondary" href="../index.html">
+                    L-Workshop
+                </a>
+                <a class="is-primary" href="https://g-l.l-workshop.my.id" rel="noopener">
+                    Open GraphLambda
+                </a>
+            </div>
+        </div>
+        <div class="help-scrim">
+        </div>
+        <div class="help-shell">
+            <nav aria-label="Help contents" class="help-rail" id="help-rail">
+                <h2>
+                    Contents
+                </h2>
+                <ul class="help-nav">
+                    <li>
+                        <a href="index.html">
+                            <em>
+                                01
+                            </em>
+                            Overview
+                        </a>
+                    </li>
+                    <li>
+                        <a href="getting-started.html">
+                            <em>
+                                02
+                            </em>
+                            Getting started
+                        </a>
+                    </li>
+                    <li>
+                        <a href="graphs.html">
+                            <em>
+                                03
+                            </em>
+                            Graphs and connections
+                        </a>
+                    </li>
+                    <li>
+                        <a href="functions.html">
+                            <em>
+                                04
+                            </em>
+                            Functions and scope
+                        </a>
+                    </li>
+                    <li>
+                        <a href="types.html">
+                            <em>
+                                05
+                            </em>
+                            Types
+                        </a>
+                    </li>
+                    <li>
+                        <a aria-current="page" href="semantics.html">
+                            <em>
+                                06
+                            </em>
+                            Semantics and debugger
+                        </a>
+                        <ul class="help-subnav">
+                            <li>
+                                <a href="#evaluation">
+                                    How evaluation proceeds
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#controls">
+                                    The run controls
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#state">
+                                    Read the debugger
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#provenance">
+                                    Follow a value back to source
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#status">
+                                    Interpret the status
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="source-code.html">
+                            <em>
+                                07
+                            </em>
+                            Source code
+                        </a>
+                    </li>
+                    <li>
+                        <a href="reference.html">
+                            <em>
+                                08
+                            </em>
+                            Reference
+                        </a>
+                    </li>
+                </ul>
+                <p class="help-rail-note">
+                    GraphLambda · eight chapters. Open the editor at
+                    <a href="https://g-l.l-workshop.my.id" rel="noopener">g-l.l-workshop.my.id</a>.
+                </p>
+            </nav>
+            <main class="help-main" id="main">
+                <article class="help-doc">
+                    <span class="help-kicker">
+                        06 / Semantics and debugger
+                    </span>
+                    <h1>
+                        Step the machine on the source
+                    </h1>
+                    <p class="help-lede">
+                        Run opens a call-by-value machine session. The source graph stays fixed while the machine computes and its observations identify what changed.
+                    </p>
+                    <h2 id="evaluation">
+                        How evaluation proceeds
+                    </h2>
+                    <p>
+                        Application evaluates the function and argument before entering the function body. A Lambda evaluates to a closure without executing its body. An If evaluates its Boolean condition and executes only the selected branch. A shared producer supplies its value to its consumers; a recursive call is introduced through LetRec.
+                    </p>
+                    <p>
+                        The base machine state is
+                        <code>
+                            m = ⟨c, ρ, σ, κ, Q⟩
+                        </code>
+                        . SAVAM, the
+                        <strong>
+                            Source-Anchored Visual Abstract Machine
+                        </strong>
+                        , adds observations
+                        <code>
+                            ω = ⟨F, R, Δ⟩
+                        </code>
+                        over the persistent graph
+                        <code>
+                            G
+                        </code>
+                        . Those observations describe transitions; they do not choose how the base machine evaluates.
+                    </p>
+                    <h2 id="controls">
+                        The run controls
+                    </h2>
+                    <div class="help-table-wrap">
+                        <table class="help-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Control
+                                    </th>
+                                    <th scope="col">
+                                        Effect
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Run
+                                    </td>
+                                    <td>
+                                        Open a session on the complete installed graph.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Step
+                                    </td>
+                                    <td>
+                                        Take one machine transition, or replay the next recorded one.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Step Back
+                                    </td>
+                                    <td>
+                                        Restore a previous recorded configuration. This is history navigation, not an inverse evaluation rule.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Run to End
+                                    </td>
+                                    <td>
+                                        Advance in responsive batches until termination, a stuck state, Pause or the transition limit.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Pause
+                                    </td>
+                                    <td>
+                                        Stop automatic stepping at the current configuration.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Continue
+                                    </td>
+                                    <td>
+                                        Grant a fresh budget after the transition limit. A limit is not proof of nontermination.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Reset
+                                    </td>
+                                    <td>
+                                        Start a fresh session on the same graph.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Close Run
+                                    </td>
+                                    <td>
+                                        Discard the run and unlock structural editing.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        The automatic-run budget is 2,000 transitions at a time. After Pause, Run to End resumes from the current state. A terminating program reports its final value in Control.
+                    </p>
+                    <h2 id="state">
+                        Read the debugger
+                    </h2>
+                    <figure class="help-fig is-shot">
+                        <a aria-label="View full-size screenshot: Application part way through execution, with runtime values on the graph and the observation, Control, Environment, Store, Kontinuation and Ready Frontier below." href="assets/img/gl-debugger.jpg">
+                            <img alt="Application part way through execution, with runtime values on the graph and the observation, Control, Environment, Store, Kontinuation and Ready Frontier below." height="1000" loading="lazy" src="assets/img/gl-debugger.jpg" width="1600"/>
+                        </a>
+                        <figcaption>
+                            A paused Application run. The graph is still present; the bottom panel exposes machine state and its source-anchored observation. Select the image to view it at full size.
+                        </figcaption>
+                    </figure>
+                    <div class="help-table-wrap">
+                        <table class="help-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Heading
+                                    </th>
+                                    <th scope="col">
+                                        Meaning
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Control (c)
+                                    </td>
+                                    <td>
+                                        The current instruction, or a returned / final value, and the rule that produced it.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Environment (E / ρ)
+                                    </td>
+                                    <td>
+                                        Bindings from binder identities to runtime values.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Store (S / σ)
+                                    </td>
+                                    <td>
+                                        Values indexed by source ports. This is not a language heap.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Kontinuation (κ)
+                                    </td>
+                                    <td>
+                                        Suspended evaluation contexts, shown with the top frame first.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Ready Frontier (Q)
+                                    </td>
+                                    <td>
+                                        Nodes currently available to schedule. “fires next” marks the head used by this session.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Derived Observation (ω)
+                                    </td>
+                                    <td>
+                                        Source Focus F, Base Transition Rule R, and the effect fields Δ, including port writes, clears and region / frame events.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        The canvas itself is
+                        <code>
+                            G
+                        </code>
+                        , the fixed parameter, so it is not another changing register. Runtime values appear on their outgoing wires, or on a socket when no outgoing wire is visible in the current view.
+                    </p>
+                    <h2 id="provenance">
+                        Follow a value back to source
+                    </h2>
+                    <p>
+                        Select a machine row to populate
+                        <b>
+                            Source Anchoring and Provenance
+                        </b>
+                        . A closure can reveal its Lambda, body, parameter and captures. Select an enabled source link to open the appropriate region, centre the source element and mark it. Navigation does not advance the machine.
+                    </p>
+                    <p>
+                        Clicking a valued wire or port during a run selects the corresponding Store row rather than beginning a connection. Enable
+                        <b>
+                            Follow Source Focus
+                        </b>
+                        to follow the current observation as you step. Source selection, machine focus and provenance anchors retain distinct marks.
+                    </p>
+                    <p>
+                        The
+                        <code>
+                            +
+                        </code>
+                        and
+                        <code>
+                            ±
+                        </code>
+                        row marks distinguish additions from updates. An Environment row marked
+                        <b>
+                            same name
+                        </b>
+                        shares a display spelling with another live binding; lookup still follows binder identity.
+                    </p>
+                    <h2 id="status">
+                        Interpret the status
+                    </h2>
+                    <p>
+                        <b>
+                            Transition available
+                        </b>
+                        means the session can step.
+                        <b>
+                            Terminated
+                        </b>
+                        means it reached a final value.
+                        <b>
+                            Stuck
+                        </b>
+                        means it cannot take an expected transition; inspect the diagnostic.
+                        <b>
+                            Transition limit reached
+                        </b>
+                        means the automatic budget ended and Continue is available.
+                    </p>
+                    <p>
+                        While a run is open, palette edits, property changes, textual replacement and Undo / Redo are locked. Moving nodes and navigating the view remain available because they do not alter the source graph.
+                    </p>
+                    <nav aria-label="Chapter navigation" class="help-pager">
+                        <a href="types.html">
+                            <span>
+                                Previous — 05
+                            </span>
+                            <b>
+                                ← Types
+                            </b>
+                        </a>
+                        <a class="is-next" href="source-code.html">
+                            <span>
+                                Next — 07
+                            </span>
+                            <b>
+                                Source code →
+                            </b>
+                        </a>
+                    </nav>
+                </article>
+                <p class="help-foot">
+                    GraphLambda is developed at
+                    <a href="../index.html">
+                        L-Workshop
+                    </a>
+                    .
+                </p>
+            </main>
+        </div>
+        <script src="../assets/js/help-shared.js">
+        </script>
+    </body>
+</html>

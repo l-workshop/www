@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <script>
+            (function () {
+        try {
+            var t = localStorage.getItem('lw-theme');
+            if (!t) {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* theme just falls back to light */ }
+    }());
+        </script>
+        <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+        <meta content="L-Workshop" name="author"/>
+        <meta content="Nodes compute or introduce scope. Ports say where values enter and leave. Directed wires connect producers to consumers." name="description"/>
+        <meta content="#ffffff" name="theme-color"/>
+        <title>
+            Graphs and connections — GraphLambda Help | L-Workshop
+        </title>
+        <link href="https://www.l-workshop.my.id/help-graphlambda/graphs.html" rel="canonical"/>
+        <link href="../favicon.ico" rel="icon" sizes="any"/>
+        <link href="../vendor/css/bundle.min.css" rel="stylesheet"/>
+        <link href="../assets/css/style.css" rel="stylesheet"/>
+        <link href="../assets/css/custom.css" rel="stylesheet"/>
+        <link href="../assets/css/help-shared.css" rel="stylesheet"/>
+    </head>
+    <body class="help help-graphlambda">
+        <a class="lw-skip" href="#main">
+            Skip to content
+        </a>
+        <div class="help-bar">
+            <button aria-controls="help-rail" aria-expanded="false" aria-label="Toggle help navigation" class="help-menu-toggle" type="button">
+                <i aria-hidden="true" class="fa fa-bars">
+                </i>
+            </button>
+            <a class="help-bar-brand" href="index.html">
+                <img alt="" height="336" src="../assets/img/lw-logo.png" width="336"/>
+                <span class="help-bar-text">
+                    <b>
+                        GraphLambda Help
+                    </b>
+                    <span class="help-bar-sub">
+                        Graph-native functional programming
+                    </span>
+                </span>
+            </a>
+            <span class="help-bar-spacer">
+            </span>
+            <button aria-label="Switch to dark theme" aria-pressed="false" class="lw-theme-toggle" type="button">
+                <i aria-hidden="true" class="fa fa-moon">
+                </i>
+            </button>
+            <div class="help-bar-links">
+                <a class="is-secondary" href="../index.html">
+                    L-Workshop
+                </a>
+                <a class="is-primary" href="https://g-l.l-workshop.my.id" rel="noopener">
+                    Open GraphLambda
+                </a>
+            </div>
+        </div>
+        <div class="help-scrim">
+        </div>
+        <div class="help-shell">
+            <nav aria-label="Help contents" class="help-rail" id="help-rail">
+                <h2>
+                    Contents
+                </h2>
+                <ul class="help-nav">
+                    <li>
+                        <a href="index.html">
+                            <em>
+                                01
+                            </em>
+                            Overview
+                        </a>
+                    </li>
+                    <li>
+                        <a href="getting-started.html">
+                            <em>
+                                02
+                            </em>
+                            Getting started
+                        </a>
+                    </li>
+                    <li>
+                        <a aria-current="page" href="graphs.html">
+                            <em>
+                                03
+                            </em>
+                            Graphs and connections
+                        </a>
+                        <ul class="help-subnav">
+                            <li>
+                                <a href="#nodes">
+                                    The node vocabulary
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#connect">
+                                    Make or remove a connection
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#sharing">
+                                    Sharing is fan-out
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#holes">
+                                    Open inputs are typed holes
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#layout">
+                                    Move the picture
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="functions.html">
+                            <em>
+                                04
+                            </em>
+                            Functions and scope
+                        </a>
+                    </li>
+                    <li>
+                        <a href="types.html">
+                            <em>
+                                05
+                            </em>
+                            Types
+                        </a>
+                    </li>
+                    <li>
+                        <a href="semantics.html">
+                            <em>
+                                06
+                            </em>
+                            Semantics and debugger
+                        </a>
+                    </li>
+                    <li>
+                        <a href="source-code.html">
+                            <em>
+                                07
+                            </em>
+                            Source code
+                        </a>
+                    </li>
+                    <li>
+                        <a href="reference.html">
+                            <em>
+                                08
+                            </em>
+                            Reference
+                        </a>
+                    </li>
+                </ul>
+                <p class="help-rail-note">
+                    GraphLambda · eight chapters. Open the editor at
+                    <a href="https://g-l.l-workshop.my.id" rel="noopener">g-l.l-workshop.my.id</a>.
+                </p>
+            </nav>
+            <main class="help-main" id="main">
+                <article class="help-doc">
+                    <span class="help-kicker">
+                        03 / Graphs and connections
+                    </span>
+                    <h1>
+                        Read the wires as a program
+                    </h1>
+                    <p class="help-lede">
+                        Nodes compute or introduce scope. Ports say where values enter and leave. Directed wires connect producers to consumers.
+                    </p>
+                    <h2 id="nodes">
+                        The node vocabulary
+                    </h2>
+                    <div class="help-table-wrap">
+                        <table class="help-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Palette item
+                                    </th>
+                                    <th scope="col">
+                                        Ports and purpose
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Integer; True; False
+                                    </td>
+                                    <td>
+                                        A literal with one
+                                        <code>
+                                            out
+                                        </code>
+                                        port. True and False create the same Boolean node kind with different values.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Add; Subtract; Multiply
+                                    </td>
+                                    <td>
+                                        Two integer inputs,
+                                        <code>
+                                            left
+                                        </code>
+                                        and
+                                        <code>
+                                            right
+                                        </code>
+                                        , and an integer
+                                        <code>
+                                            out
+                                        </code>
+                                        .
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Less
+                                    </td>
+                                    <td>
+                                        Two integer inputs; a Boolean
+                                        <code>
+                                            out
+                                        </code>
+                                        representing strict less-than.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Lambda
+                                    </td>
+                                    <td>
+                                        A parameter declaration, a body-result input and a function-value output. Owns a BODY region.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Application
+                                    </td>
+                                    <td>
+                                        <code>
+                                            function
+                                        </code>
+                                        ,
+                                        <code>
+                                            argument
+                                        </code>
+                                        and
+                                        <code>
+                                            result
+                                        </code>
+                                        ports. The node is named
+                                        <code>
+                                            Apply
+                                        </code>
+                                        in diagnostics.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        If
+                                    </td>
+                                    <td>
+                                        A Boolean
+                                        <code>
+                                            condition
+                                        </code>
+                                        , THEN and ELSE body-result inputs and one
+                                        <code>
+                                            result
+                                        </code>
+                                        output.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        LetRec
+                                    </td>
+                                    <td>
+                                        Wraps a selected Lambda in a recursive scope. Has definition, recursive declaration, body and result ports.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Output
+                                    </td>
+                                    <td>
+                                        One
+                                        <code>
+                                            value
+                                        </code>
+                                        input. Identifies the program result; it is not a printing instruction.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        Data uses parallelograms; arithmetic and application use process rectangles; Lambda and LetRec use preparation hexagons; If uses a decision diamond; Output uses a terminator. Variable occurrences can also appear as small inline parallelograms on binder-use edges.
+                    </p>
+                    <h2 id="connect">
+                        Make or remove a connection
+                    </h2>
+                    <p>
+                        Start at an
+                        <strong>
+                            output
+                        </strong>
+                        , then click or drag to an
+                        <strong>
+                            input
+                        </strong>
+                        . A target input accepts one producer. One output may feed several consumers. Every completed wire points toward its consumer; a wire routed leftward does not reverse its meaning.
+                    </p>
+                    <p>
+                        Press Escape to cancel a pending connection. If a proposed connection has the wrong type, escapes a scope or introduces an illegal cycle, the editor reports the reason and keeps the existing graph. Select a wire to inspect its endpoints and type or disconnect it.
+                    </p>
+                    <p>
+                        Ordinary connected sockets do not print all their role names on the chart. Hover their titles and use the Inspector when you need the exact role. Function, argument and result remain separate ports even when their captions are hidden.
+                    </p>
+                    <h2 id="sharing">
+                        Sharing is fan-out
+                    </h2>
+                    <figure class="help-fig is-shot">
+                        <a aria-label="View full-size screenshot: Let sharing example with literals 10 and 20 feeding Add, and one Add output branching into both inputs of Multiply before Output." href="assets/img/gl-sharing.jpg">
+                            <img alt="Let sharing example with literals 10 and 20 feeding Add, and one Add output branching into both inputs of Multiply before Output." height="1000" loading="lazy" src="assets/img/gl-sharing.jpg" width="1600"/>
+                        </a>
+                        <figcaption>
+                            One Add output feeds both Multiply inputs. The junction is notation for two connections, not another computation. Select the image to view it at full size.
+                        </figcaption>
+                    </figure>
+                    <pre><code>let x = 10 + 20 in x * x</code></pre>
+                    <p>
+                        The graph has one Add producer and two consumers of its value. The producer computes
+                        <code>
+                            30
+                        </code>
+                        once, and Multiply returns
+                        <code>
+                            900
+                        </code>
+                        . There is no ordinary Let node in the palette: the binding becomes graph sharing. The displayed junction has no independent runtime value.
+                    </p>
+                    <h2 id="holes">
+                        Open inputs are typed holes
+                    </h2>
+                    <p>
+                        An unconnected input is marked
+                        <code>
+                            ? : expected-type
+                        </code>
+                        . It remains visible while you build. Unknown or unresolved types use a different socket and dotted wire notation; they do not supply a value. Incomplete graphs can be inspected and edited, but cannot run.
+                    </p>
+                    <h2 id="layout">
+                        Move the picture
+                    </h2>
+                    <p>
+                        Drag a node’s title bar to move it. Moving an owner carries its nested regions. Enclosing frames fit their contents automatically. Zoom with the mouse wheel or toolbar; pan with the middle mouse button or Shift+drag.
+                    </p>
+                    <p>
+                        <b>
+                            Fit Graph
+                        </b>
+                        returns to the root and fits the complete graph;
+                        <b>
+                            Fit Region
+                        </b>
+                        fits the current region;
+                        <b>
+                            Fit Selection
+                        </b>
+                        centres the selected node. These operations change the view, not the computation.
+                    </p>
+                    <nav aria-label="Chapter navigation" class="help-pager">
+                        <a href="getting-started.html">
+                            <span>
+                                Previous — 02
+                            </span>
+                            <b>
+                                ← Getting started
+                            </b>
+                        </a>
+                        <a class="is-next" href="functions.html">
+                            <span>
+                                Next — 04
+                            </span>
+                            <b>
+                                Functions and scope →
+                            </b>
+                        </a>
+                    </nav>
+                </article>
+                <p class="help-foot">
+                    GraphLambda is developed at
+                    <a href="../index.html">
+                        L-Workshop
+                    </a>
+                    .
+                </p>
+            </main>
+        </div>
+        <script src="../assets/js/help-shared.js">
+        </script>
+    </body>
+</html>
